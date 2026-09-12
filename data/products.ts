@@ -133,40 +133,6 @@ export const products: Product[] = [
     preorder: true,
     altText: "Contoh Custom Bouquet Biorona yang dapat disesuaikan",
   },
-  {
-  id: "BRN-001",
-  sku: "BRN-001",
-  slug: "pink-rona-bouquet",
-
-  name: "Pink Rona Bouquet",
-  category: "Bouquet",
-
-  price: 250000,
-  originalPrice: null,
-
-  thumbnail: "/products/pink-rona-1.jpg",
-
-  images: [
-    "/products/pink-rona-1.jpg",
-    "/products/pink-rona-2.jpg",
-    "/products/pink-rona-3.jpg"
-  ],
-
-  colors: ["Pink", "Putih"],
-  occasions: ["Birthday", "Anniversary"],
-
-  available: true,
-  preorder: false,
-  featured: true,
-
-  leadTime: "Ready stock",
-
-  description: "...",
-  seoDescription: "...",
-  altText: "...",
-
-  sortOrder: 1
-}
 ];
 
 export const categories = ["Semua", ...productCategories] as const;
