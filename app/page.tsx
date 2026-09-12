@@ -10,6 +10,7 @@ import MobileOrderBar from "@/components/MobileOrderBar";
 import HowToOrder from "@/components/HowToOrder";
 import JsonLd from "@/components/JsonLd";
 import { siteConfig } from "@/data/site";
+import type { Product } from "@/data/products";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getProducts } from "@/lib/products";
 
 const homeTitle = `${siteConfig.brand} | Florist ${siteConfig.location.city}, ${siteConfig.location.region}`;
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  let products = [];
+  let products: Product[] = [];
   let unavailableMessage: string | undefined;
 
   try {

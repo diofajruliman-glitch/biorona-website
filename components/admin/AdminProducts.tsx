@@ -47,14 +47,24 @@ export default function AdminProducts() {
       const images = await supabase.from("product_images").select("storage_path").eq("product_id", product.id);
       if (images.error) throw images.error;
       const paths = images.data.map((image) => image.storage_path);
-      const result = await supabase.from("products").delete().eq("id", product.id);
-      if (result.error) throw result.error;
+
+      const deactivate = await supabase.from("products").update({ is_active: false }).eq("id", product.id);
+      if (deactivate.error) throw new Error(`Produk gagal diamankan sebelum dihapus: ${deactivate.error.message}`);
+
       if (paths.length) {
         const storage = await supabase.storage.from("product-images").remove(paths);
-        setMessage(storage.error ? "Produk dihapus, tetapi file Storage perlu dibersihkan manual." : "Produk berhasil dihapus.");
-      } else {
-        setMessage("Produk berhasil dihapus.");
+        if (storage.error) {
+          const restore = await supabase.from("products").update({ is_active: product.is_active }).eq("id", product.id);
+          const suffix = restore.error ? " Status aktif produk juga gagal dipulihkan." : " Produk tidak dihapus dan statusnya sudah dipulihkan.";
+          throw new Error(`File gambar gagal dihapus: ${storage.error.message}.${suffix}`);
+        }
       }
+
+      const result = await supabase.from("products").delete().eq("id", product.id);
+      if (result.error) {
+        throw new Error(`File gambar sudah dihapus dan produk dinonaktifkan, tetapi data produk gagal dihapus: ${result.error.message}. Coba hapus kembali setelah memeriksa koneksi.`);
+      }
+      setMessage("Produk dan seluruh file gambarnya berhasil dihapus.");
       await load();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Gagal menghapus produk.");
