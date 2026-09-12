@@ -29,12 +29,25 @@ export default function Trust() {
             <a href={waUrl("Halo Biorona 🌷 Saya ingin menanyakan opsi Pickup atau Delivery.")} target="_blank" rel="noreferrer">Konfirmasi area via WhatsApp</a>
           </article>
           <article className="serviceInfo mapInfo">
-            <span className="kicker">Lokasi</span>
-            <h3>{siteConfig.location.city}, {siteConfig.location.region}</h3>
-            <p>Pin lokasi lengkap akan ditampilkan setelah tautan Google Maps resmi tersedia.</p>
-            {siteConfig.googleMapsUrl
-              ? <a href={siteConfig.googleMapsUrl} target="_blank" rel="noreferrer"><MapPinIcon size={18}/> Buka Google Maps</a>
-              : <span className="pendingLabel">Google Maps belum dikonfigurasi</span>}
+            <div className="mapCopy">
+              <span className="kicker">Lokasi</span>
+              <h3>Biorona Florist, {siteConfig.location.city}</h3>
+              <p>Lihat pin lokasi pickup dan buka petunjuk arah langsung melalui Google Maps.</p>
+            </div>
+            <div className="mapEmbed">
+              <iframe
+                src={siteConfig.googleMapsEmbedUrl}
+                title={`Peta lokasi ${siteConfig.brand}`}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+            {siteConfig.googleMapsUrl && (
+              <a href={siteConfig.googleMapsUrl} target="_blank" rel="noreferrer">
+                <MapPinIcon size={18}/> Buka Google Maps
+              </a>
+            )}
           </article>
           <article className="serviceInfo socialInfo">
             <span className="kicker">Inspirasi & karya</span>
