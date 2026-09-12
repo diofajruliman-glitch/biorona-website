@@ -6,7 +6,7 @@ import {
   getProductImages,
   getProductStatus,
 } from "@/data/products";
-import { getProductBySlug, getProducts } from "@/lib/products";
+import { getProductBySlug } from "@/lib/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
@@ -14,16 +14,12 @@ import ProductGallery from "@/components/ProductGallery";
 import ProductOrderForm from "@/components/ProductOrderForm";
 import { CheckIcon } from "@/components/Icons";
 
-export const dynamicParams = false;
-
-export async function generateStaticParams() {
-  return (await getProducts()).map((product) => ({ slug: product.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
-  if (!product) return {};
+  if (!product) notFound();
 
   const canonical = `/produk/${product.slug}/`;
   const image = getPrimaryProductImage(product);

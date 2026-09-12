@@ -13,6 +13,7 @@ import { siteConfig } from "@/data/site";
 import { getProducts } from "@/lib/products";
 
 const homeTitle = `${siteConfig.brand} | Florist ${siteConfig.location.city}, ${siteConfig.location.region}`;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: { absolute: homeTitle },

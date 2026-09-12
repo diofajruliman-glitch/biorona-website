@@ -1,6 +1,6 @@
 # Supabase setup untuk Biorona
 
-Katalog membaca Supabase melalui `lib/products.ts`. Jika environment belum diisi atau koneksi gagal, data existing dari `data/products.ts` otomatis menjadi fallback sehingga development dan static build tetap dapat berjalan.
+Katalog production membaca Supabase melalui `lib/products.ts`. Saat development, data existing dari `data/products.ts` otomatis menjadi fallback jika environment belum diisi atau koneksi gagal.
 
 ## 1. Buat project dan jalankan migration
 
@@ -48,7 +48,7 @@ Gunakan `app_metadata`, bukan `user_metadata`: pelanggan tidak dapat mengubah `a
 - Simpan path objek pada `product_images.storage_path` dan public URL pada `image_url`.
 - Hanya admin yang dapat upload, mengganti, atau menghapus file.
 
-Bucket dibuat public agar gambar produk aktif dapat digunakan langsung oleh storefront dan static export. Metadata produk/image tetap mengikuti RLS. Saat produk dinonaktifkan, hapus atau pindahkan objek jika file juga tidak boleh lagi dapat diakses melalui URL lama.
+Bucket dibuat public agar gambar produk dapat digunakan langsung oleh storefront. Metadata produk/image tetap mengikuti RLS. Saat produk dinonaktifkan, hapus atau pindahkan objek jika file juga tidak boleh lagi dapat diakses melalui URL lama.
 
 ## 5. Seed katalog existing
 
@@ -79,7 +79,7 @@ const { data, error } = await getSupabaseClient()
   .order("sort_order");
 ```
 
-Untuk menguji fallback, hentikan Supabase sementara atau kosongkan dua variable publik Supabase, restart dev server, lalu pastikan enam produk lokal tetap tampil.
+Untuk menguji fallback, jalankan mode development, hentikan Supabase sementara atau kosongkan dua variable publik Supabase, restart dev server, lalu pastikan enam produk lokal tetap tampil. Production tidak memakai fallback agar kegagalan database terlihat jelas dan data lama tidak dianggap sebagai source of truth.
 
 Checklist keamanan:
 

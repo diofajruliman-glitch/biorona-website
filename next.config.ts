@@ -6,7 +6,6 @@ const remotePatterns = supabaseUrl
   : [];
 
 const nextConfig: NextConfig = {
-  output: "export",
   images: { unoptimized: true, remotePatterns },
   trailingSlash: true,
 };

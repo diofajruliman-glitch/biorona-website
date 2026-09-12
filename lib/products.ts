@@ -46,7 +46,11 @@ function toProduct(row: ProductWithImages): Product {
 const loadProducts = cache(async (): Promise<Product[]> => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return fallbackProducts;
+  const useDevelopmentFallback = process.env.NODE_ENV === "development";
+  if (!url || !key) {
+    if (useDevelopmentFallback) return fallbackProducts;
+    throw new Error("Katalog belum terhubung ke Supabase.");
+  }
 
   try {
     const supabase = createClient<Database>(url, key, {
@@ -55,16 +59,18 @@ const loadProducts = cache(async (): Promise<Product[]> => {
     const { data, error } = await supabase
       .from("products")
       .select("*, product_images(*)")
+      .eq("is_active", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
     return (data as ProductWithImages[]).map(toProduct);
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
+    if (useDevelopmentFallback) {
       console.warn("Supabase tidak tersedia; katalog lokal digunakan.", error);
+      return fallbackProducts;
     }
-    return fallbackProducts;
+    throw new Error("Katalog sedang tidak dapat dimuat dari Supabase.", { cause: error });
   }
 });
 

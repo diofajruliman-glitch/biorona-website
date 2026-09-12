@@ -24,9 +24,9 @@ Jangan pernah memasukkan service-role key ke source code, browser, atau variable
 - `/admin/` — ringkasan status produk.
 - `/admin/products/` — daftar, nonaktifkan, dan hapus produk.
 - `/admin/products/new/` — tambah produk.
-- `/admin/products/_/edit/?id=UUID` — edit produk melalui static edit shell.
+- `/admin/products/UUID/edit/` — edit produk berdasarkan UUID database.
 
-Project mempertahankan `output: "export"`. Karena static hosting tidak dapat menghasilkan route UUID baru saat runtime, daftar produk memakai shell `_` dengan UUID pada query string. Segment `/admin/products/[id]/edit` tetap menjadi struktur route edit dan dapat diubah ke URL UUID langsung bila aplikasi kelak memakai runtime Next.js/server deployment.
+Area admin dan katalog production memerlukan deployment Next.js runtime agar perubahan database, produk baru, slug, dan metadata tampil tanpa rebuild. Static HTML hosting saja tidak mendukung kebutuhan ini.
 
 ## Mengelola produk
 

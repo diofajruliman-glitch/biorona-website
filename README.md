@@ -10,7 +10,7 @@ Website florist Biorona dengan UI khas Biorona, Liquid Glass iOS-inspired, mobil
 - Halaman produk terpisah `/produk/[slug]/` agar lebih SEO-friendly.
 - Metadata, canonical, OpenGraph, sitemap, robots, JSON-LD Florist/ItemList/Product.
 - Custom Bouquet langsung membuat pesan WhatsApp.
-- Static export: cocok untuk Vercel atau cPanel.
+- Next.js runtime: diperlukan agar katalog Supabase dan area admin selalu menampilkan data terbaru.
 
 ## Menjalankan
 1. Copy `.env.local.example` menjadi `.env.local`.
