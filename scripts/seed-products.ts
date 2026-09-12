@@ -21,6 +21,16 @@ const mimeTypes: Record<string, string> = {
   ".webp": "image/webp", ".avif": "image/avif",
 };
 
+function assertUnique(values: string[], field: "SKU" | "slug") {
+  const duplicates = values.filter((value, index) => values.indexOf(value) !== index);
+  if (duplicates.length) {
+    throw new Error(`${field} duplikat pada products.ts: ${[...new Set(duplicates)].join(", ")}`);
+  }
+}
+
+assertUnique(products.map((product) => product.id), "SKU");
+assertUnique(products.map((product) => product.slug), "slug");
+
 for (const [productIndex, product] of products.entries()) {
   const { data: storedProduct, error: productError } = await supabase
     .from("products")

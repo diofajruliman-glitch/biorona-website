@@ -61,9 +61,10 @@ npm run seed:products
 Script akan:
 
 1. Membaca enam produk dari `data/products.ts`.
-2. Melakukan upsert berdasarkan `sku`, sehingga aman dijalankan ulang.
-3. Mengunggah gambar lokal dari folder `public` ke bucket `product-images`.
-4. Menyimpan URL, storage path, alt text, urutan, dan thumbnail ke `product_images`.
+2. Memvalidasi bahwa seluruh SKU dan slug pada sumber bersifat unik.
+3. Melakukan upsert berdasarkan `sku`, sehingga aman dijalankan ulang.
+4. Mengunggah gambar lokal dari folder `public` ke bucket `product-images`.
+5. Menyimpan URL, storage path, alt text, urutan, dan thumbnail ke `product_images`.
 
 Script tidak menghapus record atau file lama secara otomatis. Jika daftar gambar berubah, bersihkan objek lama secara sadar dari dashboard setelah memastikan file tidak lagi dipakai.
 
