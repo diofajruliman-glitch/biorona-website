@@ -5,7 +5,7 @@ import { categories, type CatalogCategory, type Product } from "@/data/products"
 import ProductCard from "./ProductCard";
 import { SearchIcon } from "./Icons";
 
-export default function Catalog({ products }: { products: Product[] }) {
+export default function Catalog({ products, unavailableMessage }: { products: Product[]; unavailableMessage?: string }) {
   const [category, setCategory] = useState<CatalogCategory>("Semua");
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
@@ -20,13 +20,17 @@ export default function Catalog({ products }: { products: Product[] }) {
           <div><span className="kicker">Koleksi Biorona</span><h2>Pilih yang paling cocok untuk momennya.</h2></div>
           <p>Mulai dari produk siap pilih sampai custom bouquet. Harga terlihat jelas dan pemesanan selesai di WhatsApp.</p>
         </div>
-        <div className="catalogToolbar glassSurface">
+        {!unavailableMessage && <div className="catalogToolbar glassSurface">
           <label className="searchField"><SearchIcon size={18}/><input type="search" inputMode="search" enterKeyHint="search" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cari bouquet, wisuda, birthday..." aria-label="Cari produk" /></label>
           <div className="categoryScroller" role="group" aria-label="Filter kategori">
             {categories.map((item) => <button key={item} type="button" className={item === category ? "active" : ""} aria-pressed={item === category} onClick={() => setCategory(item)}>{item}</button>)}
           </div>
-        </div>
-        {filtered.length ? <div className="productGrid">{filtered.map((product) => <ProductCard key={product.slug} product={product}/>)}</div> : <div className="emptyState">Belum ada produk yang cocok dengan pencarian Anda.</div>}
+        </div>}
+        {unavailableMessage
+          ? <div className="emptyState" role="alert"><strong>{unavailableMessage}</strong><p>Anda tetap dapat menghubungi Biorona melalui WhatsApp untuk bantuan.</p></div>
+          : filtered.length
+            ? <div className="productGrid">{filtered.map((product) => <ProductCard key={product.slug} product={product}/>)}</div>
+            : <div className="emptyState">Belum ada produk yang cocok dengan pencarian Anda.</div>}
       </div>
     </section>
   );

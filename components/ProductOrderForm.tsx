@@ -7,9 +7,13 @@ import { buildOrderMessage, waUrl, type FulfillmentMethod } from "@/lib/whatsapp
 import { ArrowIcon, WhatsAppIcon } from "./Icons";
 
 export default function ProductOrderForm({ product }: { product: Product }) {
+  const colorOptions = product.colors.filter((item) => item.trim());
+  const occasionOptions = product.occasions.filter((item) => item.trim());
+  const safeColorOptions = colorOptions.length ? colorOptions : ["Custom"];
+  const safeOccasionOptions = occasionOptions.length ? occasionOptions : ["Lainnya"];
   const [quantity, setQuantity] = useState("1");
-  const [color, setColor] = useState(product.colors[0] || "Custom");
-  const [occasion, setOccasion] = useState(product.occasions[0] || "Lainnya");
+  const [color, setColor] = useState(safeColorOptions[0]);
+  const [occasion, setOccasion] = useState(safeOccasionOptions[0]);
   const [customerName, setCustomerName] = useState("");
   const [recipientName, setRecipientName] = useState("");
   const [cardMessage, setCardMessage] = useState("");
@@ -67,12 +71,12 @@ export default function ProductOrderForm({ product }: { product: Product }) {
           </label>
           <label>Warna/tema *
             <select required value={color} onChange={(event) => setColor(event.target.value)}>
-              {product.colors.map((item) => <option key={item} value={item}>{item}</option>)}
+              {safeColorOptions.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
           <label>Occasion/acara *
             <select required value={occasion} onChange={(event) => setOccasion(event.target.value)}>
-              {product.occasions.map((item) => <option key={item} value={item}>{item}</option>)}
+              {safeOccasionOptions.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
           <label>Tanggal dibutuhkan *

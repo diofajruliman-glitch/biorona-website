@@ -11,6 +11,20 @@ type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
 type ProductWithImages = ProductRow & { product_images: ProductImageRow[] | null };
 
+export const CATALOG_UNAVAILABLE_MESSAGE = "Katalog sementara tidak tersedia. Silakan coba kembali beberapa saat lagi.";
+
+export class CatalogUnavailableError extends Error {
+  constructor() {
+    super(CATALOG_UNAVAILABLE_MESSAGE);
+    this.name = "CatalogUnavailableError";
+  }
+}
+
+function developmentFallback() {
+  if (process.env.NODE_ENV === "development") return fallbackProducts;
+  throw new CatalogUnavailableError();
+}
+
 function toProduct(row: ProductWithImages): Product {
   const images = [...(row.product_images ?? [])].sort((a, b) => {
     if (a.is_thumbnail !== b.is_thumbnail) return a.is_thumbnail ? -1 : 1;
@@ -48,8 +62,7 @@ const loadProducts = cache(async (): Promise<Product[]> => {
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !key) {
-    console.warn("Supabase belum dikonfigurasi; fallback catalog lokal digunakan.");
-    return fallbackProducts;
+    return developmentFallback();
   }
 
   try {
@@ -69,9 +82,8 @@ const loadProducts = cache(async (): Promise<Product[]> => {
     }
 
     return (data as ProductWithImages[]).map(toProduct);
-  } catch (error) {
-    console.warn("Supabase tidak tersedia; fallback catalog lokal digunakan.", error);
-    return fallbackProducts;
+  } catch {
+    return developmentFallback();
   }
 });
 

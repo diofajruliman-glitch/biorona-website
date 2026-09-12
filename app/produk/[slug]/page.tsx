@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const canonical = `/produk/${product.slug}/`;
   const image = getPrimaryProductImage(product);
-  const description = `${product.shortDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
+  const productDescription = product.seoDescription?.trim() || product.shortDescription.trim();
+  const description = `${productDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
 
   return {
     title: `${product.name} - ${formatRupiah(product.price)}`,
