@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getPrimaryProductImage,
+  getProductImageAlt,
   getProductImages,
   getProductStatus,
+  isSearchIndexableProduct,
 } from "@/data/products";
 import { getProductBySlug } from "@/lib/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
@@ -22,8 +24,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const product = await getProductBySlug(normalizedSlug);
   if (!product) notFound();
 
-  const canonical = `/produk/${product.slug}/`;
+  const canonical = absoluteUrl(`/produk/${product.slug}/`);
   const image = getPrimaryProductImage(product);
+  const imageAlt = getProductImageAlt(product);
   const productDescription = product.seoDescription?.trim() || product.shortDescription.trim();
   const description = `${productDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
 
@@ -31,6 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${product.name} - ${formatRupiah(product.price)}`,
     description,
     alternates: { canonical },
+    robots: isSearchIndexableProduct(product) ? undefined : { index: false, follow: false },
     openGraph: {
       type: "website",
       locale: "id_ID",
@@ -38,7 +42,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: siteConfig.brand,
       title: product.name,
       description,
-      images: [{ url: image, alt: product.altText }],
+      images: [{ url: absoluteUrl(image), alt: imageAlt }],
     },
     twitter: {
       card: "summary_large_image",
@@ -57,6 +61,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   const formattedPrice = formatRupiah(product.price);
   const status = getProductStatus(product);
+  const isIndexable = isSearchIndexableProduct(product);
+  const imageAlt = getProductImageAlt(product);
   const productUrl = absoluteUrl(`/produk/${product.slug}/`);
   const floristId = `${siteConfig.siteUrl}/#florist`;
   const schema = {
@@ -98,7 +104,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+      {isIndexable && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />}
       <header className="productPageHeader">
         <div className="container productPageNav">
           <Logo />
@@ -112,7 +118,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <span aria-current="page">{product.name}</span>
         </nav>
         <div className="container productDetailGrid">
-          <ProductGallery images={product.images} alt={product.altText} />
+          <ProductGallery images={product.images} alt={imageAlt} />
           <div className="productDetailCopy">
             <span className="kicker">{product.category}</span>
             <h1>{product.name}</h1>

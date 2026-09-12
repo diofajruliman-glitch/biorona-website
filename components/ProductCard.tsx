@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProductStatus, type Product } from "@/data/products";
+import { getProductImageAlt, getProductStatus, type Product } from "@/data/products";
 import { formatRupiah } from "@/lib/format";
 import { ArrowIcon, WhatsAppIcon } from "./Icons";
 import { productInquiryMessage, waUrl } from "@/lib/whatsapp";
@@ -13,7 +13,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <article className="productCard">
       <Link className="productImageLink" href={`/produk/${product.slug}/`} aria-label={`Lihat ${product.name}`}>
         <div className="productImageWrap">
-          <ProductImage images={product.images} sizes="(max-width: 700px) 50vw, 28vw" alt={product.altText} />
+          <ProductImage images={product.images} sizes="(max-width: 700px) 50vw, 28vw" alt={getProductImageAlt(product)} />
           {badge && <span className="productBadge glassSurface">{badge}</span>}
         </div>
       </Link>

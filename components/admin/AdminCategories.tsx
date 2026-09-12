@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { requireAdminSession } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
+import { adminErrorMessage, logSupabaseError } from "@/lib/supabase/error";
 
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 
@@ -49,7 +50,7 @@ export default function AdminCategories() {
         .select("*")
         .order("sort_order", { ascending: true })
         .order("name", { ascending: true });
-      if (fetchError) throw fetchError;
+      if (fetchError) { logSupabaseError("categories.fetch", fetchError); throw fetchError; }
       setCategories(data ?? []);
       const counts: Record<string, number> = {};
       for (const category of data ?? []) {
@@ -57,12 +58,13 @@ export default function AdminCategories() {
           .from("products")
           .select("id", { count: "exact", head: true })
           .eq("category_id", category.id);
-        if (countError) throw countError;
+        if (countError) { logSupabaseError("categories.product-count", countError); throw countError; }
         counts[category.id] = count ?? 0;
       }
       setProductCounts(counts);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Gagal memuat kategori.");
+      logSupabaseError("categories.load", reason);
+      setError(adminErrorMessage(reason, "Gagal memuat kategori."));
     } finally {
       setLoading(false);
     }
@@ -121,19 +123,19 @@ export default function AdminCategories() {
 
       if (form.id) {
         const { error: updateError } = await supabase.from("categories").update(payload).eq("id", form.id);
-        if (updateError) throw updateError;
+        if (updateError) { logSupabaseError("categories.update", updateError); throw updateError; }
         setMessage("Kategori berhasil diperbarui.");
       } else {
         const { error: insertError } = await supabase.from("categories").insert(payload);
-        if (insertError) throw insertError;
+        if (insertError) { logSupabaseError("categories.create", insertError); throw insertError; }
         setMessage("Kategori berhasil ditambahkan.");
       }
 
       setForm(emptyForm());
       await loadCategories();
     } catch (reason) {
-      const messageText = reason instanceof Error ? reason.message : "Gagal menyimpan kategori.";
-      setError(messageText.includes("duplicate key") ? "Nama atau slug kategori sudah digunakan. Gunakan nilai yang unik." : messageText);
+      logSupabaseError(form.id ? "categories.update" : "categories.create", reason);
+      setError(adminErrorMessage(reason, "Gagal menyimpan kategori."));
     } finally {
       setSaving(false);
     }
@@ -145,11 +147,12 @@ export default function AdminCategories() {
     try {
       const { supabase } = await requireAdminSession();
       const { error } = await supabase.from("categories").update({ is_active: !category.is_active }).eq("id", category.id);
-      if (error) throw error;
+      if (error) { logSupabaseError("categories.toggle", error); throw error; }
       setMessage(category.is_active ? "Kategori dinonaktifkan." : "Kategori diaktifkan.");
       await loadCategories();
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Gagal mengubah status kategori.");
+      logSupabaseError("categories.toggle", reason);
+      setError(adminErrorMessage(reason, "Gagal mengubah status kategori."));
     }
   }
 
@@ -167,12 +170,12 @@ export default function AdminCategories() {
     try {
       const { supabase } = await requireAdminSession();
       const { error } = await supabase.from("categories").delete().eq("id", category.id);
-      if (error) throw error;
+      if (error) { logSupabaseError("categories.delete", error); throw error; }
       setMessage("Kategori berhasil dihapus.");
       await loadCategories();
     } catch (reason) {
-      const errorText = reason instanceof Error ? reason.message : "Gagal menghapus kategori.";
-      setError(errorText.includes("masih digunakan") ? errorText : "Kategori ini masih digunakan oleh produk. Nonaktifkan atau pindahkan produknya terlebih dahulu.");
+      logSupabaseError("categories.delete", reason);
+      setError(adminErrorMessage(reason, "Gagal menghapus kategori."));
     }
   }
 

@@ -147,3 +147,17 @@ export function getProductImages(product: Product) {
   const images = product.images.filter(Boolean);
   return images.length ? images : [FALLBACK_PRODUCT_IMAGE];
 }
+
+const dummyProductPattern = /(?:^|[\s_-])(test|testing|dummy|sample|contoh)(?:$|[\s_-])/i;
+const genericImageAltPattern = /^(image|img|foto|gambar|photo|untitled|[a-z0-9_-]+\.(jpe?g|png|webp|avif))$/i;
+
+export function isSearchIndexableProduct(product: Product) {
+  return !dummyProductPattern.test(`${product.slug} ${product.name} ${product.sku ?? ""}`);
+}
+
+export function getProductImageAlt(product: Product) {
+  const altText = product.altText.trim();
+  return altText && !genericImageAltPattern.test(altText)
+    ? altText
+    : `${product.name} dari Biorona Florist`;
+}

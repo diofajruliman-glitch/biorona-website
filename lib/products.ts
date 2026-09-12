@@ -5,12 +5,13 @@ import {
   type Product,
 } from "@/data/products";
 import type { Database } from "@/lib/supabase/database.types";
+import { logSupabaseError } from "@/lib/supabase/error";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
 type ProductWithImages = ProductRow & {
   product_images: ProductImageRow[] | null;
-  categories: { name: string };
+  categories: { name: string; is_active: boolean } | null;
 };
 
 export const CATALOG_UNAVAILABLE_MESSAGE = "Katalog sementara tidak tersedia. Silakan coba kembali beberapa saat lagi.";
@@ -39,7 +40,7 @@ function toProduct(row: ProductWithImages): Product {
     sku: row.sku,
     slug: row.slug,
     name: row.name,
-    category: row.categories.name,
+    category: row.categories?.name ?? row.category ?? "Tanpa kategori",
     price: row.price,
     originalPrice: row.original_price,
     shortDescription: row.short_description,
@@ -74,9 +75,8 @@ const loadProducts = cache(async (): Promise<Product[]> => {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, product_images(*), categories!inner(name, is_active)")
+      .select("*, product_images(*), categories(name, is_active)")
       .eq("is_active", true)
-      .eq("categories.is_active", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
 
@@ -84,8 +84,11 @@ const loadProducts = cache(async (): Promise<Product[]> => {
       throw error;
     }
 
-    return (data as ProductWithImages[]).map(toProduct);
-  } catch {
+    return (data as ProductWithImages[])
+      .filter((row) => row.categories?.is_active !== false)
+      .map(toProduct);
+  } catch (error) {
+    logSupabaseError("products.fetch-public", error);
     return developmentFallback();
   }
 });
@@ -129,7 +132,8 @@ export async function getActiveCategories(): Promise<string[]> {
 
     if (error) throw error;
     return (data ?? []).map((item) => item.name);
-  } catch {
+  } catch (error) {
+    logSupabaseError("categories.fetch-public", error);
     return developmentFallbackCategories();
   }
 }

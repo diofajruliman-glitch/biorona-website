@@ -11,8 +11,8 @@ export default function Hero() {
           <div className="eyebrow"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
           <h1>Toko Bunga Bogor &amp; Florist Cibinong untuk Setiap Momen Spesial</h1>
           <div className="heroDescriptions">
-            <p className="heroLead">Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan bunga buket, custom bouquet, standing flower, bunga ucapan, flower box, dan rangkaian bunga untuk wisuda, ulang tahun, anniversary, grand opening, pernikahan, duka cita, dan berbagai momen spesial.</p>
-            <p className="heroSupportingCopy">Pesan bunga dengan mudah melalui WhatsApp. Pilih koleksi Biorona atau konsultasikan desain, warna, ukuran, ucapan, dan budget sesuai kebutuhan Anda.</p>
+            <p className="heroLead">Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan buket bunga, custom bouquet, standing flower, bunga ucapan, flower box, dan rangkaian bunga untuk wisuda, ulang tahun, anniversary, grand opening, pernikahan, duka cita, dan berbagai momen spesial.</p>
+            <p className="heroSupportingCopy">Pilih koleksi Biorona atau konsultasikan desain, warna, ukuran, ucapan, dan budget sesuai kebutuhan. Pemesanan dapat dilakukan langsung melalui WhatsApp tanpa login atau checkout.</p>
           </div>
           <div className="heroCtas">
             <a className="primaryButton" href="#katalog">Lihat Koleksi Bunga <ArrowIcon size={18}/></a>

@@ -1,7 +1,14 @@
 begin;
 
-create unique index if not exists categories_name_unique_ci
-  on public.categories (lower(btrim(name)));
+do $$
+begin
+  if not exists (
+    select 1 from public.categories group by lower(btrim(name)) having count(*) > 1
+  ) then
+    create unique index if not exists categories_name_unique_ci
+      on public.categories (lower(btrim(name)));
+  end if;
+end $$;
 
 create or replace function public.sync_product_legacy_category()
 returns trigger

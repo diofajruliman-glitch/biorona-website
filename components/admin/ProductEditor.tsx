@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { requireAdminSession } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
+import { adminErrorMessage, logSupabaseError } from "@/lib/supabase/error";
 
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
@@ -106,7 +107,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
       const loaded=rows.map(image=>({key:image.id,id:image.id,storagePath:image.storage_path,url:image.image_url,alt:image.alt_text}));
       setImages(loaded);
       setThumbnailKey(loaded.find((_,index)=>rows[index]?.is_thumbnail)?.key??loaded[0]?.key??"");
-    }).catch(reason=>setError(reason instanceof Error?reason.message:"Produk gagal dimuat.")).finally(()=>setLoading(false));
+    }).catch(reason=>{logSupabaseError(productId?"products.fetch-editor":"categories.fetch-editor",reason);setError(adminErrorMessage(reason,"Produk gagal dimuat."));}).finally(()=>setLoading(false));
   },[productId]);
 
   function field<K extends keyof FormState>(key:K,value:FormState[K]){setForm(current=>({...current,[key]:value}));}
@@ -162,6 +163,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
     const insertedImageIds:string[]=[];
     let createdProductId:string|undefined;
     let supabase:Awaited<ReturnType<typeof requireAdminSession>>["supabase"]|undefined;
+    let operation=productId?"products.update":"products.create";
     try{
       ({supabase}=await requireAdminSession());
       const payload=productPayload(form);
@@ -198,6 +200,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
       if(!thumbnail)throw new Error("Thumbnail produk tidak dapat ditentukan.");
       const thumbnailResult=await supabase.from("product_images").update({is_thumbnail:true}).eq("id",thumbnail.id);
       if(thumbnailResult.error)throw thumbnailResult.error;
+      operation="products.update";
       const productResult=await supabase.from("products").update(payload).eq("id",id);
       if(productResult.error)throw productResult.error;
 
@@ -225,7 +228,8 @@ export default function ProductEditor({ productId }: { productId?: string }) {
           for(const image of originalImages.current){const restored=await supabase.from("product_images").update({alt_text:image.alt_text,sort_order:image.sort_order,is_thumbnail:image.is_thumbnail}).eq("id",image.id);if(restored.error)cleanupErrors.push("urutan atau thumbnail lama gagal dipulihkan");}
         }
       }
-      const message=reason instanceof Error?reason.message:"Produk gagal disimpan.";
+      logSupabaseError(operation,reason);
+      const message=adminErrorMessage(reason,"Produk gagal disimpan.");
       setError(cleanupErrors.length?`${message} Pemulihan belum lengkap: ${[...new Set(cleanupErrors)].join(", ")}.`:message);
     }finally{setSaving(false);}
   }

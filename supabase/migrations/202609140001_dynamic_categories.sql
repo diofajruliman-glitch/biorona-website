@@ -16,6 +16,19 @@ create table if not exists public.categories (
   constraint categories_slug_format check (slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$')
 );
 
+-- Production recovery may already have a partial categories table.
+alter table public.categories add column if not exists slug text;
+alter table public.categories add column if not exists description text;
+alter table public.categories add column if not exists is_active boolean default true;
+alter table public.categories add column if not exists sort_order integer default 0;
+alter table public.categories add column if not exists created_at timestamptz default now();
+alter table public.categories add column if not exists updated_at timestamptz default now();
+
+update public.categories set is_active = true where is_active is null;
+update public.categories set sort_order = 0 where sort_order is null;
+update public.categories set created_at = now() where created_at is null;
+update public.categories set updated_at = now() where updated_at is null;
+
 alter table public.products
   add column if not exists category_id uuid references public.categories(id) on delete restrict;
 
@@ -62,6 +75,25 @@ begin
 end;
 $$;
 
+update public.categories
+set slug = concat(
+  coalesce(nullif(public.slugify_category_name(name), ''), 'kategori'),
+  '-',
+  substr(id::text, 1, 8)
+)
+where slug is null or length(btrim(slug)) = 0;
+
+with duplicate_slugs as (
+  select id, slug, row_number() over (partition by slug order by id) as duplicate_number
+  from public.categories
+)
+update public.categories c
+set slug = concat(c.slug, '-', substr(c.id::text, 1, 8))
+from duplicate_slugs d
+where c.id = d.id and d.duplicate_number > 1;
+
+create unique index if not exists categories_slug_unique_idx on public.categories (slug);
+
 with unique_categories as (
   select
     distinct trim(category) as category_name,
@@ -99,8 +131,12 @@ where p.category_id is null
   and length(btrim(p.category)) > 0
   and c.slug = public.slugify_category_name(trim(p.category));
 
-alter table public.products
-  alter column category_id set not null;
+do $$
+begin
+  if not exists (select 1 from public.products where category_id is null) then
+    alter table public.products alter column category_id set not null;
+  end if;
+end $$;
 
 alter table public.categories enable row level security;
 alter table public.products enable row level security;
@@ -113,6 +149,7 @@ grant insert, update, delete on public.categories to authenticated;
 grant select on public.products to anon, authenticated;
 grant insert, update, delete on public.products to authenticated;
 
+drop trigger if exists categories_set_updated_at on public.categories;
 create trigger categories_set_updated_at
 before update on public.categories
 for each row execute function public.set_updated_at();
