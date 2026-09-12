@@ -18,7 +18,8 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const normalizedSlug = slug.trim();
+  const product = await getProductBySlug(normalizedSlug);
   if (!product) notFound();
 
   const canonical = `/produk/${product.slug}/`;
@@ -49,7 +50,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const normalizedSlug = slug.trim();
+  const product = await getProductBySlug(normalizedSlug);
   if (!product) notFound();
 
   const formattedPrice = formatRupiah(product.price);
