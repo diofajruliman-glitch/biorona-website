@@ -12,19 +12,26 @@ export type ProductCategory = (typeof productCategories)[number];
 
 export type Product = {
   id: string;
+  databaseId?: string;
+  sku?: string;
   slug: string;
   name: string;
   category: ProductCategory;
   price: number;
+  originalPrice?: number | null;
   shortDescription: string;
   description: string;
+  seoDescription?: string;
   images: string[];
   colors: string[];
   occasions: string[];
+  tags?: string[];
   bestseller: boolean;
   featured: boolean;
   available: boolean;
   preorder: boolean;
+  leadTime?: string | null;
+  sortOrder?: number;
   altText: string;
 };
 

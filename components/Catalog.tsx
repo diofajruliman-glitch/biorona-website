@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { categories, products, type CatalogCategory } from "@/data/products";
+import { categories, type CatalogCategory, type Product } from "@/data/products";
 import ProductCard from "./ProductCard";
 import { SearchIcon } from "./Icons";
 
-export default function Catalog() {
+export default function Catalog({ products }: { products: Product[] }) {
   const [category, setCategory] = useState<CatalogCategory>("Semua");
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {

@@ -1,7 +1,7 @@
-import { getPrimaryProductImage, products } from "@/data/products";
+import { getPrimaryProductImage, type Product } from "@/data/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
 
-export default function JsonLd() {
+export default function JsonLd({ products }: { products: Product[] }) {
   const floristId = `${siteConfig.siteUrl}/#florist`;
   const data = {
     "@context": "https://schema.org",

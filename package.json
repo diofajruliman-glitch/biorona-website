@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "seed:products": "node --experimental-strip-types scripts/seed-products.ts",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run build"
   },

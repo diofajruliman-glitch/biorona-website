@@ -3,11 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getPrimaryProductImage,
-  getProduct,
   getProductImages,
   getProductStatus,
-  products,
 } from "@/data/products";
+import { getProductBySlug, getProducts } from "@/lib/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
@@ -17,13 +16,13 @@ import { CheckIcon } from "@/components/Icons";
 
 export const dynamicParams = false;
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  return (await getProducts()).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
 
   const canonical = `/produk/${product.slug}/`;
@@ -54,7 +53,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   const formattedPrice = formatRupiah(product.price);

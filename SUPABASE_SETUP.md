@@ -1,6 +1,6 @@
 # Supabase setup untuk Biorona
 
-Fondasi ini belum digunakan oleh katalog customer. `data/products.ts` tetap menjadi sumber data aktif sampai fase migrasi katalog.
+Katalog membaca Supabase melalui `lib/products.ts`. Jika environment belum diisi atau koneksi gagal, data existing dari `data/products.ts` otomatis menjadi fallback sehingga development dan static build tetap dapat berjalan.
 
 ## 1. Buat project dan jalankan migration
 
@@ -18,9 +18,12 @@ Salin `.env.example` menjadi `.env.local`, lalu isi:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 Publishable key memang aman digunakan di browser karena akses tetap dibatasi RLS. Jangan pernah menambahkan `service_role` key ke variable `NEXT_PUBLIC_*`, repository, atau client bundle.
+
+`SUPABASE_SERVICE_ROLE_KEY` hanya dipakai oleh script seed lokal, tidak diimpor ke aplikasi, dan tidak boleh memiliki prefix `NEXT_PUBLIC_`. Jangan pasang variable ini pada environment frontend/deployment jika tidak diperlukan.
 
 ## 3. Buat admin pertama
 
@@ -47,9 +50,26 @@ Gunakan `app_metadata`, bukan `user_metadata`: pelanggan tidak dapat mengubah `a
 
 Bucket dibuat public agar gambar produk aktif dapat digunakan langsung oleh storefront dan static export. Metadata produk/image tetap mengikuti RLS. Saat produk dinonaktifkan, hapus atau pindahkan objek jika file juga tidak boleh lagi dapat diakses melalui URL lama.
 
-## 5. Verifikasi koneksi dan RLS
+## 5. Seed katalog existing
 
-Jalankan aplikasi dengan `npm run dev`, lalu gunakan `getSupabaseClient()` dari `lib/supabase/client.ts` pada halaman admin fase berikutnya. Tes cepat dari browser console pada halaman yang mengimpor helper:
+Setelah migration dan environment selesai, jalankan:
+
+```bash
+npm run seed:products
+```
+
+Script akan:
+
+1. Membaca enam produk dari `data/products.ts`.
+2. Melakukan upsert berdasarkan `sku`, sehingga aman dijalankan ulang.
+3. Mengunggah gambar lokal dari folder `public` ke bucket `product-images`.
+4. Menyimpan URL, storage path, alt text, urutan, dan thumbnail ke `product_images`.
+
+Script tidak menghapus record atau file lama secara otomatis. Jika daftar gambar berubah, bersihkan objek lama secara sadar dari dashboard setelah memastikan file tidak lagi dipakai.
+
+## 6. Verifikasi koneksi dan RLS
+
+Jalankan `npm run seed:products`, lalu `npm run dev`. Katalog harus menampilkan data hasil seed. Untuk pengecekan langsung pada kode admin fase berikutnya, gunakan:
 
 ```ts
 const { data, error } = await getSupabaseClient()
@@ -57,6 +77,8 @@ const { data, error } = await getSupabaseClient()
   .select("id,sku,slug,name,is_active")
   .order("sort_order");
 ```
+
+Untuk menguji fallback, hentikan Supabase sementara atau kosongkan dua variable publik Supabase, restart dev server, lalu pastikan enam produk lokal tetap tampil.
 
 Checklist keamanan:
 
