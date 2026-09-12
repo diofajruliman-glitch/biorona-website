@@ -1,22 +1,10 @@
-export const productCategories = [
-  "Bouquet",
-  "Artificial",
-  "Wisuda",
-  "Birthday",
-  "Anniversary",
-  "Flower Box",
-  "Custom Bouquet",
-] as const;
-
-export type ProductCategory = (typeof productCategories)[number];
-
 export type Product = {
   id: string;
   databaseId?: string;
   sku?: string;
   slug: string;
   name: string;
-  category: ProductCategory;
+  category: string;
   price: number;
   originalPrice?: number | null;
   shortDescription: string;
@@ -141,9 +129,6 @@ export const products: Product[] = [
     altText: "Contoh Custom Bouquet Biorona yang dapat disesuaikan",
   },
 ];
-
-export const categories = ["Semua", ...productCategories] as const;
-export type CatalogCategory = (typeof categories)[number];
 
 export function getProduct(slug: string) {
   return products.find((product) => product.slug === slug);

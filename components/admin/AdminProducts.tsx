@@ -7,18 +7,19 @@ import type { Database } from "@/lib/supabase/database.types";
 import { formatRupiah } from "@/lib/format";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
+type ProductWithCategory = Product & { categories: { name: string } | null };
 
 export default function AdminProducts() {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<ProductWithCategory[] | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     try {
       const { supabase } = await requireAdminSession();
-      const result = await supabase.from("products").select("*").order("sort_order");
+      const result = await supabase.from("products").select("*, categories(name)").order("sort_order");
       if (result.error) throw result.error;
-      setProducts(result.data);
+      setProducts(result.data as ProductWithCategory[]);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Gagal memuat produk.");
     }
@@ -26,7 +27,7 @@ export default function AdminProducts() {
 
   useEffect(() => { void load(); }, [load]);
 
-  async function toggleActive(product: Product) {
+  async function toggleActive(product: ProductWithCategory) {
     setError(""); setMessage("");
     try {
       const { supabase } = await requireAdminSession();
@@ -39,7 +40,7 @@ export default function AdminProducts() {
     }
   }
 
-  async function remove(product: Product) {
+  async function remove(product: ProductWithCategory) {
     if (!window.confirm(`Hapus permanen ${product.name}? Tindakan ini tidak dapat dibatalkan.`)) return;
     setError(""); setMessage("");
     try {
@@ -71,5 +72,5 @@ export default function AdminProducts() {
     }
   }
 
-  return <><header className="adminPageHeader"><div><span className="adminEyebrow">Katalog</span><h1>Product Management</h1></div><Link className="adminPrimary" href="/admin/products/new/">Tambah produk</Link></header>{message&&<p className="adminNotice" role="status">{message}</p>}{error&&<p className="adminNotice adminError" role="alert">{error}</p>}{!products?<div className="adminState" role="status">Memuat produk…</div>:products.length===0?<div className="adminEmpty"><h2>Belum ada produk</h2><p>Tambahkan produk pertama untuk memulai katalog.</p><Link className="adminPrimary" href="/admin/products/new/">Tambah produk</Link></div>:<div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Produk</th><th>Status</th><th>Harga</th><th>Urutan</th><th>Aksi</th></tr></thead><tbody>{products.map(product=><tr key={product.id}><td><strong>{product.name}</strong><small>{product.sku} · {product.category}</small></td><td><span className={`adminStatus ${product.is_active?"isActive":""}`}>{product.is_active?"Aktif":"Nonaktif"}</span>{!product.available&&<small>Unavailable</small>}{product.preorder&&<small>Pre-order</small>}</td><td>{formatRupiah(product.price)}</td><td>{product.sort_order}</td><td><div className="adminActions"><Link href={`/admin/products/${product.id}/edit/`}>Edit</Link><button type="button" onClick={()=>toggleActive(product)}>{product.is_active?"Nonaktifkan":"Aktifkan"}</button><button className="danger" type="button" onClick={()=>remove(product)}>Hapus</button></div></td></tr>)}</tbody></table></div>}</>;
+  return <><header className="adminPageHeader"><div><span className="adminEyebrow">Katalog</span><h1>Product Management</h1></div><Link className="adminPrimary" href="/admin/products/new/">Tambah produk</Link></header>{message&&<p className="adminNotice" role="status">{message}</p>}{error&&<p className="adminNotice adminError" role="alert">{error}</p>}{!products?<div className="adminState" role="status">Memuat produk…</div>:products.length===0?<div className="adminEmpty"><h2>Belum ada produk</h2><p>Tambahkan produk pertama untuk memulai katalog.</p><Link className="adminPrimary" href="/admin/products/new/">Tambah produk</Link></div>:<div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Produk</th><th>Status</th><th>Harga</th><th>Urutan</th><th>Aksi</th></tr></thead><tbody>{products.map(product=><tr key={product.id}><td><strong>{product.name}</strong><small>{product.sku} · {product.categories?.name || "Kategori tidak ditemukan"}</small></td><td><span className={`adminStatus ${product.is_active?"isActive":""}`}>{product.is_active?"Aktif":"Nonaktif"}</span>{!product.available&&<small>Unavailable</small>}{product.preorder&&<small>Pre-order</small>}</td><td>{formatRupiah(product.price)}</td><td>{product.sort_order}</td><td><div className="adminActions"><Link href={`/admin/products/${product.id}/edit/`}>Edit</Link><button type="button" onClick={()=>toggleActive(product)}>{product.is_active?"Nonaktifkan":"Aktifkan"}</button><button className="danger" type="button" onClick={()=>remove(product)}>Hapus</button></div></td></tr>)}</tbody></table></div>}</>;
 }
