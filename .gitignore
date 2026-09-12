@@ -1,7 +1,22 @@
-node_modules
-.next
-out
-.env*.local
-.DS_Store
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Vercel
+.vercel/
+
+# logs
 *.log
-tsconfig.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
