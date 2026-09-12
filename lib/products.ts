@@ -9,7 +9,10 @@ import type { Database } from "@/lib/supabase/database.types";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
-type ProductWithImages = ProductRow & { product_images: ProductImageRow[] | null };
+type ProductWithImages = ProductRow & {
+  product_images: ProductImageRow[] | null;
+  category_lookup?: { name: string | null } | null;
+};
 
 export const CATALOG_UNAVAILABLE_MESSAGE = "Katalog sementara tidak tersedia. Silakan coba kembali beberapa saat lagi.";
 
@@ -31,13 +34,15 @@ function toProduct(row: ProductWithImages): Product {
     return a.sort_order - b.sort_order;
   });
 
+  const categoryName = row.category_lookup?.name || row.category || "Umum";
+
   return {
     id: row.sku,
     databaseId: row.id,
     sku: row.sku,
     slug: row.slug,
     name: row.name,
-    category: row.category as ProductCategory,
+    category: categoryName as ProductCategory,
     price: row.price,
     originalPrice: row.original_price,
     shortDescription: row.short_description,
@@ -72,7 +77,7 @@ const loadProducts = cache(async (): Promise<Product[]> => {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, product_images(*)")
+      .select("*, product_images(*), category_lookup:categories!products_category_id_fkey(name)")
       .eq("is_active", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
@@ -104,4 +109,31 @@ export async function getProductBySlug(slug: string) {
 
 export async function getProductsByCategory(category: ProductCategory) {
   return (await loadProducts()).filter((product) => product.category === category);
+}
+
+export async function getActiveCategories(): Promise<string[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!url || !key) {
+    return [];
+  }
+
+  try {
+    const supabase = createClient<Database>(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    const { data, error } = await supabase
+      .from("categories")
+      .select("name")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+
+    if (error) throw error;
+    return (data ?? []).map((item) => item.name);
+  } catch {
+    return [];
+  }
 }

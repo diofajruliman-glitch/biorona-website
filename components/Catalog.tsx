@@ -1,17 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { categories, type CatalogCategory, type Product } from "@/data/products";
+import type { Product } from "@/data/products";
 import ProductCard from "./ProductCard";
 import { SearchIcon } from "./Icons";
 
-export default function Catalog({ products, unavailableMessage }: { products: Product[]; unavailableMessage?: string }) {
-  const [category, setCategory] = useState<CatalogCategory>("Semua");
+export default function Catalog({ products, unavailableMessage, categories = [] }: { products: Product[]; unavailableMessage?: string; categories?: string[] }) {
+  const categoryOptions = ["Semua", ...categories.filter(Boolean)];
+  const [category, setCategory] = useState<string>("Semua");
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return products.filter((p) => (category === "Semua" || p.category === category) && (!q || `${p.name} ${p.category} ${p.shortDescription} ${p.description} ${p.colors.join(" ")} ${p.occasions.join(" ")}`.toLowerCase().includes(q)));
-  }, [category, query]);
+  }, [category, products, query]);
 
   return (
     <section className="section catalogSection" id="katalog">
@@ -23,7 +24,7 @@ export default function Catalog({ products, unavailableMessage }: { products: Pr
         {!unavailableMessage && <div className="catalogToolbar glassSurface">
           <label className="searchField"><SearchIcon size={18}/><input type="search" inputMode="search" enterKeyHint="search" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cari bouquet, wisuda, birthday..." aria-label="Cari produk" /></label>
           <div className="categoryScroller" role="group" aria-label="Filter kategori">
-            {categories.map((item) => <button key={item} type="button" className={item === category ? "active" : ""} aria-pressed={item === category} onClick={() => setCategory(item)}>{item}</button>)}
+            {categoryOptions.map((item) => <button key={item} type="button" className={item === category ? "active" : ""} aria-pressed={item === category} onClick={() => setCategory(item)}>{item}</button>)}
           </div>
         </div>}
         {unavailableMessage

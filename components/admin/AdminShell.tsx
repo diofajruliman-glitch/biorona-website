@@ -11,5 +11,5 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     window.location.replace("/admin/login/");
   }
 
-  return <div className="adminApp"><aside className="adminSidebar"><Logo/><span className="adminLabel">Admin</span><nav aria-label="Navigasi admin"><Link href="/admin/">Dashboard</Link><Link href="/admin/products/">Produk</Link><Link href="/admin/products/new/">Tambah produk</Link></nav><button type="button" onClick={logout}>Keluar</button></aside><main className="adminMain">{children}</main></div>;
+  return <div className="adminApp"><aside className="adminSidebar"><Logo/><span className="adminLabel">Admin</span><nav aria-label="Navigasi admin"><Link href="/admin/">Dashboard</Link><Link href="/admin/products/">Produk</Link><Link href="/admin/products/new/">Tambah produk</Link><Link href="/admin/categories/">Kategori</Link></nav><button type="button" onClick={logout}>Keluar</button></aside><main className="adminMain">{children}</main></div>;
 }
