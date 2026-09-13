@@ -10,6 +10,8 @@ import MobileOrderBar from "@/components/MobileOrderBar";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import LocalFlorist from "@/components/LocalFlorist";
+import LocationSection from "@/components/LocationSection";
+import InstagramSection from "@/components/InstagramSection";
 import { siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategories, getProducts } from "@/lib/products";
@@ -64,5 +66,5 @@ export default async function Home() {
     unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE;
   }
 
-  return <><JsonLd/><Navbar/><main><Hero/><Reveal><LocalFlorist/></Reveal><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal></main><Footer/><MobileOrderBar/></>;
+  return <><JsonLd/><Navbar/><main><Hero/><Reveal><LocalFlorist/></Reveal><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal><Reveal><LocationSection/></Reveal><Reveal><InstagramSection/></Reveal></main><Footer/><MobileOrderBar/></>;
 }
