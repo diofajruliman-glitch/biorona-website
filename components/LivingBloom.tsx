@@ -10,6 +10,16 @@ export default function LivingBloom() {
           <span className="livingLiquidRim" />
           <span className="livingLiquidHighlight" />
         </div>
+        <div className="livingFlowerStage">
+          <span className="livingFlowerPetal livingFlowerPetalOne" />
+          <span className="livingFlowerPetal livingFlowerPetalTwo" />
+          <span className="livingFlowerPetal livingFlowerPetalThree" />
+          <span className="livingFlowerPetal livingFlowerPetalFour" />
+          <span className="livingFlowerPetal livingFlowerPetalFive" />
+          <span className="livingFlowerPetal livingFlowerPetalSix" />
+          <span className="livingFlowerCore" />
+          <span className="livingFlowerHighlight" />
+        </div>
         <div className="livingLogoStage">
           <span className="livingLogoGlass" />
           <span className="livingLogoFlow" />
