@@ -319,6 +319,8 @@ img{display:block;max-width:100%}
 @media (max-width:760px){.locationPanel{grid-template-columns:1fr;grid-template-areas:"copy" "map" "actions";gap:16px;padding:12px}.locationCopy{padding:18px 12px 0}.locationMap{width:100%;height:280px;aspect-ratio:auto;border-radius:20px}.locationActions{display:grid;grid-template-columns:1fr;padding:0 12px 14px}.locationActions a{width:100%}.instagramPanel{align-items:flex-start;flex-direction:column;padding:30px 24px}.instagramPanel>a{width:100%}}
 @media (max-width:360px){.locationMap{height:260px}.locationPanel{border-radius:24px}.instagramPanel{padding:26px 20px}}
 
+.mobileCategoryLabel{display:none}
+
 /* Compact homepage catalog on phones; other product grids retain their layout. */
 @media (max-width:767px){
   .homeCatalog{padding-top:58px;padding-bottom:58px}
@@ -346,4 +348,36 @@ img{display:block;max-width:100%}
   .homeCatalog .quickWa svg{display:none}
   .homeCatalog .catalogAllCta{margin-top:24px}
   .homeCatalog .catalogAllCta a{width:100%;min-height:48px;border-radius:999px}
+
+  .catalogPageSection{padding-top:104px;padding-bottom:64px}
+  .catalogPageSection .splitHeading{gap:8px;margin-bottom:16px}
+  .catalogPageSection .sectionHeading h1{margin:9px 0 5px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.15rem,10vw,3rem);font-weight:500;line-height:.98;letter-spacing:-.045em}
+  .catalogPageSection .sectionHeading p{font-size:.88rem;line-height:1.52}
+  .catalogPageSection .catalogToolbar{position:relative;top:auto;gap:7px;margin-bottom:14px;padding:7px;border-radius:18px;box-shadow:0 8px 24px rgba(91,52,67,.07);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .catalogPageSection .searchField{height:44px;padding-inline:12px;border-radius:13px}
+  .catalogPageSection .searchField input{font-size:.82rem}
+  .catalogPageSection .categoryScroller{gap:6px;padding:0;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+  .catalogPageSection .categoryScroller button{flex:0 0 auto;height:40px;padding-inline:13px;border-radius:999px;font-size:.74rem}
+  .catalogPageSection .desktopCategoryLabel{display:none}
+  .catalogPageSection .mobileCategoryLabel{display:inline}
+  .catalogPageSection .productGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .catalogPageSection .productCard{min-width:0;padding:5px;border:1px solid rgba(84,50,64,.08);border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 8px 22px rgba(91,52,67,.06);transition:transform .18s ease,box-shadow .18s ease}
+  .catalogPageSection .productCard:active{transform:scale(.99);box-shadow:0 5px 15px rgba(91,52,67,.05)}
+  .catalogPageSection .productImageWrap{aspect-ratio:1/1;border-radius:16px}
+  .catalogPageSection .productBadge{top:8px;left:8px;max-width:calc(100% - 16px);padding:5px 8px;border-color:rgba(255,255,255,.65);background:rgba(255,255,255,.72);font-size:.62rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 3px 10px rgba(60,35,45,.09)}
+  .catalogPageSection .productInfo{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title title" "category category" "price action";align-items:center;column-gap:6px;row-gap:3px;min-width:0;padding:9px 5px 5px}
+  .catalogPageSection .productInfo>div:first-child{display:contents}
+  .catalogPageSection .productInfo>p,.catalogPageSection .textButton,.catalogPageSection .productStatus{display:none}
+  .catalogPageSection .productLabelRow{grid-area:category;display:block;min-width:0;overflow:hidden}
+  .catalogPageSection .productCategory{display:block;overflow:hidden;color:var(--muted);font-size:.65rem;font-weight:600;line-height:1.3;letter-spacing:.01em;text-overflow:ellipsis;text-transform:none;white-space:nowrap;opacity:.82}
+  .catalogPageSection .productInfo h3{grid-area:title;min-width:0;margin:0;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;font-size:.86rem;font-weight:650;line-height:1.22;letter-spacing:-.012em}
+  .catalogPageSection .productInfo h3 a{display:-webkit-box;min-height:0;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2}
+  .catalogPageSection .price{grid-area:price;display:block;min-width:0;margin-top:5px;color:var(--ink);font-size:.76rem;font-weight:750;line-height:1.2;white-space:nowrap}
+  .catalogPageSection .productActions{grid-area:action;margin-top:5px}
+  .catalogPageSection .quickWa{width:auto;min-width:54px;height:34px;padding:0 11px;border-radius:999px;background:rgba(217,87,132,.12);color:var(--rose-deep);font-size:.7rem;font-weight:700;transition:transform .16s ease,background-color .16s ease}
+  .catalogPageSection .quickWa:active{transform:scale(.98);background:rgba(217,87,132,.18)}
+  .catalogPageSection .quickWa.isDisabled{min-width:0;padding-inline:7px;font-size:.59rem;text-align:center}
+  .catalogPageSection .quickWa svg{display:none}
+  .catalogPageSection .pagination{gap:4px;margin-top:22px;padding:5px;border-radius:16px}
+  .catalogPageSection .pagination a{min-width:34px;height:38px;border-radius:11px;font-size:.78rem}
 }
