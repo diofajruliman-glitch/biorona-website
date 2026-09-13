@@ -26,7 +26,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <p>{product.shortDescription}</p>
         <div className="productActions">
           <Link className="textButton" href={`/produk/${product.slug}/`}>Detail <ArrowIcon size={16}/></Link>
-          {product.available ? <a className="quickWa" href={waUrl(message)} target="_blank" rel="noreferrer"><WhatsAppIcon size={17}/> Pesan</a> : <span className="quickWa isDisabled" aria-disabled="true">Belum tersedia</span>}
+          {product.available ? <a className="quickWa" href={waUrl(message)} target="_blank" rel="noreferrer" aria-label={`Pesan ${product.name} via WhatsApp`}><WhatsAppIcon size={17}/> Pesan</a> : <span className="quickWa isDisabled" aria-disabled="true">Belum tersedia</span>}
         </div>
       </div>
     </article>
