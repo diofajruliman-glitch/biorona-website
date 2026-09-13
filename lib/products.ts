@@ -86,12 +86,19 @@ const loadProducts = cache(async (): Promise<Product[]> => {
 
     return (data as ProductWithImages[])
       .filter((row) => row.categories?.is_active !== false)
-      .map(toProduct);
+      .map(toProduct)
+      .filter(isPublicProduct);
   } catch (error) {
     logSupabaseError("products.fetch-public", error);
     return developmentFallback();
   }
 });
+
+function isPublicProduct(product: Product) {
+  return !/(?:^|[\s_-])(test|testing|dummy|sample|contoh)(?:$|[\s_-])/i.test(
+    `${product.slug} ${product.name} ${product.sku ?? ""}`,
+  );
+}
 
 export async function getProducts() {
   return loadProducts();

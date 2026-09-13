@@ -9,12 +9,13 @@ import Footer from "@/components/Footer";
 import MobileOrderBar from "@/components/MobileOrderBar";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
+import LocalFlorist from "@/components/LocalFlorist";
 import { siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategories, getProducts } from "@/lib/products";
 
 const homeTitle = "Toko Bunga Bogor & Florist Cibinong | Biorona Florist";
-const homeDescription = "Biorona Florist, toko bunga di Cibinong Bogor untuk buket bunga, custom bouquet, standing flower, bunga ucapan dan flower box. Pesan langsung via WhatsApp.";
+const homeDescription = "Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan buket bunga, standing flower, bunga ucapan, flower box dan custom bouquet. Pesan mudah via WhatsApp dengan layanan pengiriman Bogor dan sekitarnya.";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -63,5 +64,5 @@ export default async function Home() {
     unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE;
   }
 
-  return <><JsonLd products={products}/><Navbar/><main><Hero/><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal></main><Footer/><MobileOrderBar/></>;
+  return <><JsonLd products={products}/><Navbar/><main><Hero/><Reveal><LocalFlorist/></Reveal><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal></main><Footer/><MobileOrderBar/></>;
 }

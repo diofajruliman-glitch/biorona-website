@@ -39,6 +39,8 @@ export default function Navbar() {
 
   const nav = [
     ["Katalog", "/katalog"],
+    ["Bogor", "/toko-bunga-bogor/"],
+    ["Cibinong", "/toko-bunga-cibinong/"],
     ["Custom", "/#custom"],
     ["Kenapa Biorona", "/#tentang"],
     ["FAQ", "/#faq"],

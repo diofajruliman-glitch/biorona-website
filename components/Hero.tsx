@@ -72,9 +72,10 @@ export default function Hero() {
         <div className="heroCopy">
           <div className="sameDayBadge"><span aria-hidden="true">⚡</span> Pesan Hari Ini <span aria-hidden="true">•</span> Kirim Hari Ini</div>
           <div className="eyebrow heroEntrance heroEntranceLocation"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
-          <h1 aria-label="Toko Bunga Bogor & Florist Cibinong">
-            <span className="heroTitleLine"><span>Toko Bunga Bogor &amp;</span></span>
+          <h1 aria-label="Toko Bunga Bogor & Florist Cibinong — Biorona Florist">
+            <span className="heroTitleLine"><span>Toko Bunga Bogor &amp; </span></span>
             <span className="heroTitleLine"><span>Florist Cibinong</span></span>
+            <span className="srOnly"> — Biorona Florist</span>
           </h1>
           <p className="heroServiceLine" aria-label="Pilihan bunga untuk Buket Bunga">
             <span aria-hidden="true">Pilihan bunga untuk</span>

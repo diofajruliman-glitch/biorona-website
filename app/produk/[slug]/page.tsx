@@ -30,8 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const productDescription = product.seoDescription?.trim() || product.shortDescription.trim();
   const description = `${productDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
 
+  const seoTitle = `${product.name} | Buket Bunga Bogor - Biorona Florist`;
   return {
-    title: `${product.name} - ${formatRupiah(product.price)}`,
+    title: { absolute: seoTitle },
     description,
     alternates: { canonical },
     robots: isSearchIndexableProduct(product) ? undefined : { index: false, follow: false },
@@ -40,13 +41,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       locale: "id_ID",
       url: canonical,
       siteName: siteConfig.brand,
-      title: product.name,
+      title: seoTitle,
       description,
       images: [{ url: absoluteUrl(image), alt: imageAlt }],
     },
     twitter: {
       card: "summary_large_image",
-      title: product.name,
+      title: seoTitle,
       description,
       images: [image],
     },
@@ -71,7 +72,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       {
         "@type": "Product",
         "@id": `${productUrl}#product`,
-        sku: product.id,
+        sku: product.sku || product.id,
         name: product.name,
         category: product.category,
         url: productUrl,

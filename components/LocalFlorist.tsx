@@ -36,6 +36,8 @@ export default function LocalFlorist() {
               <WhatsAppIcon size={19} /> Pesan Bunga via WhatsApp
             </a>
             <a className="secondaryGlassButton" href="#katalog">Lihat Koleksi Biorona <ArrowIcon size={18} /></a>
+            <a className="secondaryGlassButton" href="/toko-bunga-bogor/">Toko Bunga Bogor <ArrowIcon size={18} /></a>
+            <a className="secondaryGlassButton" href="/toko-bunga-cibinong/">Florist di Cibinong <ArrowIcon size={18} /></a>
           </div>
         </div>
       </div>

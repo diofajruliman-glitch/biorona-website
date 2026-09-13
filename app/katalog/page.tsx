@@ -7,7 +7,7 @@ import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategori
 import type { Product } from "@/data/products";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Katalog Bunga | Biorona Florist Bogor & Cibinong", description: "Katalog buket bunga, standing flower, bunga ucapan, dan rangkaian bunga dari Biorona Florist Cibinong, Bogor.", alternates: { canonical: "/katalog" } };
+export const metadata: Metadata = { title: "Katalog Bunga | Biorona Florist Bogor & Cibinong", description: "Katalog buket bunga, standing flower, bunga ucapan, dan rangkaian bunga dari Biorona Florist Cibinong, Bogor.", alternates: { canonical: "/katalog/" } };
 
 export default async function CatalogPage() {
   let products: Product[] = []; let categories: string[] = []; let unavailableMessage: string | undefined;
