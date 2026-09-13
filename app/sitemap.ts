@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.siteUrl}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${siteConfig.siteUrl}/toko-bunga-bogor/`, changeFrequency: "monthly", priority: .9 },
     { url: `${siteConfig.siteUrl}/toko-bunga-cibinong/`, changeFrequency: "monthly", priority: .9 },
+    { url: `${siteConfig.siteUrl}/buket-bunga-bogor/`, changeFrequency: "weekly", priority: .9 },
+    { url: `${siteConfig.siteUrl}/standing-flower-bogor/`, changeFrequency: "weekly", priority: .9 },
+    { url: `${siteConfig.siteUrl}/bunga-ucapan-bogor/`, changeFrequency: "weekly", priority: .9 },
     { url: `${siteConfig.siteUrl}/katalog/`, changeFrequency: "weekly", priority: .9 },
   ];
   try {

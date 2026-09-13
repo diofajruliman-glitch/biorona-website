@@ -1,12 +1,13 @@
+import Link from "next/link";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
 
 const services = [
-  { title: "Buket Bunga", description: "Bouquet untuk wisuda, ulang tahun, anniversary, hadiah, dan berbagai momen spesial." },
-  { title: "Standing Flower", description: "Standing flower untuk grand opening, ucapan selamat, pernikahan, duka cita, dan kebutuhan acara." },
-  { title: "Bunga Ucapan", description: "Rangkaian bunga ucapan yang dapat disesuaikan dengan pesan dan kebutuhan acara." },
-  { title: "Custom Bouquet", description: "Custom bouquet berdasarkan warna, gaya, ukuran, tema, dan budget pelanggan." },
-  { title: "Flower Box", description: "Flower box untuk hadiah ulang tahun, anniversary, ucapan selamat, atau kejutan spesial." },
+  { title: "Buket Bunga", href: "/buket-bunga-bogor/", description: "Bouquet untuk wisuda, ulang tahun, anniversary, hadiah, dan berbagai momen spesial." },
+  { title: "Standing Flower", href: "/standing-flower-bogor/", description: "Standing flower untuk grand opening, ucapan selamat, pernikahan, duka cita, dan kebutuhan acara." },
+  { title: "Bunga Ucapan", href: "/bunga-ucapan-bogor/", description: "Rangkaian bunga ucapan yang dapat disesuaikan dengan pesan dan kebutuhan acara." },
+  { title: "Custom Bouquet", href: "/katalog/?category=Custom%20Arrangement%20%2F%20Vase", description: "Custom bouquet berdasarkan warna, gaya, ukuran, tema, dan budget pelanggan." },
+  { title: "Flower Box", href: "/katalog/?category=Bloom%20Box", description: "Flower box untuk hadiah ulang tahun, anniversary, ucapan selamat, atau kejutan spesial." },
 ] as const;
 
 export default function LocalFlorist() {
@@ -26,7 +27,7 @@ export default function LocalFlorist() {
           <div className="localServiceGrid" aria-label="Layanan florist Biorona">
             {services.map((service) => (
               <article className="localServiceCard" key={service.title}>
-                <h3>{service.title}</h3>
+                <h3><Link href={service.href}>{service.title}</Link></h3>
                 <p>{service.description}</p>
               </article>
             ))}

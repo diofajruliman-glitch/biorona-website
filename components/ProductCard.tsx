@@ -13,7 +13,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <article className="productCard">
       <Link className="productImageLink" href={`/produk/${product.slug}/`} aria-label={`Lihat ${product.name}`}>
         <div className="productImageWrap">
-          <ProductImage images={product.images} sizes="(max-width: 700px) 50vw, 28vw" alt={getProductImageAlt(product)} />
+          <ProductImage images={product.images} sizes="(max-width: 560px) calc(100vw - 40px), (max-width: 900px) 50vw, 28vw" alt={getProductImageAlt(product)} />
           {badge && <span className="productBadge glassSurface">{badge}</span>}
         </div>
       </Link>

@@ -313,3 +313,5 @@ img{display:block;max-width:100%}
 
 /* Phase 2 responsive guardrail: preserve content parity and mobile conversion. */
 @media (max-width:560px){.heroVisual{min-height:320px}.livingBloom{inset:0 4%}.livingBloomArt{width:min(100%,320px)}.productGrid{grid-template-columns:1fr;gap:18px}.productCard{padding:9px}.productInfo{padding:16px 9px 9px}.productInfo h3{font-size:1.32rem}.productInfo p{display:block;min-height:0;margin:9px 0 14px}.productActions{gap:10px}.textButton,.quickWa{font-size:.82rem}.quickWa svg{display:block}.localLandingBody{padding-bottom:calc(100px + env(safe-area-inset-bottom))}}
+.productRelated{padding-top:88px}.productRelated .productGrid{margin-top:28px}.categorySeoPage #produk{scroll-margin-top:110px}.categorySeoPage .localLandingOrder a:not(.primaryButton):not(.secondaryGlassButton){color:var(--rose-deep);font-weight:800}
+@media (max-width:560px){.productRelated{padding-top:62px}}
