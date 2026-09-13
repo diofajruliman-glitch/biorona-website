@@ -1,25 +1,102 @@
 "use client";
 
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import { useMemo, useState } from "react";
+import { createElement, useEffect, useRef, useState, type ReactElement } from "react";
+import type { DocumentProps } from "@react-pdf/renderer";
 import { invoiceWhatsAppUrl, normalizeWhatsAppNumber } from "@/lib/whatsapp";
-import InvoicePdfDocument, { type InvoicePdfData, type InvoicePdfItem, type InvoicePdfSettings } from "./InvoicePdfDocument";
+import type { InvoicePdfData, InvoicePdfItem, InvoicePdfSettings } from "./InvoicePdfDocument";
 import styles from "./InvoicePdfActions.module.css";
 
-export default function InvoicePdfActions({ invoice, items, settings }: { invoice: InvoicePdfData; items: InvoicePdfItem[]; settings: InvoicePdfSettings }) {
+type Props = { invoice: InvoicePdfData; items: InvoicePdfItem[] | null | undefined; settings?: InvoicePdfSettings | null };
+
+function sanitizeFilename(value: string) {
+  return value.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "invoice";
+}
+
+async function logoDataUri() {
+  try {
+    const response = await fetch("/brand/biorona-logo.png");
+    if (!response.ok) throw new Error(`Logo request failed with ${response.status}.`);
+    const blob = await response.blob();
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(reader.error ?? new Error("Logo could not be read."));
+      reader.onload = () => resolve(String(reader.result));
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error("Invoice PDF failed", error);
+    return null;
+  }
+}
+
+export default function InvoicePdfActions({ invoice, items, settings = null }: Props) {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const logoSrc = useMemo(() => `${window.location.origin}/brand/biorona-logo.png`, []);
-  const document = <InvoicePdfDocument invoice={invoice} items={items} settings={settings} logoSrc={logoSrc}/>;
-  const filename = `Biorona-${invoice.invoiceNumber}.pdf`;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [pdfError, setPdfError] = useState("");
+  const previewUrlRef = useRef<string | null>(null);
+
+  function clearPreviewUrl() {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    previewUrlRef.current = null;
+    setPreviewUrl(null);
+  }
+  useEffect(() => () => { if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current); }, []);
+
+  async function generateBlob() {
+    if (!invoice.invoiceNumber || !invoice.invoiceDate || !invoice.customerName) throw new Error("Data invoice belum lengkap untuk dibuatkan PDF.");
+    const [renderer, documentModule, logoSrc] = await Promise.all([
+      import("@react-pdf/renderer"),
+      import("./InvoicePdfDocument"),
+      logoDataUri(),
+    ]);
+    const PdfDocument = documentModule.default as unknown as (props: { invoice: InvoicePdfData; items: InvoicePdfItem[]; settings: InvoicePdfSettings | null; logoSrc: string | null }) => ReactElement<DocumentProps>;
+    const documentElement = createElement(PdfDocument, { invoice, items: items ?? [], settings, logoSrc }) as unknown as ReactElement<DocumentProps>;
+    return renderer.pdf(documentElement).toBlob();
+  }
+
+  async function preview() {
+    clearPreviewUrl(); setPreviewOpen(true); setPreviewLoading(true); setPdfError("");
+    try {
+      const blob = await generateBlob();
+      const url = URL.createObjectURL(blob);
+      previewUrlRef.current = url;
+      setPreviewUrl(url);
+    } catch (error) {
+      console.error("Invoice PDF failed", error);
+      setPdfError("PDF invoice tidak dapat dibuat. Periksa data invoice lalu coba lagi.");
+    } finally { setPreviewLoading(false); }
+  }
+
+  async function download() {
+    setDownloadLoading(true); setPdfError("");
+    try {
+      const blob = await generateBlob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `Biorona-${sanitizeFilename(invoice.invoiceNumber)}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error("Invoice PDF failed", error);
+      setPdfError("PDF invoice tidak dapat diunduh. Coba lagi.");
+    } finally { setDownloadLoading(false); }
+  }
+
   const whatsAppUrl = invoiceWhatsAppUrl({ customerWhatsapp: invoice.customerWhatsapp, customerName: invoice.customerName, invoiceNumber: invoice.invoiceNumber, grandTotal: invoice.grandTotal, paymentStatus: invoice.paymentStatus });
   const hasCustomerWhatsApp = Boolean(invoice.customerWhatsapp.trim());
   const invalidWhatsApp = hasCustomerWhatsApp && !normalizeWhatsAppNumber(invoice.customerWhatsapp);
   return <section className={styles.actions} aria-label="PDF invoice">
-    <button type="button" onClick={() => setPreviewOpen(true)}>Preview Invoice</button>
-    <PDFDownloadLink document={document} fileName={filename} className={styles.download}>{({ loading }) => loading ? "Menyiapkan PDF…" : "Download PDF"}</PDFDownloadLink>
+    <button type="button" onClick={preview} disabled={previewLoading || downloadLoading}>{previewLoading ? "Menyiapkan Preview…" : "Preview Invoice"}</button>
+    <button type="button" className={styles.download} onClick={download} disabled={previewLoading || downloadLoading}>{downloadLoading ? "Menyiapkan PDF…" : "Download PDF"}</button>
     {whatsAppUrl && <a className={styles.whatsApp} href={whatsAppUrl} target="_blank" rel="noopener noreferrer">Kirim via WhatsApp</a>}
     {invalidWhatsApp && <button type="button" disabled title="Nomor WhatsApp pelanggan tidak dapat digunakan">Kirim via WhatsApp</button>}
     {hasCustomerWhatsApp && <small className={styles.hint}>{invalidWhatsApp ? "Nomor WhatsApp pelanggan tidak valid. Periksa kembali sebelum mengirim." : "Download PDF terlebih dahulu, lalu lampirkan file saat chat WhatsApp terbuka."}</small>}
-    {previewOpen && <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Preview invoice PDF"><div className={styles.preview}><div className={styles.previewHeader}><strong>Preview {invoice.invoiceNumber}</strong><button type="button" onClick={() => setPreviewOpen(false)}>Tutup</button></div><PDFViewer className={styles.viewer}>{document}</PDFViewer></div></div>}
+    {pdfError && !previewOpen && <p className={styles.error} role="alert">{pdfError}</p>}
+    {previewOpen && <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Preview invoice PDF"><div className={styles.preview}><div className={styles.previewHeader}><strong>Preview {invoice.invoiceNumber}</strong><button type="button" onClick={() => { clearPreviewUrl(); setPreviewOpen(false); }}>Tutup</button></div>{previewLoading && <div className={styles.previewState}>Menyiapkan PDF…</div>}{pdfError && <div className={styles.previewState} role="alert">{pdfError}</div>}{previewUrl && !previewLoading && !pdfError && <iframe className={styles.viewer} src={previewUrl} title={`Preview ${invoice.invoiceNumber}`}/>}</div></div>}
   </section>;
 }

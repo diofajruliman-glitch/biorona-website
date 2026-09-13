@@ -173,11 +173,11 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
     </form>
     {invoice?.status === "draft" && <section className="invoiceOperations"><button className="adminPrimary" type="button" onClick={issue} disabled={saving}>Terbitkan Invoice</button><button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
     {invoice?.status === "issued" && <section className="invoiceOperations">{invoice.payment_status === "unpaid" && <><label>Metode pembayaran<select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}><option value="">Pilih metode</option><option>Transfer Bank</option><option>QRIS</option><option>Cash</option><option>Lainnya</option></select></label><button className="adminPrimary" type="button" onClick={markPaid} disabled={saving}>Tandai Dibayar</button></>}<button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
-    {invoice && invoiceSettings && (
+    {invoice && (
       <InvoicePdfActions
         invoice={{ invoiceNumber: invoice.invoice_number, invoiceDate: invoice.invoice_date, dueDate: invoice.due_date, customerName: invoice.customer_name, customerWhatsapp: invoice.customer_whatsapp, customerAddress: invoice.customer_address, status: invoice.status, paymentStatus: invoice.payment_status, paymentMethod: invoice.payment_method, paidAt: invoice.paid_at, notes: invoice.notes, subtotal: invoice.subtotal, discount: invoice.discount, deliveryFee: invoice.delivery_fee, otherFee: invoice.other_fee, grandTotal: invoice.grand_total }}
         items={storedItems.map((item) => ({ id: item.id, productName: item.product_name, description: item.description, qty: item.qty, unitPrice: item.unit_price, lineTotal: item.line_total }))}
-        settings={{ businessName: invoiceSettings.business_name, businessAddress: invoiceSettings.business_address, businessWhatsapp: invoiceSettings.business_whatsapp, businessEmail: invoiceSettings.business_email, bankName: invoiceSettings.bank_name, bankAccountNumber: invoiceSettings.bank_account_number, bankAccountName: invoiceSettings.bank_account_name, paymentNote: invoiceSettings.payment_note, footerNote: invoiceSettings.footer_note }}
+        settings={invoiceSettings ? { businessName: invoiceSettings.business_name, businessAddress: invoiceSettings.business_address, businessWhatsapp: invoiceSettings.business_whatsapp, businessEmail: invoiceSettings.business_email, bankName: invoiceSettings.bank_name, bankAccountNumber: invoiceSettings.bank_account_number, bankAccountName: invoiceSettings.bank_account_name, paymentNote: invoiceSettings.payment_note, footerNote: invoiceSettings.footer_note } : null}
       />
     )}
   </>;
