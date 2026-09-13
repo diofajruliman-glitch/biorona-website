@@ -6,6 +6,7 @@ import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
 
 export default function Hero() {
+  const heroRef = useRef<HTMLElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
   const ctasRef = useRef<HTMLDivElement>(null);
 
@@ -52,8 +53,18 @@ export default function Hero() {
     };
   }, []);
 
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      hero.classList.toggle("isMotionPaused", !entry.isIntersecting);
+    }, { threshold: 0.05 });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="hero" id="beranda">
+    <section className="hero" id="beranda" ref={heroRef}>
       <div className="heroBackdrop" aria-hidden="true" />
       <div className="heroAurora" aria-hidden="true"><i /><i /><i /></div>
       <div className="container heroGrid">
