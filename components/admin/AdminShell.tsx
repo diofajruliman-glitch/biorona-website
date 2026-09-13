@@ -17,7 +17,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   return <div className="adminApp">
     <aside className={`adminSidebar ${menuOpen ? "isOpen" : ""}`}>
       <div className="adminSidebarTop"><Logo/><span className="adminLabel">Admin</span><button className="adminMenuToggle" type="button" aria-expanded={menuOpen} aria-controls="admin-navigation" onClick={() => setMenuOpen(open => !open)}>{menuOpen ? "Tutup menu" : "Menu"}</button></div>
-      <nav id="admin-navigation" aria-label="Navigasi admin"><Link onClick={closeMenu} href="/admin/">Dashboard</Link><Link onClick={closeMenu} href="/admin/products/">Produk</Link><Link onClick={closeMenu} href="/admin/products/new/">Tambah produk</Link><Link onClick={closeMenu} href="/admin/categories/">Kategori</Link><Link onClick={closeMenu} href="/admin/invoices/">Invoice</Link></nav>
+      <nav id="admin-navigation" aria-label="Navigasi admin"><Link onClick={closeMenu} href="/admin/">Dashboard</Link><Link onClick={closeMenu} href="/admin/products/">Produk</Link><Link onClick={closeMenu} href="/admin/products/new/">Tambah produk</Link><Link onClick={closeMenu} href="/admin/categories/">Kategori</Link><Link onClick={closeMenu} href="/admin/invoices/">Invoice</Link><Link onClick={closeMenu} href="/admin/invoice-settings/">Pengaturan Invoice</Link></nav>
       <button type="button" onClick={logout}>Keluar</button>
     </aside>
     <main className="adminMain">{children}</main>

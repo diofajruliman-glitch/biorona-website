@@ -117,6 +117,22 @@ export type Database = {
           referencedColumns: ["id"];
         }];
       };
+      invoice_settings: {
+        Row: {
+          id: string; business_name: string; business_address: string | null; business_whatsapp: string | null;
+          business_email: string | null; bank_name: string | null; bank_account_number: string | null;
+          bank_account_name: string | null; payment_note: string | null; footer_note: string | null;
+          created_at: string; updated_at: string;
+        };
+        Insert: {
+          id?: string; business_name?: string; business_address?: string | null; business_whatsapp?: string | null;
+          business_email?: string | null; bank_name?: string | null; bank_account_number?: string | null;
+          bank_account_name?: string | null; payment_note?: string | null; footer_note?: string | null;
+          created_at?: string; updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["invoice_settings"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

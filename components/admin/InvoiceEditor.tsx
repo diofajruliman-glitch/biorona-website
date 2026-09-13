@@ -5,10 +5,12 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { formatRupiah } from "@/lib/format";
 import { requireAdminSession } from "@/lib/supabase/admin";
 import type { Database, Json } from "@/lib/supabase/database.types";
+import InvoicePdfActions from "./InvoicePdfActions";
 
 type Invoice = Database["public"]["Tables"]["invoices"]["Row"];
 type InvoiceItem = Database["public"]["Tables"]["invoice_items"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
+type InvoiceSettings = Database["public"]["Tables"]["invoice_settings"]["Row"];
 type DraftItem = { key: string; productId: string | null; productName: string; description: string; qty: string; unitPrice: string; };
 type FormState = { invoiceDate: string; dueDate: string; customerName: string; customerWhatsapp: string; customerAddress: string; notes: string; discount: string; deliveryFee: string; otherFee: string; };
 
@@ -32,6 +34,8 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [items, setItems] = useState<DraftItem[]>([customItem()]);
+  const [storedItems, setStoredItems] = useState<InvoiceItem[]>([]);
+  const [invoiceSettings, setInvoiceSettings] = useState<InvoiceSettings | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [catalogQuery, setCatalogQuery] = useState("");
   const [selectedProductId, setSelectedProductId] = useState("");
@@ -51,21 +55,26 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
         if (productResult.error) throw productResult.error;
         setProducts(productResult.data);
         setInvoice(null);
+        setStoredItems([]);
         return;
       }
-      const [productResult, invoiceResult, itemResult] = await Promise.all([
+      const [productResult, invoiceResult, itemResult, settingsResult] = await Promise.all([
         productRequest,
         supabase.from("invoices").select("*").eq("id", invoiceId).single(),
         supabase.from("invoice_items").select("*").eq("invoice_id", invoiceId).order("sort_order"),
+        supabase.from("invoice_settings").select("*").maybeSingle(),
       ]);
       if (productResult.error) throw productResult.error;
       if (invoiceResult.error) throw invoiceResult.error;
       if (itemResult.error) throw itemResult.error;
+      if (settingsResult.error) throw settingsResult.error;
       const row = invoiceResult.data;
       setProducts(productResult.data);
       setInvoice(row);
       setForm({ invoiceDate: row.invoice_date, dueDate: row.due_date ?? "", customerName: row.customer_name, customerWhatsapp: row.customer_whatsapp, customerAddress: row.customer_address ?? "", notes: row.notes ?? "", discount: String(row.discount), deliveryFee: String(row.delivery_fee), otherFee: String(row.other_fee) });
       setItems(itemResult.data.map((item: InvoiceItem) => ({ key: item.id, productId: item.product_id, productName: item.product_name, description: item.description ?? "", qty: String(item.qty), unitPrice: String(item.unit_price) })));
+      setStoredItems(itemResult.data);
+      setInvoiceSettings(settingsResult.data);
       setPaymentMethod(row.payment_method ?? "");
     } catch (reason) {
       logInvoiceError(reason);
@@ -164,5 +173,12 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
     </form>
     {invoice?.status === "draft" && <section className="invoiceOperations"><button className="adminPrimary" type="button" onClick={issue} disabled={saving}>Terbitkan Invoice</button><button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
     {invoice?.status === "issued" && <section className="invoiceOperations">{invoice.payment_status === "unpaid" && <><label>Metode pembayaran<select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}><option value="">Pilih metode</option><option>Transfer Bank</option><option>QRIS</option><option>Cash</option><option>Lainnya</option></select></label><button className="adminPrimary" type="button" onClick={markPaid} disabled={saving}>Tandai Dibayar</button></>}<button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
+    {invoice && invoiceSettings && (
+      <InvoicePdfActions
+        invoice={{ invoiceNumber: invoice.invoice_number, invoiceDate: invoice.invoice_date, dueDate: invoice.due_date, customerName: invoice.customer_name, customerWhatsapp: invoice.customer_whatsapp, customerAddress: invoice.customer_address, status: invoice.status, paymentStatus: invoice.payment_status, paymentMethod: invoice.payment_method, paidAt: invoice.paid_at, notes: invoice.notes, subtotal: invoice.subtotal, discount: invoice.discount, deliveryFee: invoice.delivery_fee, otherFee: invoice.other_fee, grandTotal: invoice.grand_total }}
+        items={storedItems.map((item) => ({ id: item.id, productName: item.product_name, description: item.description, qty: item.qty, unitPrice: item.unit_price, lineTotal: item.line_total }))}
+        settings={{ businessName: invoiceSettings.business_name, businessAddress: invoiceSettings.business_address, businessWhatsapp: invoiceSettings.business_whatsapp, businessEmail: invoiceSettings.business_email, bankName: invoiceSettings.bank_name, bankAccountNumber: invoiceSettings.bank_account_number, bankAccountName: invoiceSettings.bank_account_name, paymentNote: invoiceSettings.payment_note, footerNote: invoiceSettings.footer_note }}
+      />
+    )}
   </>;
 }
