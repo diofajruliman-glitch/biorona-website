@@ -108,13 +108,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <header className="productPageHeader">
         <div className="container productPageNav">
           <Logo />
-          <Link href="/#katalog">← Kembali ke katalog</Link>
+          <Link href="/katalog">← Kembali ke katalog</Link>
         </div>
       </header>
       <main className="productPage">
         <nav className="container productBreadcrumb" aria-label="Breadcrumb">
           <Link href="/">Beranda</Link><span aria-hidden="true">/</span>
-          <Link href="/#katalog">Katalog</Link><span aria-hidden="true">/</span>
+          <Link href="/katalog">Katalog</Link><span aria-hidden="true">/</span>
           <span aria-current="page">{product.name}</span>
         </nav>
         <div className="container productDetailGrid">

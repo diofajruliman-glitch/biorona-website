@@ -1,0 +1,33 @@
+/* Mobile-safe layout for the admin shell and product workflow. */
+.adminApp,.adminMain,.adminForm,.adminForm section,.adminPageHeader,.adminImageList,.adminImageList article,.adminProductCard{min-width:0;max-width:100%}
+.adminApp{grid-template-columns:230px minmax(0,1fr)}
+.adminSidebar{height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+.adminSidebarTop{display:contents}.adminMenuToggle{display:none}
+.adminMain{min-width:0;overflow:visible}
+.adminForm input,.adminForm select,.adminForm textarea{max-width:100%;box-sizing:border-box}.adminForm textarea{overflow-wrap:anywhere}
+.adminFormActions{display:flex;justify-content:flex-end;gap:10px;padding-top:2px}
+.adminFormActions>a{min-height:46px;border:1px solid var(--admin-line);border-radius:12px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--admin-ink);font-weight:800;text-decoration:none}
+.adminProductCards{display:none}
+
+@media(max-width:760px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .adminApp{display:block;min-height:100dvh}
+  .adminSidebar{position:sticky;z-index:30;top:0;width:100%;height:auto;min-height:64px;padding:10px 12px;display:block;overflow:visible;border-right:0;border-bottom:1px solid var(--admin-line)}
+  .adminSidebarTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .adminSidebar .brand{min-width:0}.adminSidebar .brand img{width:122px}.adminSidebar .adminLabel{display:none}
+  .adminMenuToggle{display:inline-flex!important;align-items:center;justify-content:center;min-height:44px!important;padding:0 12px!important;border:1px solid var(--admin-line)!important;background:#fff!important;color:var(--admin-ink)!important}
+  .adminSidebar nav,.adminSidebar>button:not(.adminMenuToggle){display:none}
+  .adminSidebar.isOpen nav{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--admin-line);max-height:calc(100dvh - 74px);overflow-y:auto}
+  .adminSidebar.isOpen>button:not(.adminMenuToggle){display:flex;margin:10px 0 0}.adminSidebar nav a,.adminSidebar>button{min-height:44px}
+  .adminMain{width:100%;padding:22px 12px calc(104px + env(safe-area-inset-bottom));overflow:visible}
+  .adminPageHeader{align-items:flex-start;gap:14px;margin-bottom:20px}.adminPageHeader h1{font-size:clamp(1.8rem,9vw,2.45rem);overflow-wrap:anywhere}.adminPageHeader .adminPrimary{flex:0 0 auto;min-height:44px;padding:0 12px;text-align:center}
+  .adminStats{grid-template-columns:1fr}.adminTableWrap{display:none}.adminProductCards{display:grid;gap:12px}
+  .adminProductCard{display:grid;gap:11px;padding:15px;border:1px solid var(--admin-line);border-radius:14px;background:#fff;overflow:hidden}
+  .adminProductCardHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}.adminProductCardHeader>div{min-width:0}.adminProductCardHeader strong,.adminProductCardHeader small,.adminProductCard>small{display:block;overflow-wrap:anywhere;word-break:break-word}.adminProductCardHeader small,.adminProductCard>small{color:var(--admin-muted);margin-top:5px}.adminProductPrice{color:var(--admin-rose);font-size:1.05rem}
+  .adminActions{gap:8px}.adminActions a,.adminActions button{min-height:44px;flex:1 1 100px;justify-content:center}
+  .adminForm{gap:14px;padding-bottom:76px}.adminStats article,.adminForm section{padding:16px;border-radius:14px}.adminFormGrid{grid-template-columns:minmax(0,1fr);gap:14px}.adminForm label{min-width:0}.adminForm input,.adminForm select,.adminForm textarea{width:100%;max-width:100%;min-width:0}
+  .adminChecks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.adminChecks label{min-width:0;padding:8px 10px;overflow-wrap:anywhere}.adminUpload{width:100%!important;max-width:100%;justify-content:center;overflow:hidden;text-align:center}
+  .adminImageList article{grid-template-columns:1fr;gap:12px}.adminImageList img{width:100%;height:auto;max-height:240px;aspect-ratio:1/1;object-fit:cover}.adminImageList article>div{min-width:0;grid-template-columns:1fr}.thumbnailChoice{width:max-content;max-width:100%}
+  .adminFormActions{position:sticky;z-index:10;bottom:0;margin:0 -12px calc(-104px - env(safe-area-inset-bottom));padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(248,244,245,.96);border-top:1px solid var(--admin-line);justify-content:stretch}.adminFormActions>a,.adminFormActions .adminSubmit{min-height:48px;flex:1;min-width:0}.adminFormActions .adminSubmit{width:auto}
+}
+@media(max-width:360px){.adminPageHeader{display:grid}.adminChecks{grid-template-columns:1fr}.adminActions a,.adminActions button{flex-basis:100%}}

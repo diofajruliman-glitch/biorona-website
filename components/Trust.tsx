@@ -8,6 +8,7 @@ export default function Trust() {
     [<WhatsAppIcon key="wa" size={22}/>, "Mudah dipesan", "Tidak perlu login. Semua detail diteruskan ke WhatsApp."],
     [<CheckIcon key="check" size={22}/>, "Harga lebih jelas", "Harga dasar terlihat sebelum Anda mulai bertanya."],
     [<ClockIcon key="clock" size={22}/>, "Hemat waktu", "Pilih kebutuhan di website agar chat lebih singkat dan terarah."],
+    [<ClockIcon key="same-day" size={22}/>, "Same-Day Delivery", "Pesan hari ini untuk pengiriman hari yang sama, tergantung stok dan area pengiriman."],
     [<MapPinIcon key="pin" size={22}/>, `${siteConfig.shortBrand} ${siteConfig.location.city}`, `Florist lokal untuk pelanggan di ${siteConfig.location.city} dan ${siteConfig.location.region}.`],
   ];
   return (

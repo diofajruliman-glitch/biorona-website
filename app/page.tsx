@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import MobileOrderBar from "@/components/MobileOrderBar";
 import HowToOrder from "@/components/HowToOrder";
 import JsonLd from "@/components/JsonLd";
+import Reveal from "@/components/Reveal";
 import { siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategories, getProducts } from "@/lib/products";
@@ -64,5 +65,5 @@ export default async function Home() {
     unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE;
   }
 
-  return <><JsonLd products={products}/><Navbar/><main><Hero/><Catalog products={products} unavailableMessage={unavailableMessage} categories={categories}/><LocalFlorist/><HowToOrder/><CustomBouquet/><Trust/><FAQ/></main><Footer/><MobileOrderBar/></>;
+  return <><JsonLd products={products}/><Navbar/><main><Hero/><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><LocalFlorist/></Reveal><Reveal><HowToOrder/></Reveal><Reveal><CustomBouquet/></Reveal><Reveal><FAQ/></Reveal></main><Footer/><MobileOrderBar/></>;
 }

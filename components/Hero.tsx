@@ -8,18 +8,20 @@ export default function Hero() {
       <div className="heroBackdrop" aria-hidden="true" />
       <div className="container heroGrid">
         <div className="heroCopy">
-          <div className="eyebrow"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
+          <div className="sameDayBadge"><span aria-hidden="true">⚡</span> Pesan Hari Ini <span aria-hidden="true">•</span> Kirim Hari Ini</div>
+          <div className="eyebrow heroEntrance heroEntranceLocation"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
           <h1>Toko Bunga Bogor &amp; Florist Cibinong untuk Setiap Momen Spesial</h1>
           <div className="heroDescriptions">
-            <p className="heroLead">Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan buket bunga, custom bouquet, standing flower, bunga ucapan, flower box, dan rangkaian bunga untuk wisuda, ulang tahun, anniversary, grand opening, pernikahan, duka cita, dan berbagai momen spesial.</p>
+            <p className="heroLead">Pesan buket bunga, standing flower, bunga ucapan, dan rangkaian bunga pilihan dari Biorona. Pesan hari ini dan kirim hari yang sama untuk Cibinong, Bogor, dan sekitarnya.</p>
             <p className="heroSupportingCopy">Pilih koleksi Biorona atau konsultasikan desain, warna, ukuran, ucapan, dan budget sesuai kebutuhan. Pemesanan dapat dilakukan langsung melalui WhatsApp tanpa login atau checkout.</p>
           </div>
           <div className="heroCtas">
-            <a className="primaryButton" href="#katalog">Lihat Koleksi Bunga <ArrowIcon size={18}/></a>
+            <a className="primaryButton" href="/katalog">Lihat Koleksi Bunga <ArrowIcon size={18}/></a>
             <a className="secondaryGlassButton glassSurface" href="#custom"><SparkleIcon size={18}/> Custom Bouquet</a>
             <a className="secondaryGlassButton glassSurface" href={waUrl("Halo Biorona 🌷 Saya ingin konsultasi untuk memilih bunga.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Pesan via WhatsApp</a>
           </div>
           <p className="heroKeywords">Buket Bunga <span aria-hidden="true">•</span> Standing Flower <span aria-hidden="true">•</span> Bunga Ucapan <span aria-hidden="true">•</span> Flower Box <span aria-hidden="true">•</span> Custom Bouquet</p>
+          <p className="sameDayNote">Same-Day Delivery <span>•</span> Tergantung ketersediaan produk dan area pengiriman.</p>
         </div>
         <div className="heroVisual">
           <div className="heroImageFrame">

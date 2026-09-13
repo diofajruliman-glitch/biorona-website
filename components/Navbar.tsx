@@ -38,10 +38,10 @@ export default function Navbar() {
   }, [open]);
 
   const nav = [
-    ["Katalog", "#katalog"],
-    ["Custom", "#custom"],
-    ["Kenapa Biorona", "#tentang"],
-    ["FAQ", "#faq"],
+    ["Katalog", "/katalog"],
+    ["Custom", "/#custom"],
+    ["Kenapa Biorona", "/#tentang"],
+    ["FAQ", "/#faq"],
   ];
 
   return (
@@ -52,7 +52,7 @@ export default function Navbar() {
           {nav.map(([label, href]) => <a key={href} href={href}>{label}</a>)}
         </nav>
         <div className="navActions">
-          <a className="iconButton desktopOnly" href="#katalog" aria-label="Cari produk"><SearchIcon /></a>
+          <a className="iconButton desktopOnly" href="/katalog" aria-label="Cari produk"><SearchIcon /></a>
           <a className="waButton waButtonSmall" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk Biorona.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/><span>Pesan via WhatsApp</span></a>
           <button className="iconButton mobileOnly" type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation" aria-label={open ? "Tutup menu" : "Buka menu"}>{open ? <XIcon/> : <MenuIcon/>}</button>
         </div>
