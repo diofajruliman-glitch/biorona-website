@@ -9,7 +9,7 @@ import {
   isSearchIndexableProduct,
 } from "@/data/products";
 import { getProductBySlug, getProducts } from "@/lib/products";
-import { primarySeoCategory, relatedProducts } from "@/lib/product-seo";
+import { primarySeoCategory, productSeoDescription, relatedProducts } from "@/lib/product-seo";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
@@ -17,6 +17,8 @@ import ProductGallery from "@/components/ProductGallery";
 import ProductOrderForm from "@/components/ProductOrderForm";
 import ProductCard from "@/components/ProductCard";
 import { CheckIcon } from "@/components/Icons";
+import Footer from "@/components/Footer";
+import { floristId, floristSchema, serializeJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const canonical = absoluteUrl(`/produk/${product.slug}/`);
   const image = getPrimaryProductImage(product);
   const imageAlt = getProductImageAlt(product);
-  const productDescription = product.seoDescription?.trim() || product.shortDescription.trim();
+  const productDescription = productSeoDescription(product);
   const description = `${productDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
 
   const seoTitle = `${product.name} | ${product.category} - Biorona Florist`;
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: { absolute: seoTitle },
     description,
     alternates: { canonical },
-    robots: isSearchIndexableProduct(product) ? undefined : { index: false, follow: false },
+    robots: isSearchIndexableProduct(product) ? { index: true, follow: true } : { index: false, follow: false },
     openGraph: {
       type: "website",
       locale: "id_ID",
@@ -67,7 +69,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const isIndexable = isSearchIndexableProduct(product);
   const imageAlt = getProductImageAlt(product);
   const productUrl = absoluteUrl(`/produk/${product.slug}/`);
-  const floristId = `${siteConfig.siteUrl}/#florist`;
   const primaryCategory = primarySeoCategory(product);
   const categoryHref = primaryCategory ? `/${primaryCategory.slug}/` : "/katalog/";
   const categoryName = primaryCategory?.label ?? "Katalog";
@@ -75,6 +76,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
+      floristSchema(),
       {
         "@type": "Product",
         "@id": `${productUrl}#product`,
@@ -84,7 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         url: productUrl,
         mainEntityOfPage: productUrl,
         image: getProductImages(product).map((image) => absoluteUrl(image)),
-        description: product.seoDescription?.trim() || product.description,
+        description: productSeoDescription(product),
         brand: { "@type": "Brand", name: siteConfig.shortBrand },
         offers: {
           "@type": "Offer",
@@ -111,7 +113,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      {isIndexable && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />}
+      {isIndexable && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />}
       <header className="productPageHeader">
         <div className="container productPageNav">
           <Logo />
@@ -143,7 +145,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
         <div className="container"><ProductOrderForm product={product} /></div>
         {suggestions.length > 0 && <section className="container productRelated" aria-labelledby="related-products-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Pilihan Biorona</span><h2 id="related-products-title">Produk terkait</h2></div><p>Rekomendasi berdasarkan kategori, momen, dan kisaran harga terdekat.</p></div><div className="productGrid">{suggestions.map((suggestion) => <ProductCard product={suggestion} key={suggestion.slug}/>)}</div><p className="localLandingMore"><Link href={categoryHref}>Lihat {categoryName} <span aria-hidden="true">→</span></Link></p></section>}
+        <nav className="container localLandingMore" aria-label="Jelajahi layanan bunga lokal">
+          <Link href="/toko-bunga-cibinong/">Biorona Florist di Cibinong</Link><span aria-hidden="true"> · </span>
+          <Link href="/toko-bunga-bogor/">Layanan florist Bogor</Link><span aria-hidden="true"> · </span>
+          <Link href="/katalog/">Semua produk</Link>
+        </nav>
       </main>
+      <Footer />
     </>
   );
 }

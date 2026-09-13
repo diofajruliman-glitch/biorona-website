@@ -5,6 +5,7 @@ import { categorySeoRoutes, type CategorySeoKey } from "@/lib/product-seo";
 import { waUrl } from "@/lib/whatsapp";
 import ProductCard from "./ProductCard";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
+import { floristId, floristSchema, serializeJsonLd, websiteId, websiteSchema } from "@/lib/structured-data";
 
 const pageCopy = {
   buket: {
@@ -67,7 +68,9 @@ export default function CategorySeoPage({ categoryKey, products }: { categoryKey
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebPage", "@id": canonical, url: canonical, name: page.h1, isPartOf: { "@id": `${siteConfig.siteUrl}/#website` }, about: { "@id": `${siteConfig.siteUrl}/#florist` } },
+      websiteSchema(),
+      floristSchema(),
+      { "@type": "WebPage", "@id": canonical, url: canonical, name: page.h1, isPartOf: { "@id": websiteId }, about: { "@id": floristId } },
       { "@type": "BreadcrumbList", itemListElement: [
         { "@type": "ListItem", position: 1, name: "Beranda", item: `${siteConfig.siteUrl}/` },
         { "@type": "ListItem", position: 2, name: route.label, item: canonical },
@@ -79,7 +82,7 @@ export default function CategorySeoPage({ categoryKey, products }: { categoryKey
   const related = Object.values(categorySeoRoutes).filter((item) => item.slug !== route.slug);
 
   return <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
     <main className="localLanding categorySeoPage">
       <section className="localLandingHero">
         <div className="container localLandingHeroGrid">

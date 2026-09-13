@@ -10,6 +10,21 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.brand,
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: `${siteConfig.siteUrl}/`,
+    siteName: siteConfig.brand,
+    title: `${siteConfig.brand} | Florist Cibinong, Bogor`,
+    description: siteConfig.description,
+    images: [{ url: siteConfig.defaultImage, alt: `Rangkaian bunga ${siteConfig.brand}` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.brand} | Florist Cibinong, Bogor`,
+    description: siteConfig.description,
+    images: [siteConfig.defaultImage],
+  },
   robots: {
     index: true,
     follow: true,

@@ -7,7 +7,7 @@ import { absoluteUrl, siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CatalogUnavailableError, getProducts } from "@/lib/products";
 
-const title = "Toko Bunga Bogor: Buket & Standing Flower | Biorona";
+const title = "Toko Bunga Bogor & Florist Bogor | Biorona";
 const description = "Cari toko bunga Bogor untuk buket bunga, standing flower, bunga ucapan, flower box, dan custom bouquet? Pesan Biorona Florist dengan mudah via WhatsApp.";
 const url = absoluteUrl("/toko-bunga-bogor/");
 export const dynamic = "force-dynamic";

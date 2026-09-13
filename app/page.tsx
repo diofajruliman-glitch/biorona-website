@@ -16,8 +16,8 @@ import { siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategories, getProducts } from "@/lib/products";
 
-const homeTitle = "Toko Bunga Bogor & Florist Cibinong | Biorona Florist";
-const homeDescription = "Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan buket bunga, standing flower, bunga ucapan, flower box dan custom bouquet. Pesan mudah via WhatsApp dengan layanan pengiriman Bogor dan sekitarnya.";
+const homeTitle = "Toko Bunga Bogor & Florist Cibinong | Biorona";
+const homeDescription = "Biorona Florist, toko bunga di Cibinong, Bogor untuk buket, fresh flower, standing flower, bunga ucapan, flower box, dan rangkaian custom.";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {

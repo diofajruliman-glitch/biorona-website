@@ -4,6 +4,7 @@ import { absoluteUrl, siteConfig } from "@/data/site";
 import { waUrl } from "@/lib/whatsapp";
 import ProductCard from "./ProductCard";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
+import { floristId, floristSchema, serializeJsonLd, websiteId, websiteSchema } from "@/lib/structured-data";
 
 type Area = "Bogor" | "Cibinong";
 
@@ -39,7 +40,7 @@ const copy = {
     eyebrow: "Biorona dekat dengan momen Anda",
     h1: "Toko Bunga Cibinong dengan Pemesanan Mudah",
     intro: [
-      "Biorona Florist adalah pilihan lokal bagi Anda yang mencari toko bunga Cibinong untuk mengirim hadiah yang hangat dan berkesan. Kami menyiapkan rangkaian untuk ulang tahun, wisuda, anniversary, ucapan selamat, grand opening, pernikahan, duka cita, serta berbagai momen personal. Koleksi dapat dilihat secara transparan melalui katalog, kemudian detail pesanan dikonsultasikan langsung bersama tim melalui WhatsApp.",
+      "Biorona Florist di Cibinong, Bogor adalah pilihan lokal untuk buket bunga, fresh flower, artificial bouquet, standing flower, bunga ucapan, flower box, dan custom arrangement. Rangkaian dapat dikonsultasikan untuk ulang tahun, wisuda, anniversary, grand opening, duka cita, serta berbagai momen personal melalui WhatsApp.",
       "Berada di Cibinong, Bogor, Biorona memahami bahwa banyak pesanan bunga membutuhkan respons cepat sekaligus perhatian pada detail. Karena itu, prosesnya dibuat ringkas tanpa menghilangkan sentuhan personal. Anda cukup memilih produk atau menyampaikan ide, lalu florist Cibinong kami akan membantu menyesuaikan pilihan warna, ukuran, isi kartu ucapan, jadwal, dan budget sebelum pesanan dikerjakan.",
     ],
     services: [
@@ -69,7 +70,9 @@ export default function LocalLandingPage({ area, products }: { area: Area; produ
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebPage", "@id": canonical, url: canonical, name: page.h1, isPartOf: { "@id": `${siteConfig.siteUrl}/#website` }, about: { "@id": `${siteConfig.siteUrl}/#florist` } },
+      websiteSchema(),
+      floristSchema(),
+      { "@type": "WebPage", "@id": canonical, url: canonical, name: page.h1, isPartOf: { "@id": websiteId }, about: { "@id": floristId } },
       { "@type": "BreadcrumbList", itemListElement: [
         { "@type": "ListItem", position: 1, name: "Beranda", item: `${siteConfig.siteUrl}/` },
         { "@type": "ListItem", position: 2, name: page.h1, item: canonical },
@@ -79,7 +82,7 @@ export default function LocalLandingPage({ area, products }: { area: Area; produ
   };
 
   return <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
     <main className="localLanding">
       <section className="localLandingHero">
         <div className="container localLandingHeroGrid">
@@ -92,7 +95,7 @@ export default function LocalLandingPage({ area, products }: { area: Area; produ
         <section aria-labelledby="layanan-title"><h2 id="layanan-title">Rangkaian bunga untuk kebutuhan personal dan acara</h2><p>{page.intro[1]}</p><div className="localLandingServices">{page.services.map(([title, description]) => <article className="glassSurface" key={title}><h3>{title}</h3><p>{description}</p></article>)}</div></section>
         <section className="localLandingSplit" aria-labelledby="keunggulan-title"><div><h2 id="keunggulan-title">Mengapa memilih Biorona Florist?</h2><p>{page.strengths}</p></div><div><h2>Area pickup dan pengiriman</h2><p>{page.delivery}</p></div></section>
         <section aria-labelledby="panduan-title"><h2 id="panduan-title">Panduan memilih dan menyiapkan pesanan</h2>{page.guidance.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>
-        <nav className="localLandingOrder glassSurface" aria-label="Kategori bunga Biorona"><div><span className="kicker">Jelajahi berdasarkan kebutuhan</span><h2>Koleksi bunga di Bogor</h2><p><Link href="/buket-bunga-bogor/">Buket bunga Bogor</Link> · <Link href="/standing-flower-bogor/">Standing flower Bogor</Link> · <Link href="/bunga-ucapan-bogor/">Bunga ucapan Bogor</Link></p></div><Link className="secondaryGlassButton" href="/katalog/">Lihat katalog <ArrowIcon size={18}/></Link></nav>
+        <nav className="localLandingOrder glassSurface" aria-label="Kategori bunga Biorona"><div><span className="kicker">Jelajahi berdasarkan kebutuhan</span><h2>{area === "Cibinong" ? "Koleksi bunga untuk Cibinong" : "Koleksi bunga di Bogor"}</h2><p>{area === "Cibinong" ? <><Link href="/buket-bunga-bogor/">Pilihan buket bunga</Link> · <Link href="/standing-flower-bogor/">Standing flower</Link> · <Link href="/bunga-ucapan-bogor/">Bunga ucapan</Link> · <Link href="/katalog/">flower box dan rangkaian custom</Link></> : <><Link href="/buket-bunga-bogor/">Buket bunga Bogor</Link> · <Link href="/standing-flower-bogor/">Standing flower Bogor</Link> · <Link href="/bunga-ucapan-bogor/">Bunga ucapan Bogor</Link></>}</p></div><Link className="secondaryGlassButton" href="/katalog/">Lihat katalog <ArrowIcon size={18}/></Link></nav>
         <section className="localLandingOrder glassSurface" aria-labelledby="cara-order-title"><div><span className="kicker">Langsung, jelas, dan personal</span><h2 id="cara-order-title">Cara order bunga melalui WhatsApp</h2><p>{page.order}</p></div><a className="primaryButton" href={waUrl(`Halo Biorona 🌷 Saya ingin konsultasi pesanan bunga di ${area}.`)} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Mulai konsultasi</a></section>
         {chosen.length > 0 && <section aria-labelledby="produk-pilihan-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Dari katalog aktif</span><h2 id="produk-pilihan-title">Produk pilihan Biorona</h2></div><p>Lihat detail, harga, dan opsi pemesanan pada setiap produk.</p></div><div className="productGrid">{chosen.map((product) => <ProductCard product={product} key={product.slug}/>)}</div><p className="localLandingMore"><Link href="/katalog/">Jelajahi seluruh katalog bunga Biorona <ArrowIcon size={17}/></Link></p></section>}
         <section className="localLandingFaq" aria-labelledby="local-faq-title"><div><span className="kicker">Pertanyaan umum</span><h2 id="local-faq-title">Sebelum memesan bunga</h2></div><div className="faqList">{page.faqs.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div></section>

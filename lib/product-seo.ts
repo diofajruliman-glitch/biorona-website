@@ -53,3 +53,21 @@ export function relatedProducts(product: Product, products: Product[], limit = 4
     .slice(0, limit)
     .map(({ candidate }) => candidate);
 }
+
+const genericDescriptionPattern = /^(rangkaian|bunga)\s+(pilihan\s+)?untuk\s+momen\s+istimewa\.?$/i;
+
+export function productSeoDescription(product: Product) {
+  const custom = product.seoDescription?.trim();
+  if (custom) return custom;
+
+  const short = product.shortDescription.trim();
+  if (short && !genericDescriptionPattern.test(short)) return short;
+
+  const details = [
+    product.category,
+    product.colors.length ? `warna ${product.colors.slice(0, 3).join(", ")}` : "",
+    product.occasions.length ? `untuk ${product.occasions.slice(0, 3).join(", ")}` : "",
+  ].filter(Boolean);
+
+  return `${product.name}, ${details.join("; ")}. Lihat harga dan status ketersediaan aktual sebelum memesan.`;
+}

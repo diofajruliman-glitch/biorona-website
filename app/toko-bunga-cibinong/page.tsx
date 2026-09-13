@@ -7,7 +7,7 @@ import { absoluteUrl, siteConfig } from "@/data/site";
 import type { Product } from "@/data/products";
 import { CatalogUnavailableError, getProducts } from "@/lib/products";
 
-const title = "Toko Bunga Cibinong & Toko Buket | Biorona Florist";
+const title = "Toko Bunga Cibinong & Florist Cibinong | Biorona";
 const description = "Biorona adalah toko bunga Cibinong untuk buket, flower box, standing flower, bunga ucapan, dan custom bouquet. Konsultasi dan pesan langsung via WhatsApp.";
 const url = absoluteUrl("/toko-bunga-cibinong/");
 export const dynamic = "force-dynamic";

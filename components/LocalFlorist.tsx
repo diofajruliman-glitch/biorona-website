@@ -20,7 +20,7 @@ export default function LocalFlorist() {
             <h2 id="local-florist-title">Toko Bunga di Cibinong, Bogor untuk Buket, Standing Flower &amp; Bunga Ucapan</h2>
           </div>
           <div className="localFloristCopy">
-            <p>Biorona Florist merupakan florist di Cibinong, Bogor yang menyediakan berbagai rangkaian bunga untuk hadiah dan momen spesial. Tersedia buket bunga, custom bouquet, flower box, standing flower, dan bunga ucapan yang dapat disesuaikan dengan kebutuhan pelanggan.</p>
+            <p>Biorona Florist adalah toko bunga di Cibinong, Bogor yang menyediakan buket bunga, fresh flower, artificial bouquet, standing flower, bunga ucapan, flower box, dan custom arrangement untuk berbagai momen.</p>
             <p>Biorona melayani kebutuhan bunga untuk wisuda, ulang tahun, anniversary, grand opening, pernikahan, ucapan selamat, duka cita, hadiah pasangan, keluarga, sahabat, dan kebutuhan lainnya. Pemesanan dapat dikonsultasikan berdasarkan warna, ukuran, tema, ucapan, serta budget.</p>
             <p>Pickup tersedia di Cibinong dan delivery dapat dikonsultasikan untuk area Cibinong, Bogor, dan sekitarnya sesuai ketersediaan.</p>
           </div>
