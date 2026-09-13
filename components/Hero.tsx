@@ -1,34 +1,23 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
+import LivingBloom from "./LivingBloom";
 
 export default function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
   const ctasRef = useRef<HTMLDivElement>(null);
+  const [activeWord, setActiveWord] = useState(0);
+  const [leavingWord, setLeavingWord] = useState(-1);
+  const rotatingWords = ["Buket Bunga", "Standing Flower", "Bunga Ucapan", "Custom Bouquet", "Same-Day Delivery"];
 
   useEffect(() => {
-    const visual = visualRef.current;
     const ctas = ctasRef.current;
     const precisePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!precisePointer.matches || reducedMotion.matches) return;
 
-    const onVisualMove = (event: PointerEvent) => {
-      if (!visual) return;
-      const rect = visual.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - 0.5;
-      const y = (event.clientY - rect.top) / rect.height - 0.5;
-      visual.style.setProperty("--hero-rotate-x", `${(-y * 5).toFixed(2)}deg`);
-      visual.style.setProperty("--hero-rotate-y", `${(x * 5).toFixed(2)}deg`);
-    };
-    const resetVisual = () => {
-      visual?.style.setProperty("--hero-rotate-x", "0deg");
-      visual?.style.setProperty("--hero-rotate-y", "0deg");
-    };
     const buttons = Array.from(ctas?.querySelectorAll<HTMLElement>("a") ?? []);
     const cleanups = buttons.map((button) => {
       const onMove = (event: PointerEvent) => {
@@ -44,14 +33,21 @@ export default function Hero() {
       button.addEventListener("pointerleave", reset);
       return () => { button.removeEventListener("pointermove", onMove); button.removeEventListener("pointerleave", reset); };
     });
-    visual?.addEventListener("pointermove", onVisualMove);
-    visual?.addEventListener("pointerleave", resetVisual);
     return () => {
-      visual?.removeEventListener("pointermove", onVisualMove);
-      visual?.removeEventListener("pointerleave", resetVisual);
       cleanups.forEach((cleanup) => cleanup());
     };
   }, []);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setActiveWord((current) => {
+        setLeavingWord(current);
+        return (current + 1) % rotatingWords.length;
+      });
+    }, 2800);
+    return () => window.clearInterval(timer);
+  }, [rotatingWords.length]);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -59,23 +55,35 @@ export default function Hero() {
     const observer = new IntersectionObserver(([entry]) => {
       hero.classList.toggle("isMotionPaused", !entry.isIntersecting);
     }, { threshold: 0.05 });
+    const syncPageVisibility = () => hero.classList.toggle("isPageHidden", document.hidden);
     observer.observe(hero);
-    return () => observer.disconnect();
+    syncPageVisibility();
+    document.addEventListener("visibilitychange", syncPageVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", syncPageVisibility);
+      observer.disconnect();
+    };
   }, []);
 
   return (
     <section className="hero" id="beranda" ref={heroRef}>
       <div className="heroBackdrop" aria-hidden="true" />
-      <div className="heroAurora" aria-hidden="true"><i /><i /><i /></div>
       <div className="container heroGrid">
         <div className="heroCopy">
           <div className="sameDayBadge"><span aria-hidden="true">⚡</span> Pesan Hari Ini <span aria-hidden="true">•</span> Kirim Hari Ini</div>
           <div className="eyebrow heroEntrance heroEntranceLocation"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
-          <h1 aria-label="Toko Bunga Bogor & Florist Cibinong untuk Setiap Momen Spesial">
+          <h1 aria-label="Toko Bunga Bogor & Florist Cibinong">
             <span className="heroTitleLine"><span>Toko Bunga Bogor &amp;</span></span>
-            <span className="heroTitleLine"><span>Florist Cibinong untuk</span></span>
-            <span className="heroTitleLine"><span>Setiap Momen Spesial</span></span>
+            <span className="heroTitleLine"><span>Florist Cibinong</span></span>
           </h1>
+          <p className="heroServiceLine" aria-label="Pilihan bunga untuk Buket Bunga">
+            <span aria-hidden="true">Pilihan bunga untuk</span>
+            <span className="heroWordWindow" aria-hidden="true">
+              {rotatingWords.map((word, index) => (
+                <span key={word} className={`heroWord ${index === activeWord ? "isActive" : ""} ${index === leavingWord ? "isLeaving" : ""}`}>{word}</span>
+              ))}
+            </span>
+          </p>
           <div className="heroDescriptions">
             <p className="heroLead">Pesan buket bunga, standing flower, bunga ucapan, dan rangkaian bunga pilihan dari Biorona. Pesan hari ini dan kirim hari yang sama untuk Cibinong, Bogor, dan sekitarnya.</p>
             <p className="heroSupportingCopy">Pilih koleksi Biorona atau konsultasikan desain, warna, ukuran, ucapan, dan budget sesuai kebutuhan. Pemesanan dapat dilakukan langsung melalui WhatsApp tanpa login atau checkout.</p>
@@ -88,23 +96,8 @@ export default function Hero() {
           <p className="heroKeywords">Buket Bunga <span aria-hidden="true">•</span> Standing Flower <span aria-hidden="true">•</span> Bunga Ucapan <span aria-hidden="true">•</span> Flower Box <span aria-hidden="true">•</span> Custom Bouquet</p>
           <p className="sameDayNote">Same-Day Delivery <span>•</span> Tergantung ketersediaan produk dan area pengiriman.</p>
         </div>
-        <div className="heroVisual" ref={visualRef}>
-          <div className="heroImageEntrance">
-            <div className="heroImageFloat">
-              <div className="heroImageFrame">
-                <Image src="/products/hero-bouquet.jpg" fill sizes="(max-width: 860px) 100vw, 48vw" alt="Bouquet bunga bernuansa pink dari Biorona Florist" priority />
-                <div className="imageVeil" />
-              </div>
-            </div>
-          </div>
-          <div className="heroGlassCard glassSurface heroNote">
-            <span className="noteKicker">BIORONA NOTE</span>
-            <strong>“Karena hadiah terbaik terasa dibuat khusus untuk seseorang.”</strong>
-          </div>
-          <div className="heroGlassCard glassSurface heroAvailability">
-            <span className="statusDot" />
-            <div><strong>Order lebih praktis</strong><small>Konsultasi & konfirmasi via WhatsApp</small></div>
-          </div>
+        <div className="heroVisual">
+          <LivingBloom />
         </div>
       </div>
     </section>
