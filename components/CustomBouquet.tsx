@@ -16,7 +16,7 @@ const occasions = ["Ulang Tahun", "Wisuda", "Anniversary", "Romantic", "Hadiah",
 const styles: CustomBouquetRequest["style"][] = ["Elegant", "Romantic", "Cute", "Minimalist"];
 const sizes = ["Small", "Medium", "Large"] as const;
 
-export default function CustomBouquet() {
+export default function CustomBouquet({ variant = "full" }: { variant?: "full" | "cta" }) {
   const [budget, setBudget] = useState<number>(250000);
   const [color, setColor] = useState<string>("Pink");
   const [occasion, setOccasion] = useState<string>("Ulang Tahun");
@@ -51,6 +51,25 @@ export default function CustomBouquet() {
     });
 
     window.open(waUrl(message), "_blank", "noopener,noreferrer");
+  }
+
+  if (variant === "cta") {
+    return (
+      <section className="section customCtaSection" id="custom" aria-labelledby="custom-cta-title">
+        <div className="container">
+          <div className="customCta glassSurface">
+            <div>
+              <span className="kicker"><SparkleIcon size={16} /> Biorona Custom</span>
+              <h2 id="custom-cta-title">Punya bunga impian sendiri?</h2>
+              <p>Konsultasikan custom bouquet berdasarkan warna, gaya, ukuran, momen, dan budget Anda.</p>
+            </div>
+            <a className="primaryButton" href={waUrl("Halo Biorona 🌷 Saya ingin konsultasi Custom Bouquet sesuai warna, gaya, dan budget saya.")} target="_blank" rel="noreferrer">
+              <WhatsAppIcon size={19} /> Konsultasi Custom Bouquet <ArrowIcon size={17} />
+            </a>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Catalog from "@/components/Catalog";
-import LocalFlorist from "@/components/LocalFlorist";
 import CustomBouquet from "@/components/CustomBouquet";
 import Trust from "@/components/Trust";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import MobileOrderBar from "@/components/MobileOrderBar";
-import HowToOrder from "@/components/HowToOrder";
 import JsonLd from "@/components/JsonLd";
 import Reveal from "@/components/Reveal";
 import { siteConfig } from "@/data/site";
@@ -65,5 +63,5 @@ export default async function Home() {
     unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE;
   }
 
-  return <><JsonLd products={products}/><Navbar/><main><Hero/><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><LocalFlorist/></Reveal><Reveal><HowToOrder/></Reveal><Reveal><CustomBouquet/></Reveal><Reveal><FAQ/></Reveal></main><Footer/><MobileOrderBar/></>;
+  return <><JsonLd products={products}/><Navbar/><main><Hero/><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal></main><Footer/><MobileOrderBar/></>;
 }

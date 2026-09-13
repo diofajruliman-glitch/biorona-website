@@ -8,6 +8,6 @@ const faqs = [
   ["Kapan sebaiknya memesan?", "Untuk produk reguler disarankan H-1. Pesanan custom atau kebutuhan khusus sebaiknya dikonsultasikan lebih awal."],
 ];
 
-export default function FAQ() {
-  return <section className="section faqSection" id="faq"><div className="container faqGrid"><div className="sectionHeading"><span className="kicker">Pertanyaan umum</span><h2>Semua dibuat supaya pelanggan cepat paham.</h2><p>Tidak ada proses checkout yang tersembunyi atau akun yang harus dibuat.</p></div><div className="faqList">{faqs.map(([q,a])=><details key={q}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}</div></div></section>;
+export default function FAQ({ limit }: { limit?: number }) {
+  return <section className="section faqSection" id="faq"><div className="container faqGrid"><div className="sectionHeading"><span className="kicker">Pertanyaan umum</span><h2>Yang perlu diketahui sebelum memesan.</h2><p>Pilih bunga favorit Anda, lalu konfirmasi detail dan ketersediaan melalui WhatsApp.</p></div><div className="faqList">{faqs.slice(0, limit).map(([q,a])=><details key={q}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}</div></div></section>;
 }

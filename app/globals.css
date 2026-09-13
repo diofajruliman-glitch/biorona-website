@@ -154,3 +154,70 @@ img{display:block;max-width:100%}
 @media (max-width:820px){.siteHeader.isCompact .navGlass{height:64px;width:min(1150px,calc(100vw - 28px))}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}.sectionReveal{opacity:1;transform:none}}
 .faqList details[open] p{animation:faqOpen .28s ease both}@keyframes faqOpen{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+
+/* Biorona Signature Motion — Floral Glass Experience */
+.navGlass{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.38);box-shadow:0 8px 28px rgba(91,52,67,.035);backdrop-filter:blur(8px) saturate(115%);-webkit-backdrop-filter:blur(8px) saturate(115%);transition:background-color .35s ease,border-color .35s ease,box-shadow .35s ease,backdrop-filter .35s ease,-webkit-backdrop-filter .35s ease}
+.siteHeader.isCompact .navGlass{background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.7));border-color:rgba(255,255,255,.94);box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 16px 42px rgba(91,52,67,.14);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
+
+.heroBackdrop{overflow:hidden}
+.heroAurora{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.heroAurora i{position:absolute;display:block;width:clamp(280px,35vw,520px);aspect-ratio:1;border-radius:50%;filter:blur(75px);opacity:.2;will-change:transform}
+.heroAurora i:nth-child(1){top:7%;right:2%;background:#efb3ca;animation:auroraOne 16s ease-in-out infinite alternate}
+.heroAurora i:nth-child(2){bottom:5%;left:-9%;background:#f2c9b7;opacity:.16;animation:auroraTwo 20s ease-in-out infinite alternate}
+.heroAurora i:nth-child(3){top:32%;left:38%;width:clamp(220px,26vw,390px);background:#dcc8ed;opacity:.12;animation:auroraThree 18s ease-in-out infinite alternate}
+.heroGrid{position:relative;z-index:1}
+
+.sameDayBadge,.heroEntranceLocation,.heroDescriptions,.heroCtas,.heroKeywords,.sameDayNote{animation:signatureEnter .6s cubic-bezier(.16,1,.3,1) both}
+.sameDayBadge{animation-delay:0s}.heroEntranceLocation{animation-delay:.075s}.heroDescriptions{animation-delay:.24s}.heroCtas{animation-delay:.32s}.heroKeywords,.sameDayNote{animation-delay:.4s}
+.heroCopy h1{animation:none}
+.heroTitleLine{display:block;overflow:hidden;padding:0 .04em .08em;margin-bottom:-.08em}
+.heroTitleLine>span{display:block;animation:titleReveal .62s cubic-bezier(.16,1,.3,1) both}
+.heroTitleLine:nth-child(1)>span{animation-delay:.12s}.heroTitleLine:nth-child(2)>span{animation-delay:.18s}.heroTitleLine:nth-child(3)>span{animation-delay:.24s}
+
+.heroVisual{--hero-rotate-x:0deg;--hero-rotate-y:0deg;animation:none;perspective:1100px}
+.heroImageEntrance{position:absolute;inset:0;opacity:0;transform:translateY(22px) scale(.94);filter:blur(5px);animation:imageEntrance .65s .4s cubic-bezier(.16,1,.3,1) forwards;transform-style:preserve-3d}
+.heroImageFloat{position:absolute;inset:0;transform:rotateX(var(--hero-rotate-x)) rotateY(var(--hero-rotate-y));transition:transform .28s cubic-bezier(.16,1,.3,1);animation:heroFloatSignature 7s 1.05s ease-in-out infinite}
+.heroImageFrame{animation:none}
+.heroGlassCard{opacity:0;animation:signatureEnter .58s .52s cubic-bezier(.16,1,.3,1) forwards}
+.heroAvailability{animation-delay:.58s}
+
+.heroCtas a{--magnetic-x:0px;--magnetic-y:0px;transform:translate(var(--magnetic-x),var(--magnetic-y));transition:transform .24s cubic-bezier(.16,1,.3,1),box-shadow .24s ease}
+.heroCtas a:hover{transform:translate(var(--magnetic-x),calc(var(--magnetic-y) - 2px)) scale(1.012)}
+.heroCtas a:active{transform:scale(.97)}
+
+.sectionReveal{opacity:0;filter:blur(4px);transform:translateY(24px) scale(.985);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),filter .6s cubic-bezier(.16,1,.3,1)}
+.sectionReveal.isVisible{opacity:1;filter:blur(0);transform:none}
+.sectionReveal .homeCategories a,.sectionReveal .productCard{opacity:0;transform:translateY(20px) scale(.98)}
+.sectionReveal.isVisible .homeCategories a,.sectionReveal.isVisible .productCard{opacity:1;transform:none;transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1),box-shadow .28s ease}
+.sectionReveal.isVisible .homeCategories a:nth-child(1),.sectionReveal.isVisible .productCard:nth-child(1){transition-delay:.08s}
+.sectionReveal.isVisible .homeCategories a:nth-child(2),.sectionReveal.isVisible .productCard:nth-child(2){transition-delay:.15s}
+.sectionReveal.isVisible .homeCategories a:nth-child(3),.sectionReveal.isVisible .productCard:nth-child(3){transition-delay:.22s}
+.sectionReveal.isVisible .homeCategories a:nth-child(4),.sectionReveal.isVisible .productCard:nth-child(4){transition-delay:.29s}
+.sectionReveal.isVisible .homeCategories a:nth-child(n+5),.sectionReveal.isVisible .productCard:nth-child(n+5){transition-delay:.36s}
+.sectionReveal.isVisible .homeCategories a:hover{transform:translateY(-2px) scale(1.02);transition-delay:0s}
+.sectionReveal.isVisible .productCard:hover{transform:translateY(-5px) scale(1.01);transition-delay:0s;box-shadow:0 30px 64px rgba(91,52,67,.13)}
+.productCard{position:relative}
+.productCard::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(120deg,transparent 24%,rgba(255,255,255,.46) 48%,transparent 70%);opacity:0;transform:translateX(-35%);transition:opacity .3s ease,transform .55s cubic-bezier(.16,1,.3,1)}
+.productCard:hover::after{opacity:.4;transform:translateX(35%)}
+.productCard:hover .productImageWrap img{transform:scale(1.04)}
+
+@keyframes signatureEnter{from{opacity:0;transform:translateY(22px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes titleReveal{from{opacity:0;transform:translateY(105%);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes imageEntrance{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes heroFloatSignature{0%,100%{translate:0 -3px;rotate:-.18deg}50%{translate:0 3px;rotate:.18deg}}
+@keyframes auroraOne{to{transform:translate3d(-7%,8%,0) scale(1.08)}}
+@keyframes auroraTwo{to{transform:translate3d(10%,-7%,0) scale(.94)}}
+@keyframes auroraThree{to{transform:translate3d(7%,10%,0) scale(1.1)}}
+
+@media (hover:none),(pointer:coarse){.heroImageFloat{transition:none}.heroCtas a:hover{transform:none}.sectionReveal.isVisible .productCard:hover{transform:none}.productCard:hover::after{opacity:0}.productCard:hover .productImageWrap img{transform:none}}
+@media (max-width:820px){.heroAurora i{filter:blur(62px);opacity:.15}.heroImageFloat{animation-duration:8s}.heroTitleLine{padding-bottom:.1em;margin-bottom:-.1em}}
+@media (max-width:430px){.heroTitleLine{padding-inline:.03em}.heroAurora i:nth-child(3){display:none}}
+@media (prefers-reduced-motion:reduce){.sameDayBadge,.heroEntranceLocation,.heroTitleLine>span,.heroDescriptions,.heroCtas,.heroKeywords,.sameDayNote,.heroImageEntrance,.heroImageFloat,.heroGlassCard,.heroAurora i{opacity:1!important;filter:none!important;transform:none!important;translate:none!important;rotate:none!important;animation:none!important}.sectionReveal,.sectionReveal .homeCategories a,.sectionReveal .productCard{opacity:1!important;filter:none!important;transform:none!important}.heroCtas a{transform:none!important}.heroAurora{display:none}}
+
+/* Compact premium storefront sections. */
+.homeCatalog{padding-bottom:82px}.homeCatalog .productGrid{margin-top:8px}
+.trustSection{padding:82px 0}.trustSection .compactHeading{max-width:760px;margin-bottom:28px}.trustSection .trustGrid{grid-template-columns:repeat(4,1fr)}
+.customCtaSection{padding:24px 0 72px}.customCta{border-radius:34px;padding:40px 44px;display:flex;align-items:center;justify-content:space-between;gap:40px;overflow:hidden}.customCta>div{position:relative;z-index:1;max-width:680px}.customCta h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.35rem,4vw,4rem);font-weight:500;line-height:1;letter-spacing:-.045em;margin:12px 0}.customCta p{color:var(--muted);line-height:1.65;margin:0}.customCta>a{position:relative;z-index:1;flex:0 0 auto}
+.faqSection{padding:74px 0 88px}
+@media (max-width:820px){.trustSection .trustGrid{grid-template-columns:repeat(2,1fr)}.customCta{padding:32px 28px;align-items:flex-start;flex-direction:column;gap:24px}.customCta>a{width:100%}}
+@media (max-width:560px){.homeCatalog{padding-bottom:58px}.trustSection{padding:58px 0}.trustSection .trustGrid{grid-template-columns:1fr}.customCtaSection{padding:8px 0 52px}.customCta{padding:27px 20px;border-radius:26px}.customCta h2{font-size:2.45rem}.customCta>a{padding-inline:12px;font-size:.8rem}.faqSection{padding:58px 0 68px}}

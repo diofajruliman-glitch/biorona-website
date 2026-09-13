@@ -13,7 +13,7 @@ export default function Navbar() {
     let animationFrame = 0;
     const updateCompactState = () => {
       animationFrame = 0;
-      const nextCompact = window.scrollY > 24;
+      const nextCompact = window.scrollY > 50;
       setCompact((current) => current === nextCompact ? current : nextCompact);
     };
     const onScroll = () => {
