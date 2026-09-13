@@ -15,7 +15,7 @@ export default function Footer() {
           <span>{siteConfig.location.city}, {siteConfig.location.region}</span>
         </div>
       </div>
-      <div className="container footerBottom"><span>© {new Date().getFullYear()} {siteConfig.brand}. - Diocode</span><span>Designed for love, speed ordering</span></div>
+      <div className="container footerBottom"><span>© {new Date().getFullYear()} {siteConfig.brand}. - Diocode</span><span>Ingat Bunga? Ingat Biorona</span></div>
     </footer>
   );
 }
