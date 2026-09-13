@@ -43,6 +43,36 @@ export function waUrl(message: string) {
   return `https://wa.me/${getWhatsAppNumber()}?text=${encodeURIComponent(message)}`;
 }
 
+export function normalizeWhatsAppNumber(value: string | null | undefined) {
+  const digits = (value ?? "").replace(/[+\s\-()]/g, "");
+  const normalized = digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
+  return /^\d{8,15}$/.test(normalized) ? normalized : null;
+}
+
+export function buildInvoiceWhatsAppMessage(invoice: { customerName: string; invoiceNumber: string; grandTotal: number; paymentStatus: "unpaid" | "paid" }) {
+  const customerName = invoice.customerName.trim();
+  const paymentStatus = invoice.paymentStatus === "paid" ? "LUNAS" : "BELUM DIBAYAR";
+  return [
+    customerName ? `Halo Kak ${customerName},` : "Halo Kak,",
+    "",
+    "Berikut invoice Biorona Florist:",
+    "",
+    `No. Invoice: ${invoice.invoiceNumber}`,
+    `Total: ${formatRupiah(invoice.grandTotal)}`,
+    `Status Pembayaran: ${paymentStatus}`,
+    "",
+    "Silakan cek PDF invoice yang kami kirimkan.",
+    "",
+    "Terima kasih telah mempercayakan pesanan bunga kepada Biorona Florist.",
+  ].join("\n");
+}
+
+export function invoiceWhatsAppUrl(invoice: { customerWhatsapp: string | null | undefined; customerName: string; invoiceNumber: string; grandTotal: number; paymentStatus: "unpaid" | "paid" }) {
+  const number = normalizeWhatsAppNumber(invoice.customerWhatsapp);
+  if (!number) return null;
+  return `https://wa.me/${number}?text=${encodeURIComponent(buildInvoiceWhatsAppMessage(invoice))}`;
+}
+
 export function buildOrderMessage(order: WhatsAppOrder) {
   const quantity = Math.max(1, Math.floor(order.quantity));
   const total = order.unitPrice * quantity;
