@@ -78,12 +78,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         url: productUrl,
         mainEntityOfPage: productUrl,
         image: getProductImages(product).map((image) => absoluteUrl(image)),
-        description: product.shortDescription,
+        description: product.seoDescription?.trim() || product.description,
         brand: { "@type": "Brand", name: siteConfig.shortBrand },
         offers: {
           "@type": "Offer",
           priceCurrency: "IDR",
-          price: product.price,
+          price: String(product.price),
           availability: product.available
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",

@@ -1,12 +1,18 @@
-import { getPrimaryProductImage, isSearchIndexableProduct, type Product } from "@/data/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
+import { homeFaqs } from "./FAQ";
 
-export default function JsonLd({ products }: { products: Product[] }) {
+export default function JsonLd() {
   const floristId = `${siteConfig.siteUrl}/#florist`;
-  const indexableProducts = products.filter(isSearchIndexableProduct);
   const data = {
     "@context": "https://schema.org",
     "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${siteConfig.siteUrl}/#website`,
+        url: siteConfig.siteUrl,
+        name: siteConfig.brand,
+        inLanguage: "id-ID",
+      },
       {
         "@type": ["Florist", "LocalBusiness"],
         "@id": floristId,
@@ -29,19 +35,12 @@ export default function JsonLd({ products }: { products: Product[] }) {
         sameAs: siteConfig.instagram ? [siteConfig.instagram] : undefined,
       },
       {
-        "@type": "ItemList",
-        "@id": `${siteConfig.siteUrl}/#catalog`,
-        name: `Katalog ${siteConfig.brand}`,
-        numberOfItems: indexableProducts.length,
-        itemListElement: indexableProducts.map((product, index) => ({
-          "@type": "ListItem",
-          position: index + 1,
-          item: {
-            "@type": "Product",
-            name: product.name,
-            url: absoluteUrl(`/produk/${product.slug}/`),
-            image: absoluteUrl(getPrimaryProductImage(product)),
-          },
+        "@type": "FAQPage",
+        "@id": `${siteConfig.siteUrl}/#faq`,
+        mainEntity: homeFaqs.slice(0, 3).map(([name, text]) => ({
+          "@type": "Question",
+          name,
+          acceptedAnswer: { "@type": "Answer", text },
         })),
       },
     ],
