@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { createClient } from "@supabase/supabase-js";
 import {
   products as fallbackProducts,
@@ -60,7 +61,7 @@ function toProduct(row: ProductWithImages): Product {
   };
 }
 
-const loadProducts = cache(async (): Promise<Product[]> => {
+async function fetchProducts(): Promise<Product[]> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -92,7 +93,14 @@ const loadProducts = cache(async (): Promise<Product[]> => {
     logSupabaseError("products.fetch-public", error);
     return developmentFallback();
   }
+}
+
+const getCachedProducts = unstable_cache(fetchProducts, ["public-products-v1"], {
+  revalidate: 30,
+  tags: ["public-products"],
 });
+
+const loadProducts = cache(async (): Promise<Product[]> => getCachedProducts());
 
 function isPublicProduct(product: Product) {
   return !/(?:^|[\s_-])(test|testing|dummy|sample|contoh)(?:$|[\s_-])/i.test(
@@ -119,7 +127,7 @@ export async function getProductsByCategory(category: string) {
   return (await loadProducts()).filter((product) => product.category === category);
 }
 
-export async function getActiveCategories(): Promise<string[]> {
+async function fetchActiveCategories(): Promise<string[]> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -143,6 +151,15 @@ export async function getActiveCategories(): Promise<string[]> {
     logSupabaseError("categories.fetch-public", error);
     return developmentFallbackCategories();
   }
+}
+
+const getCachedActiveCategories = unstable_cache(fetchActiveCategories, ["public-categories-v1"], {
+  revalidate: 30,
+  tags: ["public-categories"],
+});
+
+export async function getActiveCategories(): Promise<string[]> {
+  return getCachedActiveCategories();
 }
 
 function developmentFallbackCategories(): string[] {

@@ -293,6 +293,13 @@ img{display:block;max-width:100%}
 @media (max-width:820px){.livingFlowerPetal{box-shadow:inset 6px 6px 12px rgba(255,255,255,.3),inset -7px -6px 12px rgba(109,49,82,.08),0 8px 17px rgba(146,66,107,.09)}.livingFlowerPetal::before{animation-duration:6.5s}.livingFlowerHighlight{animation-duration:6s}}
 @media (prefers-reduced-motion:reduce){.livingLiquidStage,.livingFlowerStage{display:none!important}.livingLogoStage{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}}
 
+@media (max-width:820px){
+  .livingBloomArt{contain:layout paint}
+  .livingLiquidCore,.livingLiquidSwirl,.livingLiquidRim,.livingLiquidHighlight,.livingFlowerPetal,.livingFlowerCore,.livingFlowerHighlight,.livingLogoFlow,.livingLogoShine{animation-duration:12s}
+}
+
+.homeCategories,.categoryScroller{contain:content}
+
 /* Clarity pass: continuous 8.5s shape handoff with no empty/fade phase. */
 .livingLiquidStage,.livingFlowerStage,.livingLogoStage{opacity:1;filter:none;animation-duration:8.5s}
 .livingFlowerStage{animation:none}

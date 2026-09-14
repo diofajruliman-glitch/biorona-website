@@ -24,7 +24,8 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
           images={[activeImage]}
           sizes="(max-width: 560px) calc(100vw - 24px), (max-width: 820px) calc(100vw - 28px), (max-width: 1040px) 54vw, 670px"
           alt={alt}
-          loading={activeIndex === 0 ? "eager" : undefined}
+          loading={activeIndex === 0 ? "eager" : "lazy"}
+          fetchPriority={activeIndex === 0 ? "high" : "low"}
         />
       </div>
       {galleryImages.length > 1 && (
@@ -38,7 +39,7 @@ export default function ProductGallery({ images, alt }: ProductGalleryProps) {
               aria-pressed={index === activeIndex}
               onClick={() => setActiveIndex(index)}
             >
-              <ProductImage images={[image]} sizes="(max-width: 560px) 54px, 66px" alt={`${alt}, foto ${index + 1}`} />
+              <ProductImage images={[image]} sizes="(max-width: 560px) 54px, 66px" alt={`${alt}, foto ${index + 1}`} loading="lazy" fetchPriority="low" />
             </button>
           ))}
         </div>
