@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
+import CategoryCards from "./CategoryCards";
 
 const services = [
   { title: "Buket Bunga", href: "/buket-bunga-bogor/", description: "Bouquet untuk wisuda, ulang tahun, anniversary, hadiah, dan berbagai momen spesial." },
@@ -24,14 +24,7 @@ export default function LocalFlorist() {
             <p>Biorona melayani kebutuhan bunga untuk wisuda, ulang tahun, anniversary, grand opening, pernikahan, ucapan selamat, duka cita, hadiah pasangan, keluarga, sahabat, dan kebutuhan lainnya. Pemesanan dapat dikonsultasikan berdasarkan warna, ukuran, tema, ucapan, serta budget.</p>
             <p>Pickup tersedia di Cibinong dan delivery dapat dikonsultasikan untuk area Cibinong, Bogor, dan sekitarnya sesuai ketersediaan.</p>
           </div>
-          <div className="localServiceGrid" aria-label="Layanan florist Biorona">
-            {services.map((service) => (
-              <article className="localServiceCard" key={service.title}>
-                <h3><Link href={service.href}>{service.title}</Link></h3>
-                <p>{service.description}</p>
-              </article>
-            ))}
-          </div>
+          <CategoryCards categories={services} />
           <div className="localFloristCtas">
             <a className="primaryButton" href={waUrl("Halo Biorona 🌷 Saya ingin memesan bunga dan berkonsultasi dengan florist Biorona.")} target="_blank" rel="noreferrer">
               <WhatsAppIcon size={19} /> Pesan Bunga via WhatsApp

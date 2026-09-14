@@ -3,6 +3,9 @@ import type { Product } from "@/data/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { waUrl } from "@/lib/whatsapp";
 import ProductCard from "./ProductCard";
+import CategoryCards from "./CategoryCards";
+import InstagramSection from "./InstagramSection";
+import LocationSection from "./LocationSection";
 import { ArrowIcon, SparkleIcon, WhatsAppIcon } from "./Icons";
 import { floristId, floristSchema, serializeJsonLd, websiteId, websiteSchema } from "@/lib/structured-data";
 
@@ -63,6 +66,12 @@ const copy = {
   },
 } as const;
 
+const localCategories = [
+  { title: "Buket Bunga Bogor", href: "/buket-bunga-bogor/", description: "Bouquet untuk wisuda, ulang tahun, anniversary, hadiah, dan momen personal." },
+  { title: "Standing Flower Bogor", href: "/standing-flower-bogor/", description: "Rangkaian standing flower untuk grand opening, pernikahan, ucapan, dan acara." },
+  { title: "Bunga Ucapan Bogor", href: "/bunga-ucapan-bogor/", description: "Rangkaian bunga ucapan dengan pesan, warna, dan kebutuhan acara yang dapat dikonsultasikan." },
+] as const;
+
 export default function LocalLandingPage({ area, products }: { area: Area; products: Product[] }) {
   const page = copy[area];
   const chosen = products.slice(0, 3);
@@ -81,9 +90,8 @@ export default function LocalLandingPage({ area, products }: { area: Area; produ
     ],
   };
 
-  return <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
-    <main className="localLanding">
+  return <main className="localLanding">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
       <section className="localLandingHero">
         <div className="container localLandingHeroGrid">
           <div><span className="kicker"><SparkleIcon size={16}/>{page.eyebrow}</span><h1>{page.h1}</h1><p>{page.intro[0]}</p><div className="heroCtas"><a className="primaryButton" href={waUrl(`Halo Biorona 🌷 Saya ingin memesan bunga untuk area ${area}.`)} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Pesan via WhatsApp</a><Link className="secondaryGlassButton glassSurface" href="/katalog/">Lihat katalog <ArrowIcon size={18}/></Link></div></div>
@@ -95,12 +103,13 @@ export default function LocalLandingPage({ area, products }: { area: Area; produ
         <section aria-labelledby="layanan-title"><h2 id="layanan-title">Rangkaian bunga untuk kebutuhan personal dan acara</h2><p>{page.intro[1]}</p><div className="localLandingServices">{page.services.map(([title, description]) => <article className="glassSurface" key={title}><h3>{title}</h3><p>{description}</p></article>)}</div></section>
         <section className="localLandingSplit" aria-labelledby="keunggulan-title"><div><h2 id="keunggulan-title">Mengapa memilih Biorona Florist?</h2><p>{page.strengths}</p></div><div><h2>Area pickup dan pengiriman</h2><p>{page.delivery}</p></div></section>
         <section aria-labelledby="panduan-title"><h2 id="panduan-title">Panduan memilih dan menyiapkan pesanan</h2>{page.guidance.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</section>
-        <nav className="localLandingOrder glassSurface" aria-label="Kategori bunga Biorona"><div><span className="kicker">Jelajahi berdasarkan kebutuhan</span><h2>{area === "Cibinong" ? "Koleksi bunga untuk Cibinong" : "Koleksi bunga di Bogor"}</h2><p>{area === "Cibinong" ? <><Link href="/buket-bunga-bogor/">Pilihan buket bunga</Link> · <Link href="/standing-flower-bogor/">Standing flower</Link> · <Link href="/bunga-ucapan-bogor/">Bunga ucapan</Link> · <Link href="/katalog/">flower box dan rangkaian custom</Link></> : <><Link href="/buket-bunga-bogor/">Buket bunga Bogor</Link> · <Link href="/standing-flower-bogor/">Standing flower Bogor</Link> · <Link href="/bunga-ucapan-bogor/">Bunga ucapan Bogor</Link></>}</p></div><Link className="secondaryGlassButton" href="/katalog/">Lihat katalog <ArrowIcon size={18}/></Link></nav>
+        <section className="localLandingCategories" aria-labelledby="category-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Jelajahi berdasarkan kebutuhan</span><h2 id="category-title">{area === "Cibinong" ? "Koleksi bunga untuk Cibinong" : "Koleksi bunga di Bogor"}</h2></div><p>{area === "Cibinong" ? "Pilih rangkaian untuk pickup dari Cibinong atau konsultasikan delivery lokal sesuai alamat tujuan." : "Pilih jenis rangkaian sesuai momen, lalu konsultasikan cakupan dan jadwal delivery ke area Bogor."}</p></div><CategoryCards categories={localCategories} label={`Kategori bunga untuk ${area}`} /><div className="catalogAllCta"><Link className="secondaryGlassButton glassSurface" href="/katalog/">Lihat semua koleksi <ArrowIcon size={18}/></Link></div></section>
         <section className="localLandingOrder glassSurface" aria-labelledby="cara-order-title"><div><span className="kicker">Langsung, jelas, dan personal</span><h2 id="cara-order-title">Cara order bunga melalui WhatsApp</h2><p>{page.order}</p></div><a className="primaryButton" href={waUrl(`Halo Biorona 🌷 Saya ingin konsultasi pesanan bunga di ${area}.`)} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Mulai konsultasi</a></section>
-        {chosen.length > 0 && <section aria-labelledby="produk-pilihan-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Dari katalog aktif</span><h2 id="produk-pilihan-title">Produk pilihan Biorona</h2></div><p>Lihat detail, harga, dan opsi pemesanan pada setiap produk.</p></div><div className="productGrid">{chosen.map((product) => <ProductCard product={product} key={product.slug}/>)}</div><p className="localLandingMore"><Link href="/katalog/">Jelajahi seluruh katalog bunga Biorona <ArrowIcon size={17}/></Link></p></section>}
+        {chosen.length > 0 && <section aria-labelledby="produk-pilihan-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Dari katalog aktif</span><h2 id="produk-pilihan-title">Produk pilihan Biorona</h2></div><p>Lihat detail, harga, dan opsi pemesanan pada setiap produk.</p></div><div className="productGrid">{chosen.map((product) => <ProductCard product={product} key={product.slug}/>)}</div><div className="catalogAllCta"><Link className="secondaryGlassButton glassSurface" href="/katalog/">Lihat semua koleksi <ArrowIcon size={18}/></Link></div></section>}
         <section className="localLandingFaq" aria-labelledby="local-faq-title"><div><span className="kicker">Pertanyaan umum</span><h2 id="local-faq-title">Sebelum memesan bunga</h2></div><div className="faqList">{page.faqs.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div></section>
         <section className="localLandingFinal"><h2>Siapkan bunga untuk momen Anda bersama Biorona</h2><p>Pilih koleksi yang tersedia atau ceritakan kebutuhan Anda. Tim Biorona akan membantu menyiapkan opsi yang sesuai untuk area {area} dan sekitarnya.</p><a className="primaryButton" href={waUrl(`Halo Biorona 🌷 Saya ingin memesan bunga untuk area ${area}.`)} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Pesan bunga sekarang</a></section>
       </div>
-    </main>
-  </>;
+      <LocationSection />
+      <InstagramSection />
+    </main>;
 }
