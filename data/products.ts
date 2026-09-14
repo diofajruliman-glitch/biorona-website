@@ -157,7 +157,7 @@ export function isSearchIndexableProduct(product: Product) {
 
 export function getProductImageAlt(product: Product) {
   const altText = product.altText.trim();
-  return altText && !genericImageAltPattern.test(altText)
+  return altText && altText.toLowerCase().includes(product.name.trim().toLowerCase()) && !genericImageAltPattern.test(altText)
     ? altText
-    : `${product.name} dari Biorona Florist`;
+    : `${product.name} ${product.category} dari Biorona Florist`;
 }

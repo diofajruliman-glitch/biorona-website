@@ -9,13 +9,14 @@ import {
   isSearchIndexableProduct,
 } from "@/data/products";
 import { getProductBySlug, getProducts } from "@/lib/products";
-import { primarySeoCategory, productSeoDescription, relatedProducts } from "@/lib/product-seo";
+import { primarySeoCategory, productMetadataDescription, productSeoDescription, productSeoTitle, relatedProducts } from "@/lib/product-seo";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
 import ProductGallery from "@/components/ProductGallery";
 import ProductOrderForm from "@/components/ProductOrderForm";
 import ProductCard from "@/components/ProductCard";
+import ProductAuthority from "@/components/ProductAuthority";
 import { CheckIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { floristId, floristSchema, serializeJsonLd } from "@/lib/structured-data";
@@ -31,10 +32,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const canonical = absoluteUrl(`/produk/${product.slug}/`);
   const image = getPrimaryProductImage(product);
   const imageAlt = getProductImageAlt(product);
-  const productDescription = productSeoDescription(product);
-  const description = `${productDescription} Pesan dari ${siteConfig.brand} di ${siteConfig.location.city}, ${siteConfig.location.region}.`;
+  const description = productMetadataDescription(product);
 
-  const seoTitle = `${product.name} | ${product.category} - Biorona Florist`;
+  const seoTitle = productSeoTitle(product);
   return {
     title: { absolute: seoTitle },
     description,
@@ -137,19 +137,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               {product.available && <CheckIcon size={17} />}
               {status}{product.preorder && product.available ? " · Konfirmasi estimasi melalui WhatsApp" : ""}
             </div>
-            <div className="productMeta">
-              <div><b>Pilihan warna</b><span>{product.colors.join(" · ")}</span></div>
-              <div><b>Cocok untuk</b><span>{product.occasions.join(" · ")}</span></div>
-            </div>
           </div>
         </div>
+        <ProductAuthority product={product} categoryHref={categoryHref} categoryName={categoryName} status={status} />
         <div className="container"><ProductOrderForm product={product} /></div>
         {suggestions.length > 0 && <section className="container productRelated" aria-labelledby="related-products-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Pilihan Biorona</span><h2 id="related-products-title">Produk terkait</h2></div><p>Rekomendasi berdasarkan kategori, momen, dan kisaran harga terdekat.</p></div><div className="productGrid">{suggestions.map((suggestion) => <ProductCard product={suggestion} key={suggestion.slug}/>)}</div><p className="localLandingMore"><Link href={categoryHref}>Lihat {categoryName} <span aria-hidden="true">→</span></Link></p></section>}
-        <nav className="container localLandingMore" aria-label="Jelajahi layanan bunga lokal">
-          <Link href="/toko-bunga-cibinong/">Biorona Florist di Cibinong</Link><span aria-hidden="true"> · </span>
-          <Link href="/toko-bunga-bogor/">Layanan florist Bogor</Link><span aria-hidden="true"> · </span>
-          <Link href="/katalog/">Semua produk</Link>
-        </nav>
       </main>
       <Footer />
     </>
