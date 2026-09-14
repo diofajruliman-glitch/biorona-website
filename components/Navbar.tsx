@@ -2,43 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import Logo from "./Logo";
 import { MenuIcon, SearchIcon, WhatsAppIcon, XIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [compact, setCompact] = useState(false);
-
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (!hash) {
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    let attempts = 0;
-    let timer = 0;
-    const scrollToHash = () => {
-      const target = document.getElementById(hash.slice(1));
-      if (target || attempts >= 20) {
-        if (target) {
-          window.scrollTo(0, Math.max(0, target.getBoundingClientRect().top + window.scrollY - 108));
-          if (attempts < 20) {
-            attempts += 1;
-            timer = window.setTimeout(scrollToHash, 50);
-          }
-        }
-        return;
-      }
-      attempts += 1;
-      timer = window.setTimeout(scrollToHash, 50);
-    };
-    scrollToHash();
-    return () => window.clearTimeout(timer);
-  }, [pathname]);
 
   useEffect(() => {
     let animationFrame = 0;
@@ -69,7 +39,7 @@ export default function Navbar() {
   }, [open]);
 
   const nav = [
-    ["Katalog", "/katalog"],
+    ["Katalog", "/katalog/"],
     ["Bogor", "/toko-bunga-bogor/"],
     ["Cibinong", "/toko-bunga-cibinong/"],
     ["Custom", "/#custom"],

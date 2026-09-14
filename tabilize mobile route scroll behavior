@@ -1,0 +1,66 @@
+warning: in the working copy of 'components/Navbar.tsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/app/loading.tsx b/app/loading.tsx[m
+[1mdeleted file mode 100644[m
+[1mindex cdca80a..0000000[m
+[1m--- a/app/loading.tsx[m
+[1m+++ /dev/null[m
+[36m@@ -1 +0,0 @@[m
+[31m-export default function Loading(){return <main className="container loadingShell"><div className="emptyState" role="status">Memuat Biorona…</div></main>}[m
+[1mdiff --git a/components/Navbar.tsx b/components/Navbar.tsx[m
+[1mindex 57028f8..cabc361 100644[m
+[1m--- a/components/Navbar.tsx[m
+[1m+++ b/components/Navbar.tsx[m
+[36m@@ -2,44 +2,14 @@[m
+ [m
+ import Link from "next/link";[m
+ import { useEffect, useState } from "react";[m
+[31m-import { usePathname } from "next/navigation";[m
+ import Logo from "./Logo";[m
+ import { MenuIcon, SearchIcon, WhatsAppIcon, XIcon } from "./Icons";[m
+ import { waUrl } from "@/lib/whatsapp";[m
+ [m
+ export default function Navbar() {[m
+[31m-  const pathname = usePathname();[m
+   const [open, setOpen] = useState(false);[m
+   const [compact, setCompact] = useState(false);[m
+ [m
+[31m-  useEffect(() => {[m
+[31m-    const hash = window.location.hash;[m
+[31m-    if (!hash) {[m
+[31m-      window.scrollTo(0, 0);[m
+[31m-      return;[m
+[31m-    }[m
+[31m-[m
+[31m-    let attempts = 0;[m
+[31m-    let timer = 0;[m
+[31m-    const scrollToHash = () => {[m
+[31m-      const target = document.getElementById(hash.slice(1));[m
+[31m-      if (target || attempts >= 20) {[m
+[31m-        if (target) {[m
+[31m-          window.scrollTo(0, Math.max(0, target.getBoundingClientRect().top + window.scrollY - 108));[m
+[31m-          if (attempts < 20) {[m
+[31m-            attempts += 1;[m
+[31m-            timer = window.setTimeout(scrollToHash, 50);[m
+[31m-          }[m
+[31m-        }[m
+[31m-        return;[m
+[31m-      }[m
+[31m-      attempts += 1;[m
+[31m-      timer = window.setTimeout(scrollToHash, 50);[m
+[31m-    };[m
+[31m-    scrollToHash();[m
+[31m-    return () => window.clearTimeout(timer);[m
+[31m-  }, [pathname]);[m
+[31m-[m
+   useEffect(() => {[m
+     let animationFrame = 0;[m
+     const updateCompactState = () => {[m
+[36m@@ -69,7 +39,7 @@[m [mexport default function Navbar() {[m
+   }, [open]);[m
+ [m
+   const nav = [[m
+[31m-    ["Katalog", "/katalog"],[m
+[32m+[m[32m    ["Katalog", "/katalog/"],[m
+     ["Bogor", "/toko-bunga-bogor/"],[m
+     ["Cibinong", "/toko-bunga-cibinong/"],[m
+     ["Custom", "/#custom"],[m
