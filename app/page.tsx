@@ -66,5 +66,5 @@ export default async function Home() {
     unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE;
   }
 
-  return <><JsonLd/><Navbar/><main><Hero/><Reveal><LocalFlorist/></Reveal><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal><Reveal><LocationSection/></Reveal><Reveal><InstagramSection/></Reveal></main><Footer/><MobileOrderBar/></>;
+  return <><JsonLd/><Navbar/><main><Hero/><Reveal><LocalFlorist/></Reveal><Reveal><Catalog variant="home" products={products} unavailableMessage={unavailableMessage} categories={categories}/></Reveal><Reveal><Trust/></Reveal><Reveal><CustomBouquet variant="cta"/></Reveal><Reveal><FAQ limit={3}/></Reveal><Reveal><LocationSection/></Reveal><Reveal><InstagramSection/></Reveal></main><MobileOrderBar avoidHeroCtas/><Footer/></>;
 }

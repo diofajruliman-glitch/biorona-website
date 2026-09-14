@@ -17,5 +17,5 @@ export const metadata: Metadata = { title: { absolute: title }, description, alt
 export default async function BungaUcapanBogorPage() {
   const products = productsForSeoCategory(await getProducts(), "ucapan");
   if (!products.length) notFound();
-  return <><Navbar/><CategorySeoPage categoryKey="ucapan" products={products}/><Footer/><MobileOrderBar/></>;
+  return <><Navbar/><CategorySeoPage categoryKey="ucapan" products={products}/><MobileOrderBar/><Footer/></>;
 }

@@ -17,5 +17,5 @@ export const metadata: Metadata = { title: { absolute: title }, description, alt
 export default async function StandingFlowerBogorPage() {
   const products = productsForSeoCategory(await getProducts(), "standing");
   if (!products.length) notFound();
-  return <><Navbar/><CategorySeoPage categoryKey="standing" products={products}/><Footer/><MobileOrderBar/></>;
+  return <><Navbar/><CategorySeoPage categoryKey="standing" products={products}/><MobileOrderBar/><Footer/></>;
 }

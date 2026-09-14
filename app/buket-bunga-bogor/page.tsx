@@ -17,5 +17,5 @@ export const metadata: Metadata = { title: { absolute: title }, description, alt
 export default async function BuketBungaBogorPage() {
   const products = productsForSeoCategory(await getProducts(), "buket");
   if (!products.length) notFound();
-  return <><Navbar/><CategorySeoPage categoryKey="buket" products={products}/><Footer/><MobileOrderBar/></>;
+  return <><Navbar/><CategorySeoPage categoryKey="buket" products={products}/><MobileOrderBar/><Footer/></>;
 }
