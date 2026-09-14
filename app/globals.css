@@ -314,6 +314,30 @@ img{display:block;max-width:100%}
 @media (max-width:900px){.localLandingHeroGrid{grid-template-columns:1fr;gap:35px}.localLandingOrb{min-height:270px}.localLandingServices,.localLandingCategories .localServiceGrid{grid-template-columns:1fr}.localLandingSplit,.localLandingFaq{grid-template-columns:1fr;gap:34px}.localLandingOrder{align-items:flex-start;flex-direction:column}.localLandingOrder .primaryButton{width:100%}}
 @media (max-width:560px){.localLandingHero{padding:132px 0 64px}.localLandingHero h1{font-size:clamp(3rem,14vw,4.3rem)}.localLandingOrb{min-height:220px;border-radius:34px}.localLandingBody{gap:62px;padding-bottom:74px}.localLandingServices article{padding:23px}.localLandingOrder{padding:28px 22px;border-radius:26px}.localLandingFinal{padding:44px 20px}.localLandingHero .heroCtas{align-items:stretch}.localLandingHero .heroCtas a{width:100%}}
 
+/* Local landing pages share the homepage hero material without changing homepage layout. */
+.localLandingHero{isolation:isolate;overflow:hidden;min-height:0;padding:150px 0 74px;background:transparent}
+.localLandingHeroBackdrop{position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 78% 32%,rgba(248,187,207,.3),transparent 28%),radial-gradient(circle at 8% 76%,rgba(246,209,219,.32),transparent 30%),linear-gradient(180deg,#fff9fb 0%,#fffefe 100%)}
+.localLandingHeroGrid{position:relative;grid-template-columns:minmax(0,1fr) minmax(360px,.78fr);gap:54px;min-height:560px}
+.localLandingHeroCopy{position:relative;z-index:2;align-self:center;padding:24px 0 30px}
+.localLandingHeroCopy h1{max-width:760px;margin:20px 0 24px;font-size:clamp(3.1rem,5.4vw,5.5rem);line-height:.96}
+.localLandingHeroCopy p{max-width:680px}
+.localLandingHeroCopy .heroCtas{margin-top:28px}
+.localLandingOrb{position:relative;min-height:500px;border-radius:44px 44px 108px 44px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(239,188,210,.24));box-shadow:inset 18px 18px 36px rgba(255,255,255,.5),0 30px 70px rgba(92,48,67,.14)}
+.localLandingOrb::after{content:"";position:absolute;inset:9%;border:1px solid rgba(255,255,255,.38);border-radius:48% 52% 45% 55%/54% 43% 57% 46%;pointer-events:none}
+.localLandingOrb .livingBloom{inset:4%;opacity:1;transform:none;animation:none}
+.localLandingOrb .livingBloomArt{width:min(100%,500px)}
+.localLandingBody>.sectionReveal{min-width:0}
+.localLandingBody>.sectionReveal>section>h2,.localLandingBody>.sectionReveal>section>.sectionHeading h2,.localLandingBody>section>h2,.localLandingSplit h2,.localLandingOrder h2,.localLandingFaq h2,.localLandingFinal h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.25rem,4vw,4rem);font-weight:500;line-height:1.05;letter-spacing:-.04em;margin:0 0 20px}
+.localLandingBody>.sectionReveal>section>p{max-width:900px}
+.localLandingBody>.sectionReveal>.localLandingOrder{display:flex}
+.localLandingHero .heroEntrance,.localLandingHero h1,.localLandingHero p,.localLandingHero .heroCtas{animation:heroEnter .6s cubic-bezier(.22,1,.36,1) both}
+.localLandingHero h1{animation-delay:.08s}.localLandingHero p{animation-delay:.16s}.localLandingHero .heroCtas{animation-delay:.24s}
+.localLandingServices article,.localServiceCard{transition:transform .22s ease,box-shadow .22s ease,background .22s ease}
+.localLandingServices article:hover,.localServiceCard:hover{transform:translateY(-4px);box-shadow:0 24px 52px rgba(91,52,67,.12);background:rgba(255,255,255,.64)}
+@media (max-width:900px){.localLandingHero{padding-top:126px}.localLandingHeroGrid{grid-template-columns:1fr;gap:24px;min-height:0}.localLandingHeroCopy{padding-bottom:0}.localLandingOrb{min-height:390px}.localLandingOrb .livingBloomArt{width:min(100%,430px)}}
+@media (max-width:560px){.localLandingHero{padding:112px 0 52px}.localLandingHeroCopy h1{font-size:clamp(2.65rem,12vw,3.45rem);margin:16px 0 19px}.localLandingHeroCopy p{font-size:.94rem;line-height:1.62}.localLandingHeroCopy .heroCtas{margin-top:22px;display:grid;grid-template-columns:1fr 1fr}.localLandingHeroCopy .heroCtas a{width:auto;min-width:0;padding-inline:10px;font-size:.8rem}.localLandingOrb{min-height:270px;border-radius:30px 30px 70px 30px}.localLandingOrb .livingBloom{inset:0 3%}.localLandingOrb .livingBloomArt{width:min(100%,330px)}.localLandingBody{gap:62px}.localLandingBody>.sectionReveal>section>h2,.localLandingBody>.sectionReveal>section>.sectionHeading h2,.localLandingBody>section>h2,.localLandingSplit h2,.localLandingOrder h2,.localLandingFaq h2,.localLandingFinal h2{font-size:2.45rem}.localLandingServices article{padding:23px}}
+@media (prefers-reduced-motion:reduce){.localLandingHero .heroEntrance,.localLandingHero h1,.localLandingHero p,.localLandingHero .heroCtas{animation:none}.localLandingOrb .livingBloom{opacity:1}.localLandingOrb .livingLiquidStage,.localLandingOrb .livingFlowerStage{display:none!important}.localLandingOrb .livingLogoStage{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}.localLandingServices article:hover,.localServiceCard:hover{transform:none}}
+
 /* Phase 2 responsive guardrail: preserve content parity and mobile conversion. */
 @media (max-width:560px){.heroVisual{min-height:320px}.livingBloom{inset:0 4%}.livingBloomArt{width:min(100%,320px)}.productGrid{grid-template-columns:1fr;gap:18px}.productCard{padding:9px}.productInfo{padding:16px 9px 9px}.productInfo h3{font-size:1.32rem}.productInfo p{display:block;min-height:0;margin:9px 0 14px}.productActions{gap:10px}.textButton,.quickWa{font-size:.82rem}.quickWa svg{display:block}.localLandingBody{padding-bottom:calc(100px + env(safe-area-inset-bottom))}}
 @media (max-width:560px){.productAuthority{padding:21px 16px;border-radius:24px}.productAuthority dl{grid-template-columns:1fr}.productAuthority h2{font-size:1.75rem}}
