@@ -441,15 +441,22 @@ img{display:block;max-width:100%}
 @media (max-width:560px){
   .catalogHeroVisual{min-height:100px}
   .catalogHeroVisual .livingBloomArt{width:min(100%,180px)}
-  .catalogPageSection .productGrid{grid-template-columns:1fr;gap:18px}
-  .catalogPageSection .productCard{padding:9px;border-radius:24px}
-  .catalogPageSection .productImageWrap{aspect-ratio:1/1.02;border-radius:18px}
-  .catalogPageSection .productInfo{display:block;padding:16px 9px 9px}
-  .catalogPageSection .productInfo>div:first-child{display:block}
-  .catalogPageSection .productInfo>p{display:block;min-height:0;margin:9px 0 14px}
-  .catalogPageSection .productInfo h3{font-size:1.32rem}
-  .catalogPageSection .productActions{display:flex;gap:10px;margin-top:0}
-  .catalogPageSection .textButton,.catalogPageSection .quickWa{font-size:.82rem}
-  .catalogPageSection .quickWa{height:44px;padding-inline:15px}
-  .catalogPageSection .quickWa svg{display:block}
+  .catalogPageSection .productGrid,.localLanding .productGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .catalogPageSection .productCard,.localLanding .productCard{min-width:0;padding:5px;border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 8px 22px rgba(91,52,67,.06)}
+  .catalogPageSection .productImageWrap,.localLanding .productImageWrap{aspect-ratio:1/1;border-radius:16px}
+  .catalogPageSection .productInfo,.localLanding .productInfo{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title title" "meta meta" "price action";align-items:center;column-gap:5px;row-gap:3px;min-width:0;padding:10px 5px 5px}
+  .catalogPageSection .productInfo>div:first-child,.localLanding .productInfo>div:first-child{display:contents}
+  .catalogPageSection .productLabelRow,.localLanding .productLabelRow{grid-area:meta;display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;overflow:hidden}
+  .catalogPageSection .productCategory,.localLanding .productCategory{display:block;min-width:0;overflow:hidden;color:var(--muted);font-size:.6rem;font-weight:700;line-height:1.25;letter-spacing:.01em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap;opacity:.86}
+  .catalogPageSection .productStatus,.localLanding .productStatus{display:block;flex:0 0 auto;font-size:.58rem;line-height:1.2;white-space:nowrap}
+  .catalogPageSection .productInfo h3,.localLanding .productInfo h3{grid-area:title;min-width:0;height:2.42em;margin:0;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;font-size:.88rem;font-weight:700;line-height:1.21;letter-spacing:-.012em}
+  .catalogPageSection .productInfo h3 a,.localLanding .productInfo h3 a{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2}
+  .catalogPageSection .price,.localLanding .price{grid-area:price;display:block;min-width:0;margin-top:5px;color:var(--ink);font-size:.95rem;font-weight:800;line-height:1.2;white-space:nowrap}
+  .catalogPageSection .productInfo>p,.localLanding .productInfo>p{display:-webkit-box;grid-column:1/-1;min-height:0;margin:6px 0 4px;overflow:hidden;color:var(--muted);font-size:.72rem;line-height:1.35;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2}
+  .catalogPageSection .productActions,.localLanding .productActions{grid-area:action;display:flex;justify-content:flex-end;gap:5px;margin-top:5px}
+  .catalogPageSection .textButton,.localLanding .textButton{display:flex;height:40px;min-width:40px;padding:0 5px;border-radius:12px;font-size:.68rem}
+  .catalogPageSection .textButton svg,.localLanding .textButton svg{display:none}
+  .catalogPageSection .quickWa,.localLanding .quickWa{width:auto;min-width:40px;height:40px;padding:0 8px;border-radius:999px;background:rgba(217,87,132,.12);color:var(--rose-deep);font-size:.68rem;font-weight:800}
+  .catalogPageSection .quickWa svg,.localLanding .quickWa svg{display:block;width:15px;height:15px}
+  .catalogPageSection .quickWa.isDisabled,.localLanding .quickWa.isDisabled{min-width:0;padding-inline:6px;font-size:.56rem;text-align:center}
 }
