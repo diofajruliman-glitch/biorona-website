@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
+import { markNormalNavigation } from "./RouteScrollManager";
 
 export default function MobileOrderBar({ avoidHeroCtas = false }: { avoidHeroCtas?: boolean }) {
   const pathname = usePathname();
@@ -28,5 +29,5 @@ export default function MobileOrderBar({ avoidHeroCtas = false }: { avoidHeroCta
 
   const catalogHref = pathname === "/" ? "#katalog" : "/katalog/";
 
-  return <nav className={`mobileOrderBar glassSurface ${heroCtasVisible ? "isHeroCtaVisible" : ""}`} aria-label="Aksi cepat"><Link href={catalogHref}>Lihat katalog</Link><a className="mobileWa" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/> WhatsApp</a></nav>;
+  return <nav className={`mobileOrderBar glassSurface ${heroCtasVisible ? "isHeroCtaVisible" : ""}`} aria-label="Aksi cepat"><Link href={catalogHref} onClick={() => markNormalNavigation(catalogHref)}>Lihat katalog</Link><a className="mobileWa" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/> WhatsApp</a></nav>;
 }

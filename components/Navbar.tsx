@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Logo from "./Logo";
 import { MenuIcon, SearchIcon, WhatsAppIcon, XIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
+import { markNormalNavigation } from "./RouteScrollManager";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -52,17 +53,17 @@ export default function Navbar() {
       <div className="navGlass glassSurface">
         <Logo />
         <nav className="desktopNav" aria-label="Navigasi utama">
-          {nav.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+          {nav.map(([label, href]) => <Link key={href} href={href} onClick={() => markNormalNavigation(href)}>{label}</Link>)}
         </nav>
         <div className="navActions">
-          <Link className="iconButton desktopOnly" href="/katalog/" aria-label="Cari produk"><SearchIcon /></Link>
+          <Link className="iconButton desktopOnly" href="/katalog/" aria-label="Cari produk" onClick={() => markNormalNavigation("/katalog/")}><SearchIcon /></Link>
           <a className="waButton waButtonSmall" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk Biorona.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/><span>Pesan via WhatsApp</span></a>
           <button className="iconButton mobileOnly" type="button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation" aria-label={open ? "Tutup menu" : "Buka menu"}>{open ? <XIcon/> : <MenuIcon/>}</button>
         </div>
       </div>
       {open && (
         <nav id="mobile-navigation" className="mobileMenu glassSurface" aria-label="Navigasi mobile">
-          {nav.map(([label, href]) => <Link key={href} href={href} onClick={() => setOpen(false)}>{label}</Link>)}
+          {nav.map(([label, href]) => <Link key={href} href={href} onClick={() => { markNormalNavigation(href); setOpen(false); }}>{label}</Link>)}
         </nav>
       )}
     </header>

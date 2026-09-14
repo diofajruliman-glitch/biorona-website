@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { siteConfig } from "@/data/site";
+import RouteScrollManager from "@/components/RouteScrollManager";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -45,5 +46,5 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="id"><body>{children}</body></html>;
+  return <html lang="id"><body><RouteScrollManager/>{children}</body></html>;
 }
