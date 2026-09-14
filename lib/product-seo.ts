@@ -77,6 +77,33 @@ export function relatedProducts(product: Product, products: Product[], limit = 4
 
 const genericDescriptionPattern = /(?:^|,\s*)rangkaian(?:\s+\w+)?\s+pilihan\s+untuk\s+momen\s+istimewa\.?$/i;
 const genericSeoDescriptionPattern = /^Pesan .+ untuk hadiah dan ucapan berkesan dengan layanan florist Biorona\.?$/i;
+const META_DESCRIPTION_LIMIT = 160;
+
+function limitMetaDescription(value: string) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= META_DESCRIPTION_LIMIT) return normalized;
+
+  const shortened = normalized.slice(0, META_DESCRIPTION_LIMIT - 1).replace(/\s+\S*$/, "").trim();
+  return `${shortened}.`;
+}
+
+function productAttributeDetails(product: Product) {
+  const colors = product.colors.map(formatProductAttribute).filter(Boolean).slice(0, 3);
+  const occasions = product.occasions.map(formatProductAttribute).filter(Boolean).slice(0, 3);
+  const details = [product.category];
+  if (colors.length) details.push(`warna ${colors.join(", ")}`);
+  if (occasions.length) details.push(`untuk ${occasions.join(", ")}`);
+  return details.join("; ");
+}
+
+function deterministicProductDescription(product: Product) {
+  return `${product.name}: ${productAttributeDetails(product)}. Lihat harga dan status pemesanan di Biorona Florist.`;
+}
+
+function referencesAnotherProduct(product: Product, value: string) {
+  const match = value.match(/^(.+?)\s+(?:dirancang|adalah|merupakan|menghadirkan)\b/i);
+  return Boolean(match && match[1].trim().toLowerCase() !== product.name.trim().toLowerCase());
+}
 
 export function formatProductAttribute(value: string) {
   return value.replace(/[-_]+/g, " ").trim();
@@ -84,23 +111,27 @@ export function formatProductAttribute(value: string) {
 
 export function productSeoDescription(product: Product) {
   const custom = product.seoDescription?.trim();
-  if (custom && !genericSeoDescriptionPattern.test(custom)) return custom;
+  if (custom && !genericSeoDescriptionPattern.test(custom) && !referencesAnotherProduct(product, custom)) return custom;
 
   const short = product.shortDescription.trim();
-  if (short && !genericDescriptionPattern.test(short)) return short;
+  if (short && !genericDescriptionPattern.test(short) && !referencesAnotherProduct(product, short)) return short;
 
-  const colors = product.colors.map(formatProductAttribute).filter(Boolean).slice(0, 3);
-  const occasions = product.occasions.map(formatProductAttribute).filter(Boolean).slice(0, 3);
-  const details = [product.category];
-  if (colors.length) details.push(`warna ${colors.join(", ")}`);
-  if (occasions.length) details.push(`untuk ${occasions.join(", ")}`);
+  return deterministicProductDescription(product);
+}
 
-  return `${product.name}: ${details.join("; ")}. Lihat harga dan status pemesanan di Biorona Florist.`;
+export function productDisplayDescription(product: Product) {
+  const description = product.description.trim();
+  if (description && !genericDescriptionPattern.test(description) && !referencesAnotherProduct(product, description)) return description;
+
+  const short = product.shortDescription.trim();
+  if (short && !genericDescriptionPattern.test(short) && !referencesAnotherProduct(product, short)) return short;
+
+  return deterministicProductDescription(product);
 }
 
 export function productMetadataDescription(product: Product) {
   const custom = product.seoDescription?.trim();
-  if (custom && custom.length <= 160 && !genericSeoDescriptionPattern.test(custom)) return custom;
+  if (custom && !genericSeoDescriptionPattern.test(custom) && !referencesAnotherProduct(product, custom)) return limitMetaDescription(custom);
 
   const colors = product.colors.map(formatProductAttribute).filter(Boolean).slice(0, 2);
   const occasions = product.occasions.map(formatProductAttribute).filter(Boolean).slice(0, 2);
@@ -109,5 +140,5 @@ export function productMetadataDescription(product: Product) {
     occasions.length ? `untuk ${occasions.join(", ")}` : "",
   ].filter(Boolean).join("; ");
 
-  return `${product.name}, ${product.category}${attributes ? `; ${attributes}` : ""}. Cek harga dan ketersediaan di Biorona Florist.`;
+  return limitMetaDescription(`${product.name}, ${product.category}${attributes ? `; ${attributes}` : ""}. Cek harga dan ketersediaan di Biorona Florist.`);
 }

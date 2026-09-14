@@ -9,7 +9,7 @@ import {
   isSearchIndexableProduct,
 } from "@/data/products";
 import { getProductBySlug, getProducts } from "@/lib/products";
-import { primarySeoCategory, productMetadataDescription, productSeoDescription, productSeoTitle, relatedProducts } from "@/lib/product-seo";
+import { primarySeoCategory, productDisplayDescription, productMetadataDescription, productSeoDescription, productSeoTitle, relatedProducts } from "@/lib/product-seo";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
@@ -132,7 +132,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <span className="kicker">{product.category}</span>
             <h1>{product.name}</h1>
             <strong className="productDetailPrice">{formattedPrice}</strong>
-            <p>{product.description}</p>
+            <p>{productDisplayDescription(product)}</p>
             <div className={`availabilityLine ${!product.available ? "isUnavailable" : ""}`}>
               {product.available && <CheckIcon size={17} />}
               {status}{product.preorder && product.available ? " · Konfirmasi estimasi melalui WhatsApp" : ""}
