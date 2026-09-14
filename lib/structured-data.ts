@@ -14,6 +14,16 @@ export function websiteSchema() {
 }
 
 export function floristSchema() {
+  const address: Record<string, string> = {
+    "@type": "PostalAddress",
+    addressLocality: siteConfig.location.city,
+    addressRegion: `${siteConfig.location.region}, ${siteConfig.location.province}`,
+    addressCountry: siteConfig.location.countryCode,
+  };
+
+  if (siteConfig.streetAddress) address.streetAddress = siteConfig.streetAddress;
+  if (siteConfig.postalCode) address.postalCode = siteConfig.postalCode;
+
   return {
     "@type": ["Florist", "LocalBusiness"],
     "@id": floristId,
@@ -23,12 +33,7 @@ export function floristSchema() {
     image: absoluteUrl(siteConfig.defaultImage),
     description: siteConfig.description,
     telephone: siteConfig.whatsapp ? `+${siteConfig.whatsapp}` : undefined,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: siteConfig.location.city,
-      addressRegion: `${siteConfig.location.region}, ${siteConfig.location.province}`,
-      addressCountry: siteConfig.location.countryCode,
-    },
+    address,
     geo: {
       "@type": "GeoCoordinates",
       latitude: siteConfig.location.coordinates.latitude,
