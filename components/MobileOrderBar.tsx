@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { WhatsAppIcon } from "./Icons";
 import { waUrl } from "@/lib/whatsapp";
 
 export default function MobileOrderBar({ avoidHeroCtas = false }: { avoidHeroCtas?: boolean }) {
+  const pathname = usePathname();
   const [heroCtasVisible, setHeroCtasVisible] = useState(avoidHeroCtas);
 
   useEffect(() => {
@@ -23,5 +26,7 @@ export default function MobileOrderBar({ avoidHeroCtas = false }: { avoidHeroCta
     return () => observer.disconnect();
   }, [avoidHeroCtas]);
 
-  return <nav className={`mobileOrderBar glassSurface ${heroCtasVisible ? "isHeroCtaVisible" : ""}`} aria-label="Aksi cepat"><a href="#katalog">Lihat katalog</a><a className="mobileWa" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/> WhatsApp</a></nav>;
+  const catalogHref = pathname === "/" ? "#katalog" : "/katalog/";
+
+  return <nav className={`mobileOrderBar glassSurface ${heroCtasVisible ? "isHeroCtaVisible" : ""}`} aria-label="Aksi cepat"><Link href={catalogHref}>Lihat katalog</Link><a className="mobileWa" href={waUrl("Halo Biorona 🌷 Saya ingin bertanya tentang produk.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={18}/> WhatsApp</a></nav>;
 }
