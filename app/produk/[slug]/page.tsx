@@ -17,7 +17,7 @@ import ProductGallery from "@/components/ProductGallery";
 import ProductOrderForm from "@/components/ProductOrderForm";
 import ProductCard from "@/components/ProductCard";
 import ProductAuthority from "@/components/ProductAuthority";
-import { CheckIcon } from "@/components/Icons";
+import { ArrowIcon, CheckIcon, WhatsAppIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { floristId, floristSchema, serializeJsonLd } from "@/lib/structured-data";
 
@@ -126,19 +126,29 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <Link href={categoryHref}>{categoryName}</Link><span aria-hidden="true">/</span>
           <span aria-current="page">{product.name}</span>
         </nav>
-        <div className="container productDetailGrid">
+        <section className="container productDetailGrid" aria-labelledby="product-title">
           <ProductGallery images={product.images} alt={imageAlt} />
-          <div className="productDetailCopy">
-            <span className="kicker">{product.category}</span>
-            <h1>{product.name}</h1>
-            <strong className="productDetailPrice">{formattedPrice}</strong>
-            <p>{productDisplayDescription(product)}</p>
-            <div className={`availabilityLine ${!product.available ? "isUnavailable" : ""}`}>
-              {product.available && <CheckIcon size={17} />}
-              {status}{product.preorder && product.available ? " · Konfirmasi estimasi melalui WhatsApp" : ""}
+          <div className="productDetailCopy glassSurface">
+            <div className="productDetailLabels">
+              <span className="kicker">{product.category}</span>
+              <span className={`productDetailStatus ${product.preorder ? "isPreorder" : ""} ${!product.available ? "isUnavailable" : ""}`}>
+                {product.available && <CheckIcon size={14} />}{status}
+              </span>
             </div>
+            <h1 id="product-title">{product.name}</h1>
+            <strong className="productDetailPrice">{formattedPrice}</strong>
+            <p className="productDetailDescription">{productDisplayDescription(product)}</p>
+            {product.preorder && product.available && <p className="productPreorderNote">Estimasi pengerjaan dikonfirmasi melalui WhatsApp.</p>}
+            {product.available ? (
+              <a className="primaryButton productHeroCta" href="#productOrderForm">
+                <WhatsAppIcon size={19} /> Pesan via WhatsApp <ArrowIcon size={17} />
+              </a>
+            ) : (
+              <Link className="secondaryGlassButton productHeroCta" href="/katalog/">Pilih produk lain <ArrowIcon size={17} /></Link>
+            )}
+            <small className="productCtaNote">Isi detail pesanan, lalu konfirmasi langsung dengan tim Biorona.</small>
           </div>
-        </div>
+        </section>
         <ProductAuthority product={product} categoryHref={categoryHref} categoryName={categoryName} status={status} />
         <div className="container"><ProductOrderForm product={product} /></div>
         {suggestions.length > 0 && <section className="container productRelated" aria-labelledby="related-products-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Pilihan Biorona</span><h2 id="related-products-title">Produk terkait</h2></div><p>Rekomendasi berdasarkan kategori, momen, dan kisaran harga terdekat.</p></div><div className="productGrid">{suggestions.map((suggestion) => <ProductCard product={suggestion} key={suggestion.slug}/>)}</div><p className="localLandingMore"><Link href={categoryHref}>Lihat {categoryName} <span aria-hidden="true">→</span></Link></p></section>}

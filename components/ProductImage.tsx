@@ -8,10 +8,10 @@ type ProductImageProps = {
   images?: readonly string[];
   alt: string;
   sizes: string;
-  priority?: boolean;
+  loading?: "eager";
 };
 
-export default function ProductImage({ images = [], alt, sizes, priority = false }: ProductImageProps) {
+export default function ProductImage({ images = [], alt, sizes, loading }: ProductImageProps) {
   const initialSource = images.find(Boolean) || FALLBACK_PRODUCT_IMAGE;
   const [source, setSource] = useState(initialSource);
 
@@ -21,7 +21,7 @@ export default function ProductImage({ images = [], alt, sizes, priority = false
       fill
       sizes={sizes}
       alt={alt}
-      priority={priority}
+      loading={loading}
       onError={() => {
         if (source !== FALLBACK_PRODUCT_IMAGE) setSource(FALLBACK_PRODUCT_IMAGE);
       }}
