@@ -5,6 +5,7 @@ import Link from "next/link";
 import { requireAdminSession } from "@/lib/supabase/admin";
 import type { Database } from "@/lib/supabase/database.types";
 import { adminErrorMessage, logSupabaseError } from "@/lib/supabase/error";
+import { commitPendingImageDeletion, ProductImageDeletionError, thumbnailAfterRemoval } from "@/lib/admin/product-image-deletion";
 
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
@@ -135,6 +136,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
   function move(index:number,direction:-1|1){const target=index+direction;if(target<0||target>=images.length)return;setImages(current=>{const next=[...current];[next[index],next[target]]=[next[target],next[index]];return next;});}
 
   function removeImage(image:DraftImage){
+    if(saving)return;
     if(!window.confirm("Hapus gambar ini saat produk disimpan?"))return;
     if(image.file)URL.revokeObjectURL(image.url);
     if(image.id){
@@ -143,7 +145,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
     }
     const remaining=images.filter(item=>item.key!==image.key);
     setImages(remaining);
-    if(thumbnailKey===image.key)setThumbnailKey(remaining[0]?.key??"");
+    setThumbnailKey(thumbnailAfterRemoval(images.map(item=>item.key),image.key,thumbnailKey));
     setSuccess("Gambar ditandai untuk dihapus. Klik Simpan produk untuk menerapkan.");
   }
 
@@ -152,8 +154,7 @@ export default function ProductEditor({ productId }: { productId?: string }) {
     if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(form.slug)){setError("Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung.");return;}
     if(!splitList(form.colors).length){setError("Tambahkan minimal satu warna agar produk dapat dipesan.");return;}
     if(!splitList(form.occasions).length){setError("Tambahkan minimal satu occasion/acara agar produk dapat dipesan.");return;}
-    if(!images.length){setError("Tambahkan minimal satu gambar produk sebelum menyimpan.");return;}
-    if(!thumbnailKey||!images.some(image=>image.key===thumbnailKey)){setError("Pilih satu gambar sebagai thumbnail.");return;}
+    if(images.length&&(!thumbnailKey||!images.some(image=>image.key===thumbnailKey))){setError("Pilih satu gambar sebagai thumbnail.");return;}
     if(images.some(image=>!image.alt.trim())){setError("Alt text wajib diisi untuk setiap gambar.");return;}
     const selectedCategory=categories.find(category=>category.id===form.categoryId);
     if(!selectedCategory){setError("Pilih kategori produk yang valid.");return;}
@@ -198,28 +199,33 @@ export default function ProductEditor({ productId }: { productId?: string }) {
       const clearThumbnail=await supabase.from("product_images").update({is_thumbnail:false}).eq("product_id",id);
       if(clearThumbnail.error)throw clearThumbnail.error;
       const thumbnail=resolved.find(item=>item.key===thumbnailKey);
-      if(!thumbnail)throw new Error("Thumbnail produk tidak dapat ditentukan.");
-      const thumbnailResult=await supabase.from("product_images").update({is_thumbnail:true}).eq("id",thumbnail.id);
-      if(thumbnailResult.error)throw thumbnailResult.error;
+      if(thumbnail){
+        const thumbnailResult=await supabase.from("product_images").update({is_thumbnail:true}).eq("id",thumbnail.id);
+        if(thumbnailResult.error)throw thumbnailResult.error;
+      }
       operation="products.update";
       const productResult=await supabase.from("products").update(payload).eq("id",id);
       if(productResult.error)throw productResult.error;
 
-      for(const image of removedImages){
-        if(image.storage_path){
-          const storageResult=await supabase.storage.from("product-images").remove([image.storage_path]);
-          if(storageResult.error)throw new Error(`Gagal menghapus file gambar: ${storageResult.error.message}`);
-        }
-        const imageResult=await supabase.from("product_images").delete().eq("id",image.id);
-        if(imageResult.error)throw new Error(`Gagal menghapus metadata gambar: ${imageResult.error.message}`);
-      }
+      await commitPendingImageDeletion({
+        deleteMetadata:async(ids)=>{
+          const result=await supabase!.from("product_images").delete().in("id",ids);
+          return {error:result.error};
+        },
+        removeStorage:async(paths)=>{
+          const result=await supabase!.storage.from("product-images").remove(paths);
+          return {error:result.error};
+        },
+      },removedImages);
 
       setRemovedImages([]);
       setSuccess(productId?"Perubahan produk berhasil disimpan.":"Produk berhasil ditambahkan. Kembali ke daftar untuk melihatnya.");
       if(!productId)setTimeout(()=>window.location.replace("/admin/products/"),800);
     }catch(reason){
       const cleanupErrors:string[]=[];
-      if(supabase){
+      const deletionError=reason instanceof ProductImageDeletionError?reason:null;
+      const actualError=deletionError?.causeValue??reason;
+      if(supabase&&deletionError?.stage!=="storage"){
         if(insertedImageIds.length){const cleanup=await supabase.from("product_images").delete().in("id",insertedImageIds);if(cleanup.error)cleanupErrors.push("metadata upload baru perlu dibersihkan manual");}
         if(uploadedPaths.length){const cleanup=await supabase.storage.from("product-images").remove(uploadedPaths);if(cleanup.error)cleanupErrors.push("file upload baru perlu dibersihkan manual");}
         if(createdProductId){const cleanup=await supabase.from("products").delete().eq("id",createdProductId);if(cleanup.error)cleanupErrors.push("draft produk perlu dibersihkan manual");}
@@ -229,8 +235,10 @@ export default function ProductEditor({ productId }: { productId?: string }) {
           for(const image of originalImages.current){const restored=await supabase.from("product_images").update({alt_text:image.alt_text,sort_order:image.sort_order,is_thumbnail:image.is_thumbnail}).eq("id",image.id);if(restored.error)cleanupErrors.push("urutan atau thumbnail lama gagal dipulihkan");}
         }
       }
-      logSupabaseError(operation,reason);
-      const message=adminErrorMessage(reason,"Produk gagal disimpan.");
+      logSupabaseError(deletionError?`products.image-delete.${deletionError.stage}`:operation,actualError);
+      const detail=adminErrorMessage(actualError,"Produk gagal disimpan.");
+      const message=deletionError?.stage==="storage"?`Metadata sudah tersimpan, tetapi file Storage gagal dihapus: ${detail} Klik Simpan produk untuk mencoba cleanup lagi.`:detail;
+      if(deletionError?.stage==="storage")originalImages.current=originalImages.current.filter(image=>!removedImages.some(removed=>removed.id===image.id));
       setError(cleanupErrors.length?`${message} Pemulihan belum lengkap: ${[...new Set(cleanupErrors)].join(", ")}.`:message);
     }finally{setSaving(false);}
   }

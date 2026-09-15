@@ -19,7 +19,7 @@ export function logSupabaseError(context: string, error: unknown) {
 export function adminErrorMessage(error: unknown, fallback: string) {
   if (!error || typeof error !== "object") return fallback;
   const value = error as SupabaseErrorLike;
-  if (value.code === "42501") return "Akses ditolak. Pastikan akun Anda memiliki role admin lalu login ulang.";
+  if (value.code === "42501") return `Akses ditolak: ${value.message || "kebijakan keamanan Supabase menolak operasi ini."}`;
   if (value.code === "23505") return "Nama atau slug sudah digunakan. Gunakan nilai yang unik.";
   if (value.code === "23503" || value.message?.includes("masih digunakan")) {
     return "Kategori masih digunakan oleh produk. Pindahkan produknya terlebih dahulu.";
