@@ -6,8 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "seed:products": "node --experimental-strip-types scripts/seed-products.ts",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run build"
+    "check": "npm test && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.9.0",

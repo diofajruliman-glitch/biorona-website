@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { formatRupiah } from "@/lib/format";
+import { calculateInvoiceTotals, normalizeInvoiceMoney } from "@/lib/invoice-totals";
 import { requireAdminSession } from "@/lib/supabase/admin";
 import type { Database, Json } from "@/lib/supabase/database.types";
 import InvoicePdfActions from "./InvoicePdfActions";
@@ -12,13 +13,13 @@ type InvoiceItem = Database["public"]["Tables"]["invoice_items"]["Row"];
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type InvoiceSettings = Database["public"]["Tables"]["invoice_settings"]["Row"];
 type DraftItem = { key: string; productId: string | null; productName: string; description: string; qty: string; unitPrice: string; };
-type FormState = { invoiceDate: string; dueDate: string; customerName: string; customerWhatsapp: string; customerAddress: string; notes: string; discount: string; deliveryFee: string; otherFee: string; };
+type FormState = { invoiceDate: string; dueDate: string; customerName: string; customerWhatsapp: string; customerAddress: string; notes: string; discountAmount: string; deliveryFee: string; taxAmount: string; adjustmentAmount: string; };
 
 const today = () => new Date().toLocaleDateString("en-CA");
-const emptyForm = (): FormState => ({ invoiceDate: today(), dueDate: "", customerName: "", customerWhatsapp: "", customerAddress: "", notes: "", discount: "0", deliveryFee: "0", otherFee: "0" });
+const emptyForm = (): FormState => ({ invoiceDate: today(), dueDate: "", customerName: "", customerWhatsapp: "", customerAddress: "", notes: "", discountAmount: "0", deliveryFee: "0", taxAmount: "0", adjustmentAmount: "0" });
 const newKey = () => crypto.randomUUID();
 const customItem = (): DraftItem => ({ key: newKey(), productId: null, productName: "", description: "", qty: "1", unitPrice: "0" });
-const asMoney = (value: string) => Number(value || "0");
+const asMoney = (value: string) => normalizeInvoiceMoney(value);
 const safeMoney = (value: string) => Number.isSafeInteger(asMoney(value)) && asMoney(value) >= 0;
 const invoiceError = (reason: unknown, fallback: string) => {
   const value = reason && typeof reason === "object" ? reason as { message?: string; code?: string } : undefined;
@@ -71,7 +72,7 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
       const row = invoiceResult.data;
       setProducts(productResult.data);
       setInvoice(row);
-      setForm({ invoiceDate: row.invoice_date, dueDate: row.due_date ?? "", customerName: row.customer_name, customerWhatsapp: row.customer_whatsapp, customerAddress: row.customer_address ?? "", notes: row.notes ?? "", discount: String(row.discount), deliveryFee: String(row.delivery_fee), otherFee: String(row.other_fee) });
+      setForm({ invoiceDate: row.invoice_date, dueDate: row.due_date ?? "", customerName: row.customer_name, customerWhatsapp: row.customer_whatsapp, customerAddress: row.customer_address ?? "", notes: row.notes ?? "", discountAmount: String(row.discount_amount), deliveryFee: String(row.delivery_fee), taxAmount: String(row.tax_amount), adjustmentAmount: String(row.adjustment_amount) });
       setItems(itemResult.data.map((item: InvoiceItem) => ({ key: item.id, productId: item.product_id, productName: item.product_name, description: item.description ?? "", qty: String(item.qty), unitPrice: String(item.unit_price) })));
       setStoredItems(itemResult.data);
       setInvoiceSettings(settingsResult.data);
@@ -89,13 +90,12 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
     const needle = catalogQuery.trim().toLowerCase();
     return products.filter((product) => !needle || `${product.name} ${product.sku}`.toLowerCase().includes(needle));
   }, [catalogQuery, products]);
-  const totals = useMemo(() => {
-    const subtotal = items.reduce((sum, item) => sum + (safeMoney(item.unitPrice) && Number.isInteger(asMoney(item.qty)) && asMoney(item.qty) > 0 ? asMoney(item.qty) * asMoney(item.unitPrice) : 0), 0);
-    const discount = safeMoney(form.discount) ? asMoney(form.discount) : 0;
-    const deliveryFee = safeMoney(form.deliveryFee) ? asMoney(form.deliveryFee) : 0;
-    const otherFee = safeMoney(form.otherFee) ? asMoney(form.otherFee) : 0;
-    return { subtotal, discount, deliveryFee, otherFee, grandTotal: Math.max(0, subtotal - discount + deliveryFee + otherFee) };
-  }, [form.deliveryFee, form.discount, form.otherFee, items]);
+  const totals = useMemo(() => calculateInvoiceTotals(items, {
+    discountAmount: form.discountAmount,
+    deliveryFee: form.deliveryFee,
+    taxAmount: form.taxAmount,
+    adjustmentAmount: form.adjustmentAmount,
+  }), [form.adjustmentAmount, form.discountAmount, form.deliveryFee, form.taxAmount, items]);
 
   function updateForm<K extends keyof FormState>(key: K, value: FormState[K]) { setForm((current) => ({ ...current, [key]: value })); }
   function updateItem(key: string, patch: Partial<DraftItem>) { setItems((current) => current.map((item) => item.key === key ? { ...item, ...patch } : item)); }
@@ -108,11 +108,13 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
   function validate() {
     if (!form.customerName.trim() || !form.customerWhatsapp.trim() || !form.invoiceDate) return "Lengkapi nama pelanggan, WhatsApp, dan tanggal invoice.";
     if (!items.length) return "Tambahkan minimal satu item.";
-    if (!safeMoney(form.discount) || !safeMoney(form.deliveryFee) || !safeMoney(form.otherFee)) return "Diskon dan biaya harus berupa Rupiah bulat nol atau lebih.";
-    if (totals.discount > totals.subtotal) return "Diskon tidak boleh lebih besar dari subtotal.";
+    if (!safeMoney(form.discountAmount) || !safeMoney(form.deliveryFee) || !safeMoney(form.taxAmount) || !safeMoney(form.adjustmentAmount)) return "Diskon, ongkir, pajak, dan penyesuaian harus berupa Rupiah bulat nol atau lebih.";
+    if (totals.discountAmount > totals.subtotal) return "Diskon tidak boleh lebih besar dari subtotal.";
     for (const item of items) {
       if (!item.productName.trim() || !Number.isSafeInteger(asMoney(item.qty)) || asMoney(item.qty) <= 0 || !safeMoney(item.unitPrice)) return "Setiap item wajib memiliki nama, jumlah bulat positif, dan harga Rupiah bulat.";
     }
+    const expectedGrandTotal = totals.subtotal + totals.deliveryFee + totals.taxAmount + totals.adjustmentAmount - totals.discountAmount;
+    if (totals.grandTotal !== expectedGrandTotal) return `Rincian total tidak cocok: subtotal ${formatRupiah(totals.subtotal)}, diskon ${formatRupiah(totals.discountAmount)}, ongkir ${formatRupiah(totals.deliveryFee)}, pajak ${formatRupiah(totals.taxAmount)}, grand_total ${formatRupiah(totals.grandTotal)}.`;
     return "";
   }
   function rpcItems(): Json {
@@ -124,7 +126,7 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
     setSaving(true);
     try {
       const { supabase } = await requireAdminSession();
-      const args = { p_invoice_date: form.invoiceDate, p_due_date: form.dueDate || null, p_customer_name: form.customerName.trim(), p_customer_whatsapp: form.customerWhatsapp.trim(), p_customer_address: form.customerAddress.trim() || null, p_discount: asMoney(form.discount), p_delivery_fee: asMoney(form.deliveryFee), p_other_fee: asMoney(form.otherFee), p_notes: form.notes.trim() || null, p_items: rpcItems() };
+      const args = { p_invoice_date: form.invoiceDate, p_due_date: form.dueDate || null, p_customer_name: form.customerName.trim(), p_customer_whatsapp: form.customerWhatsapp.trim(), p_customer_address: form.customerAddress.trim() || null, p_discount_amount: totals.discountAmount, p_delivery_fee: totals.deliveryFee, p_tax_amount: totals.taxAmount, p_adjustment_amount: totals.adjustmentAmount, p_notes: form.notes.trim() || null, p_items: rpcItems() };
       const result = invoiceId && invoice?.status === "draft"
         ? await supabase.rpc("update_invoice_draft", { p_invoice_id: invoiceId, ...args })
         : await supabase.rpc("create_invoice", args);
@@ -168,14 +170,14 @@ export default function InvoiceEditor({ invoiceId }: { invoiceId?: string }) {
       <section><h2>Item invoice</h2>{!readOnly && <div className="invoiceCatalog"><input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder="Cari produk aktif…" aria-label="Cari produk aktif"/><select value={selectedProductId} onChange={(event) => setSelectedProductId(event.target.value)} aria-label="Pilih produk katalog"><option value="">Pilih produk katalog</option>{catalogProducts.map((product) => <option key={product.id} value={product.id}>{product.name} — {formatRupiah(product.price)}</option>)}</select><button type="button" onClick={addProduct} disabled={!selectedProductId}>Tambah produk</button><button type="button" onClick={() => setItems((current) => [...current, customItem()])}>+ Tambah Item Custom</button></div>}
         <div className="invoiceItems">{items.map((item, index) => <article key={item.key} className="invoiceItem"><div className="invoiceItemHeader"><strong>{item.productId ? "Produk katalog (snapshot)" : "Item custom"}</strong>{!readOnly && <button className="danger" type="button" onClick={() => setItems((current) => current.filter((entry) => entry.key !== item.key))} disabled={items.length === 1}>Hapus</button>}</div><div className="adminFormGrid"><label>Nama item *<input disabled={readOnly} value={item.productName} onChange={(event) => updateItem(item.key, { productName: event.target.value })} /></label><label>Jumlah *<input disabled={readOnly} type="number" min="1" step="1" inputMode="numeric" value={item.qty} onChange={(event) => updateItem(item.key, { qty: event.target.value })} /></label><label>Harga satuan *<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={item.unitPrice} onChange={(event) => updateItem(item.key, { unitPrice: event.target.value })} /></label><label>Jumlah baris<output>{formatRupiah(Number.isInteger(asMoney(item.qty)) && asMoney(item.qty) > 0 && safeMoney(item.unitPrice) ? asMoney(item.qty) * asMoney(item.unitPrice) : 0)}</output></label></div><label>Deskripsi<textarea disabled={readOnly} value={item.description} onChange={(event) => updateItem(item.key, { description: event.target.value })} rows={2}/></label>{index > 0 && <small>Urutan item: {index + 1}</small>}</article>)}</div>
       </section>
-      <section><h2>Biaya dan total</h2><div className="adminFormGrid"><label>Diskon<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.discount} onChange={(event) => updateForm("discount", event.target.value)} /></label><label>Ongkir<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.deliveryFee} onChange={(event) => updateForm("deliveryFee", event.target.value)} /></label><label>Biaya lain<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.otherFee} onChange={(event) => updateForm("otherFee", event.target.value)} /></label></div><div className="invoiceTotals"><span>Subtotal<strong>{formatRupiah(totals.subtotal)}</strong></span><span>Diskon<strong>− {formatRupiah(totals.discount)}</strong></span><span>Ongkir<strong>{formatRupiah(totals.deliveryFee)}</strong></span><span>Biaya lain<strong>{formatRupiah(totals.otherFee)}</strong></span><span className="grand">Grand Total<strong>{formatRupiah(totals.grandTotal)}</strong></span>{invoice && <small>Total final database: {formatRupiah(invoice.grand_total)}</small>}</div></section>
+      <section><h2>Biaya dan total</h2><div className="adminFormGrid"><label>Diskon<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.discountAmount} onChange={(event) => updateForm("discountAmount", event.target.value)} /></label><label>Ongkir<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.deliveryFee} onChange={(event) => updateForm("deliveryFee", event.target.value)} /></label><label>Pajak<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.taxAmount} onChange={(event) => updateForm("taxAmount", event.target.value)} /></label><label>Penyesuaian<input disabled={readOnly} type="number" min="0" step="1" inputMode="numeric" value={form.adjustmentAmount} onChange={(event) => updateForm("adjustmentAmount", event.target.value)} /></label></div><div className="invoiceTotals"><span>Subtotal<strong>{formatRupiah(totals.subtotal)}</strong></span><span>Diskon<strong>− {formatRupiah(totals.discountAmount)}</strong></span><span>Ongkir<strong>{formatRupiah(totals.deliveryFee)}</strong></span><span>Pajak<strong>{formatRupiah(totals.taxAmount)}</strong></span><span>Penyesuaian<strong>{formatRupiah(totals.adjustmentAmount)}</strong></span><span className="grand">Grand Total<strong>{formatRupiah(totals.grandTotal)}</strong></span>{invoice && <small>Total final database: {formatRupiah(invoice.grand_total)}</small>}</div></section>
       {!readOnly && <button className="adminPrimary adminSubmit" disabled={saving} type="submit">{saving ? "Menyimpan…" : invoice ? "Simpan Draft" : "Simpan Draft"}</button>}
     </form>
     {invoice?.status === "draft" && <section className="invoiceOperations"><button className="adminPrimary" type="button" onClick={issue} disabled={saving}>Terbitkan Invoice</button><button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
     {invoice?.status === "issued" && <section className="invoiceOperations">{invoice.payment_status === "unpaid" && <><label>Metode pembayaran<select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)}><option value="">Pilih metode</option><option>Transfer Bank</option><option>QRIS</option><option>Cash</option><option>Lainnya</option></select></label><button className="adminPrimary" type="button" onClick={markPaid} disabled={saving}>Tandai Dibayar</button></>}<button className="danger" type="button" onClick={cancel} disabled={saving}>Batalkan Invoice</button></section>}
     {invoice && (
       <InvoicePdfActions
-        invoice={{ id: invoice.id, invoiceNumber: invoice.invoice_number, invoiceDate: invoice.invoice_date, dueDate: invoice.due_date, customerName: invoice.customer_name, customerWhatsapp: invoice.customer_whatsapp, customerAddress: invoice.customer_address, status: invoice.status, paymentStatus: invoice.payment_status, paymentMethod: invoice.payment_method, paidAt: invoice.paid_at, notes: invoice.notes, subtotal: invoice.subtotal, discount: invoice.discount, deliveryFee: invoice.delivery_fee, otherFee: invoice.other_fee, grandTotal: invoice.grand_total }}
+        invoice={{ id: invoice.id, invoiceNumber: invoice.invoice_number, invoiceDate: invoice.invoice_date, dueDate: invoice.due_date, customerName: invoice.customer_name, customerWhatsapp: invoice.customer_whatsapp, customerAddress: invoice.customer_address, status: invoice.status, paymentStatus: invoice.payment_status, paymentMethod: invoice.payment_method, paidAt: invoice.paid_at, notes: invoice.notes, subtotal: invoice.subtotal, discountAmount: invoice.discount_amount, deliveryFee: invoice.delivery_fee, taxAmount: invoice.tax_amount, adjustmentAmount: invoice.adjustment_amount, grandTotal: invoice.grand_total }}
         items={storedItems.map((item) => ({ id: item.id, productName: item.product_name, description: item.description, qty: item.qty, unitPrice: item.unit_price, lineTotal: item.line_total }))}
         settings={invoiceSettings ? { businessName: invoiceSettings.business_name, businessAddress: invoiceSettings.business_address, businessWhatsapp: invoiceSettings.business_whatsapp, businessEmail: invoiceSettings.business_email, bankName: invoiceSettings.bank_name, bankAccountNumber: invoiceSettings.bank_account_number, bankAccountName: invoiceSettings.bank_account_name, paymentNote: invoiceSettings.payment_note, footerNote: invoiceSettings.footer_note } : null}
       />

@@ -77,7 +77,7 @@ export type Database = {
           customer_name: string; customer_whatsapp: string; customer_address: string | null;
           status: "draft" | "issued" | "cancelled"; payment_status: "unpaid" | "paid";
           payment_method: string | null; paid_at: string | null; notes: string | null;
-          subtotal: number; discount: number; delivery_fee: number; other_fee: number;
+          subtotal: number; discount_amount: number; delivery_fee: number; tax_amount: number; adjustment_amount: number;
           grand_total: number; created_at: string; updated_at: string;
         };
         Insert: {
@@ -85,7 +85,7 @@ export type Database = {
           customer_name: string; customer_whatsapp: string; customer_address?: string | null;
           status?: "draft" | "issued" | "cancelled"; payment_status?: "unpaid" | "paid";
           payment_method?: string | null; paid_at?: string | null; notes?: string | null;
-          subtotal?: number; discount?: number; delivery_fee?: number; other_fee?: number;
+          subtotal?: number; discount_amount?: number; delivery_fee?: number; tax_amount?: number; adjustment_amount?: number;
           grand_total?: number; created_at?: string; updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["invoices"]["Insert"]>;
@@ -137,11 +137,11 @@ export type Database = {
     Views: Record<string, never>;
     Functions: {
       create_invoice: {
-        Args: { p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount: number; p_delivery_fee: number; p_other_fee: number; p_notes: string | null; p_items: Json; };
+        Args: { p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount_amount: number; p_delivery_fee: number; p_tax_amount: number; p_adjustment_amount: number; p_notes: string | null; p_items: Json; };
         Returns: { id: string; invoice_number: string; grand_total: number; }[];
       };
       update_invoice_draft: {
-        Args: { p_invoice_id: string; p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount: number; p_delivery_fee: number; p_other_fee: number; p_notes: string | null; p_items: Json; };
+        Args: { p_invoice_id: string; p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount_amount: number; p_delivery_fee: number; p_tax_amount: number; p_adjustment_amount: number; p_notes: string | null; p_items: Json; };
         Returns: { id: string; invoice_number: string; grand_total: number; }[];
       };
       issue_invoice: { Args: { p_invoice_id: string }; Returns: { id: string; invoice_number: string; grand_total: number; }[]; };
