@@ -3,7 +3,7 @@
 import { createElement, useEffect, useRef, useState, type ReactElement } from "react";
 import type { DocumentProps } from "@react-pdf/renderer";
 import { invoiceWhatsAppUrl, normalizeWhatsAppNumber } from "@/lib/whatsapp";
-import type { InvoicePdfData, InvoicePdfItem, InvoicePdfSettings } from "./InvoicePdfDocument";
+import { normalizePdfInvoice, normalizePdfItems, normalizePdfSettings, type PdfInvoiceData as InvoicePdfData, type PdfInvoiceItem as InvoicePdfItem, type PdfInvoiceSettings as InvoicePdfSettings } from "@/lib/invoice-pdf";
 import styles from "./InvoicePdfActions.module.css";
 
 type Props = { invoice: InvoicePdfData; items: InvoicePdfItem[] | null | undefined; settings?: InvoicePdfSettings | null };
@@ -27,6 +27,14 @@ async function logoDataUri() {
     logPdfError(error);
     return null;
   }
+}
+
+function normalizePdfInput(invoice: InvoicePdfData, items: InvoicePdfItem[], settings: InvoicePdfSettings | null) {
+  return {
+    invoice: normalizePdfInvoice(invoice as unknown as Record<string, unknown>),
+    items: normalizePdfItems(items),
+    settings: normalizePdfSettings(settings as unknown as Record<string, unknown> | null),
+  };
 }
 
 function logPdfError(error: unknown) {
@@ -54,23 +62,22 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
   useEffect(() => () => { if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current); }, []);
 
   async function generateBlob() {
+    if (typeof window === "undefined") throw new Error("Generator PDF hanya dapat dijalankan di browser.");
+    const normalized = normalizePdfInput(invoice, items ?? [], settings);
     console.info("Invoice PDF input", {
-      hasInvoice: Boolean(invoice),
-      invoiceId: invoice?.id ?? null,
-      invoiceNumber: invoice?.invoiceNumber ?? null,
-      itemCount: Array.isArray(items) ? items.length : 0,
-      hasSettings: Boolean(settings),
-      status: invoice?.status ?? null,
+      invoiceId: normalized.invoice.id,
+      invoiceNumber: normalized.invoice.invoiceNumber,
+      itemCount: normalized.items.length,
+      hasSettings: Boolean(normalized.settings),
+      status: normalized.invoice.status,
     });
-    if (!invoice?.id || !invoice.invoiceNumber || !invoice.invoiceDate || !invoice.customerName) throw new Error("Data invoice belum lengkap untuk dibuatkan PDF.");
-    if (!Array.isArray(items) || items.length === 0) throw new Error("Item invoice belum selesai dimuat.");
     const [renderer, documentModule] = await Promise.all([
       import("@react-pdf/renderer"),
       import("./InvoicePdfDocument"),
     ]);
     const PdfDocument = documentModule.default as unknown as (props: { invoice: InvoicePdfData; items: InvoicePdfItem[]; settings: InvoicePdfSettings | null; logoSrc: string | null }) => ReactElement<DocumentProps>;
     const render = (logoSrc: string | null) => {
-      const documentElement = createElement(PdfDocument, { invoice, items, settings, logoSrc }) as unknown as ReactElement<DocumentProps>;
+      const documentElement = createElement(PdfDocument, { ...normalized, logoSrc }) as unknown as ReactElement<DocumentProps>;
       return renderer.pdf(documentElement).toBlob();
     };
 
@@ -119,7 +126,7 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
     } finally { setDownloadLoading(false); }
   }
 
-  const whatsAppUrl = invoiceWhatsAppUrl({ customerWhatsapp: invoice.customerWhatsapp, customerName: invoice.customerName, invoiceNumber: invoice.invoiceNumber, grandTotal: invoice.grandTotal, paymentStatus: invoice.paymentStatus });
+  const whatsAppUrl = invoiceWhatsAppUrl({ customerWhatsapp: invoice.customerWhatsapp, customerName: invoice.customerName, invoiceNumber: invoice.invoiceNumber, grandTotal: invoice.grand_total, paymentStatus: invoice.paymentStatus });
   const hasCustomerWhatsApp = Boolean(invoice.customerWhatsapp.trim());
   const invalidWhatsApp = hasCustomerWhatsApp && !normalizeWhatsAppNumber(invoice.customerWhatsapp);
   return <section className={styles.actions} aria-label="PDF invoice">

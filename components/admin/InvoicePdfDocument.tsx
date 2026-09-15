@@ -1,30 +1,9 @@
 "use client";
 
 import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import type { PdfInvoiceData as InvoicePdfData, PdfInvoiceItem as InvoicePdfItem, PdfInvoiceSettings as InvoicePdfSettings } from "@/lib/invoice-pdf";
 
-export type InvoicePdfData = {
-  id: string;
-  invoiceNumber: string;
-  invoiceDate: string;
-  dueDate: string | null;
-  customerName: string;
-  customerWhatsapp: string;
-  customerAddress: string | null;
-  status: "draft" | "issued" | "cancelled";
-  paymentStatus: "unpaid" | "paid";
-  paymentMethod: string | null;
-  paidAt: string | null;
-  notes: string | null;
-  subtotal: number;
-  discountAmount: number;
-  deliveryFee: number;
-  taxAmount: number;
-  adjustmentAmount: number;
-  grandTotal: number;
-};
-
-export type InvoicePdfItem = { id: string; productName: string; description: string | null; qty: number; unitPrice: number; lineTotal: number; };
-export type InvoicePdfSettings = { businessName: string; businessAddress: string | null; businessWhatsapp: string | null; businessEmail: string | null; bankName: string | null; bankAccountNumber: string | null; bankAccountName: string | null; paymentNote: string | null; footerNote: string | null; };
+export type { PdfInvoiceData as InvoicePdfData, PdfInvoiceItem, PdfInvoiceSettings } from "@/lib/invoice-pdf";
 
 const styles = StyleSheet.create({
   page: { paddingTop: 42, paddingHorizontal: 42, paddingBottom: 54, fontFamily: "Helvetica", fontSize: 9, color: "#30262a" },
@@ -73,8 +52,8 @@ export default function InvoicePdfDocument({ invoice, items, settings, logoSrc }
       {stamp && <Text style={styles.watermark}>{text(stamp)}</Text>}
       <View style={styles.header} fixed><View style={styles.brand}>{logoSrc ? <Image src={text(logoSrc)} style={styles.logo}/> : null}<View><Text style={styles.brandName}>{text(businessName)}</Text>{settings?.businessAddress ? <Text style={styles.brandSub}>{text(settings.businessAddress)}</Text> : null}{settings?.businessWhatsapp ? <Text style={styles.brandSub}>{text(settings.businessWhatsapp)}</Text> : null}{settings?.businessEmail ? <Text style={styles.brandSub}>{text(settings.businessEmail)}</Text> : null}</View></View><View><Text style={styles.invoiceTitle}>INVOICE</Text><Text style={styles.invoiceNumber}>{text(invoice.invoiceNumber)}</Text></View></View>
       <View style={styles.dateBlock}><View style={styles.customer}><Text style={styles.sectionLabel}>DITAGIHKAN KEPADA</Text><Text style={styles.customerName}>{text(invoice.customerName)}</Text><Text style={styles.muted}>{text(invoice.customerWhatsapp)}</Text>{invoice.customerAddress ? <Text style={styles.muted}>{text(invoice.customerAddress)}</Text> : null}</View><View style={styles.details}><Text style={styles.sectionLabel}>TANGGAL INVOICE</Text><Text>{dateText(invoice.invoiceDate)}</Text>{invoice.dueDate ? <><Text style={[styles.sectionLabel, { marginTop: 10 }]}>JATUH TEMPO</Text><Text>{dateText(invoice.dueDate)}</Text></> : null}</View></View>
-      <View style={styles.table}><View style={styles.tableHead}><Text style={styles.itemCol}>ITEM</Text><Text style={styles.qtyCol}>QTY</Text><Text style={styles.priceCol}>HARGA</Text><Text style={styles.totalCol}>TOTAL</Text></View>{items.map((item) => <View key={text(item.id)} style={styles.row}><View style={styles.itemCol}><Text style={styles.itemName}>{text(item.productName)}</Text>{item.description ? <Text style={styles.itemDescription}>{text(item.description)}</Text> : null}</View><Text style={styles.qtyCol}>{text(item.qty)}</Text><Text style={styles.priceCol}>{rupiah(item.unitPrice)}</Text><Text style={styles.totalCol}>{rupiah(item.lineTotal)}</Text></View>)}</View>
-      <View style={styles.summaryArea}><View style={styles.summary}><View style={styles.summaryLine}><Text>Subtotal</Text><Text>{rupiah(invoice.subtotal)}</Text></View><View style={styles.summaryLine}><Text>Diskon</Text><Text>- {rupiah(invoice.discountAmount)}</Text></View><View style={styles.summaryLine}><Text>Ongkir</Text><Text>{rupiah(invoice.deliveryFee)}</Text></View><View style={styles.summaryLine}><Text>Pajak</Text><Text>{rupiah(invoice.taxAmount)}</Text></View><View style={styles.summaryLine}><Text>Penyesuaian</Text><Text>{rupiah(invoice.adjustmentAmount)}</Text></View><View style={[styles.summaryLine, styles.grand]}><Text>GRAND TOTAL</Text><Text>{rupiah(invoice.grandTotal)}</Text></View></View></View>
+      <View style={styles.table}><View style={styles.tableHead}><Text style={styles.itemCol}>ITEM</Text><Text style={styles.qtyCol}>QTY</Text><Text style={styles.priceCol}>HARGA</Text><Text style={styles.totalCol}>TOTAL</Text></View>{items.map((item) => <View key={text(item.id)} style={styles.row}><View style={styles.itemCol}><Text style={styles.itemName}>{text(item.name)}</Text>{item.description ? <Text style={styles.itemDescription}>{text(item.description)}</Text> : null}</View><Text style={styles.qtyCol}>{text(item.quantity)}</Text><Text style={styles.priceCol}>{rupiah(item.unit_price)}</Text><Text style={styles.totalCol}>{rupiah(item.total_price)}</Text></View>)}</View>
+      <View style={styles.summaryArea}><View style={styles.summary}><View style={styles.summaryLine}><Text>Subtotal</Text><Text>{rupiah(invoice.subtotal)}</Text></View><View style={styles.summaryLine}><Text>Diskon</Text><Text>- {rupiah(invoice.discount_amount)}</Text></View><View style={styles.summaryLine}><Text>Ongkir</Text><Text>{rupiah(invoice.delivery_fee)}</Text></View><View style={styles.summaryLine}><Text>Pajak</Text><Text>{rupiah(invoice.tax_amount)}</Text></View><View style={styles.summaryLine}><Text>Penyesuaian</Text><Text>{rupiah(invoice.adjustment_amount)}</Text></View><View style={[styles.summaryLine, styles.grand]}><Text>GRAND TOTAL</Text><Text>{rupiah(invoice.grand_total)}</Text></View></View></View>
       <View style={styles.payment}><Text style={styles.paymentTitle}>{invoice.paymentStatus === "paid" ? "LUNAS" : "BELUM DIBAYAR"}</Text>{invoice.paymentStatus === "paid" ? <Text style={styles.muted}>{text(invoice.paymentMethod || "Metode pembayaran tidak dicatat")}{invoice.paidAt ? ` · ${dateTimeText(invoice.paidAt)}` : ""}</Text> : null}</View>
       {hasPaymentInfo ? <View style={styles.payment}><Text style={styles.paymentTitle}>INFORMASI PEMBAYARAN</Text>{settings?.bankName ? <Text style={styles.muted}>{text(settings.bankName)}</Text> : null}{settings?.bankAccountNumber ? <Text style={styles.muted}>{text(settings.bankAccountNumber)}</Text> : null}{settings?.bankAccountName ? <Text style={styles.muted}>a.n. {text(settings.bankAccountName)}</Text> : null}{settings?.paymentNote ? <Text style={[styles.muted, { marginTop: 5 }]}>{text(settings.paymentNote)}</Text> : null}</View> : null}
       {invoice.notes ? <View style={styles.notes}><Text style={styles.sectionLabel}>CATATAN</Text><Text>{text(invoice.notes)}</Text></View> : null}
