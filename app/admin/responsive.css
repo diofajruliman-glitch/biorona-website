@@ -5,6 +5,7 @@
 .adminSidebarTop{display:contents}.adminMenuToggle{display:none}
 .adminMain{min-width:0;overflow:visible}
 .adminForm input,.adminForm select,.adminForm textarea{max-width:100%;box-sizing:border-box}.adminForm textarea{overflow-wrap:anywhere}
+.adminSeoHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.adminSeoHeader h2{margin-bottom:8px}.adminSeoHeader .adminActions{justify-content:flex-end}.adminSeoPreview{display:grid;gap:12px;margin-top:18px}.adminSeoPreview label{margin:0}.adminSeoPreview output{display:block;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:var(--admin-bg);border:1px solid var(--admin-line);border-radius:9px;color:var(--admin-ink);font-weight:500;line-height:1.55}.adminSeoCode{font:12px/1.5 Consolas,monospace;overflow:auto;max-height:260px}
 .adminFormActions{display:flex;justify-content:flex-end;gap:10px;padding-top:2px}
 .adminFormActions>a{min-height:46px;border:1px solid var(--admin-line);border-radius:12px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--admin-ink);font-weight:800;text-decoration:none}
 .adminProductCards{display:none}
@@ -26,6 +27,7 @@
   .adminProductCardHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}.adminProductCardHeader>div{min-width:0}.adminProductCardHeader strong,.adminProductCardHeader small,.adminProductCard>small{display:block;overflow-wrap:anywhere;word-break:break-word}.adminProductCardHeader small,.adminProductCard>small{color:var(--admin-muted);margin-top:5px}.adminProductPrice{color:var(--admin-rose);font-size:1.05rem}
   .adminActions{gap:8px}.adminActions a,.adminActions button{min-height:44px;flex:1 1 100px;justify-content:center}
   .adminForm{gap:14px;padding-bottom:76px}.adminStats article,.adminForm section{padding:16px;border-radius:14px}.adminFormGrid{grid-template-columns:minmax(0,1fr);gap:14px}.adminForm label{min-width:0}.adminForm input,.adminForm select,.adminForm textarea{width:100%;max-width:100%;min-width:0}
+  .adminSeoHeader{display:grid;gap:12px}.adminSeoHeader .adminActions{justify-content:stretch}.adminSeoHeader .adminActions button{flex:1 1 180px;min-height:44px}
   .adminChecks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.adminChecks label{min-width:0;padding:8px 10px;overflow-wrap:anywhere}.adminUpload{width:100%!important;max-width:100%;justify-content:center;overflow:hidden;text-align:center}
   .adminImageList article{grid-template-columns:1fr;gap:12px}.adminImageList img{width:100%;height:auto;max-height:240px;aspect-ratio:1/1;object-fit:cover}.adminImageList article>div{min-width:0;grid-template-columns:1fr}.thumbnailChoice{width:max-content;max-width:100%}
   .adminFormActions{position:sticky;z-index:10;bottom:0;margin:0 -12px calc(-104px - env(safe-area-inset-bottom));padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(248,244,245,.96);border-top:1px solid var(--admin-line);justify-content:stretch}.adminFormActions>a,.adminFormActions .adminSubmit{min-height:48px;flex:1;min-width:0}.adminFormActions .adminSubmit{width:auto}
