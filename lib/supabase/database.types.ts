@@ -144,6 +144,11 @@ export type Database = {
         Args: { p_invoice_id: string; p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount_amount: number; p_delivery_fee: number; p_tax_amount: number; p_adjustment_amount: number; p_notes: string | null; p_items: Json; };
         Returns: { id: string; invoice_number: string; grand_total: number; }[];
       };
+      update_invoice: {
+        Args: { p_invoice_id: string; p_invoice_date: string; p_due_date: string | null; p_customer_name: string; p_customer_whatsapp: string; p_customer_address: string | null; p_discount_amount: number; p_delivery_fee: number; p_tax_amount: number; p_adjustment_amount: number; p_notes: string | null; p_status: string; p_payment_status: string; p_payment_method: string | null; p_confirm_paid: boolean; p_items: Json; };
+        Returns: { id: string; invoice_number: string; grand_total: number; }[];
+      };
+      delete_invoice: { Args: { p_invoice_id: string }; Returns: undefined; };
       issue_invoice: { Args: { p_invoice_id: string }; Returns: { id: string; invoice_number: string; grand_total: number; }[]; };
       cancel_invoice: { Args: { p_invoice_id: string }; Returns: { id: string; invoice_number: string; grand_total: number; }[]; };
       mark_invoice_paid: { Args: { p_invoice_id: string; p_payment_method?: string | null }; Returns: { id: string; invoice_number: string; grand_total: number; }[]; };

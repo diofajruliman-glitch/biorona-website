@@ -18,6 +18,20 @@ export default function AdminInvoices() {
   const [status, setStatus] = useState<"" | Invoice["status"]>("");
   const [paymentStatus, setPaymentStatus] = useState<"" | Invoice["payment_status"]>("");
 
+  async function removeInvoice(invoice: Invoice) {
+    if (!window.confirm(`Hapus invoice ${invoice.invoice_number}? Data item invoice juga akan dihapus.`)) return;
+    try {
+      const { supabase } = await requireAdminSession();
+      const result = await supabase.rpc("delete_invoice", { p_invoice_id: invoice.id });
+      if (result.error) throw result.error;
+      await load();
+    } catch (reason) {
+      const value = reason && typeof reason === "object" ? reason as { code?: string; message?: string } : {};
+      console.error("Invoice delete failed", reason);
+      setError(value.code === "42501" ? "Akses ditolak. Login ulang dengan akun admin." : value.message || "Gagal menghapus invoice.");
+    }
+  }
+
   const load = useCallback(async () => {
     setError("");
     try {
@@ -52,7 +66,7 @@ export default function AdminInvoices() {
         <select aria-label="Filter status invoice" value={status} onChange={(event) => setStatus(event.target.value as "" | Invoice["status"])}><option value="">Semua status</option><option value="draft">Draft</option><option value="issued">Terbit</option><option value="cancelled">Batal</option></select>
         <select aria-label="Filter status pembayaran" value={paymentStatus} onChange={(event) => setPaymentStatus(event.target.value as "" | Invoice["payment_status"])}><option value="">Semua pembayaran</option><option value="unpaid">Belum Dibayar</option><option value="paid">Dibayar</option></select>
       </section>
-      {visible.length === 0 ? <div className="adminEmpty compact"><h2>{invoices.length ? "Tidak ada invoice yang cocok" : "Belum ada invoice"}</h2><p>{invoices.length ? "Ubah pencarian atau filter untuk melihat invoice lain." : "Buat invoice dari pesanan WhatsApp pertama Anda."}</p></div> : <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Invoice</th><th>Tanggal</th><th>Pelanggan</th><th>WhatsApp</th><th>Total</th><th>Status</th><th>Pembayaran</th><th>Aksi</th></tr></thead><tbody>{visible.map((invoice) => <tr key={invoice.id}><td><strong>{invoice.invoice_number}</strong></td><td>{invoice.invoice_date}</td><td>{invoice.customer_name}</td><td>{invoice.customer_whatsapp}</td><td>{formatRupiah(invoice.grand_total)}</td><td><span className={`adminStatus invoiceStatus ${invoice.status}`}>{labelStatus(invoice.status)}</span></td><td><span className={`adminStatus paymentStatus ${invoice.payment_status}`}>{labelPayment(invoice.payment_status)}</span></td><td><div className="adminActions"><Link href={`/admin/invoices/${invoice.id}/edit/`}>{invoice.status === "draft" ? "Edit" : "Lihat"}</Link></div></td></tr>)}</tbody></table></div>}
+      {visible.length === 0 ? <div className="adminEmpty compact"><h2>{invoices.length ? "Tidak ada invoice yang cocok" : "Belum ada invoice"}</h2><p>{invoices.length ? "Ubah pencarian atau filter untuk melihat invoice lain." : "Buat invoice dari pesanan WhatsApp pertama Anda."}</p></div> : <div className="adminTableWrap"><table className="adminTable"><thead><tr><th>Invoice</th><th>Tanggal</th><th>Pelanggan</th><th>WhatsApp</th><th>Total</th><th>Status</th><th>Pembayaran</th><th>Aksi</th></tr></thead><tbody>{visible.map((invoice) => <tr key={invoice.id}><td><strong>{invoice.invoice_number}</strong></td><td>{invoice.invoice_date}</td><td>{invoice.customer_name}</td><td>{invoice.customer_whatsapp}</td><td>{formatRupiah(invoice.grand_total)}</td><td><span className={`adminStatus invoiceStatus ${invoice.status}`}>{labelStatus(invoice.status)}</span></td><td><span className={`adminStatus paymentStatus ${invoice.payment_status}`}>{labelPayment(invoice.payment_status)}</span></td><td><div className="adminActions"><Link href={`/admin/invoices/${invoice.id}/edit/`}>Lihat</Link><Link href={`/admin/invoices/${invoice.id}/edit/`}>Edit</Link><button type="button" className="danger" onClick={() => removeInvoice(invoice)}>Hapus</button></div></td></tr>)}</tbody></table></div>}
     </>}
   </>;
 }
