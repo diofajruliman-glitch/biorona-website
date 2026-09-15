@@ -18,12 +18,11 @@ const remotePatterns = supabaseHostname
 
 const supabaseHttpsSource = supabaseHostname ? `https://${supabaseHostname}` : "";
 const supabaseWssSource = supabaseHostname ? `wss://${supabaseHostname}` : "";
-const developmentScriptSource = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
 const developmentConnectSources = process.env.NODE_ENV === "development" ? " ws: http://localhost:*" : "";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${developmentScriptSource}`,
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self' data:",
   `img-src 'self' data: blob:${supabaseHttpsSource ? ` ${supabaseHttpsSource}` : ""}`,
