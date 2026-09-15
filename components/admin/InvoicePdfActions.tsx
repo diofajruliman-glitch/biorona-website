@@ -1,7 +1,6 @@
 "use client";
 
 import { createElement, useEffect, useRef, useState, type ReactElement } from "react";
-import type { DocumentProps } from "@react-pdf/renderer";
 import { invoiceWhatsAppUrl, normalizeWhatsAppNumber } from "@/lib/whatsapp";
 import { normalizePdfInvoice, normalizePdfItems, normalizePdfSettings, type PdfInvoiceData as InvoicePdfData, type PdfInvoiceItem as InvoicePdfItem, type PdfInvoiceSettings as InvoicePdfSettings } from "@/lib/invoice-pdf";
 import styles from "./InvoicePdfActions.module.css";
@@ -38,7 +37,8 @@ function normalizePdfInput(invoice: InvoicePdfData, items: InvoicePdfItem[], set
 }
 
 function logPdfError(error: unknown) {
-  console.error("Invoice PDF failed:", error);
+  console.error(error);
+  console.error("Invoice PDF error stack:", error instanceof Error ? error.stack : undefined);
   console.error({
     name: error instanceof Error ? error.name : undefined,
     message: error instanceof Error ? error.message : String(error),
@@ -64,6 +64,8 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
   async function generateBlob() {
     if (typeof window === "undefined") throw new Error("Generator PDF hanya dapat dijalankan di browser.");
     const normalized = normalizePdfInput(invoice, items ?? [], settings);
+    console.info("Invoice PDF normalized invoice", normalized.invoice);
+    console.info("Invoice PDF normalized items", normalized.items);
     console.info("Invoice PDF input", {
       invoiceId: normalized.invoice.id,
       invoiceNumber: normalized.invoice.invoiceNumber,
@@ -75,19 +77,27 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
       import("@react-pdf/renderer"),
       import("./InvoicePdfDocument"),
     ]);
-    const PdfDocument = documentModule.default as unknown as (props: { invoice: InvoicePdfData; items: InvoicePdfItem[]; settings: InvoicePdfSettings | null; logoSrc: string | null }) => ReactElement<DocumentProps>;
+    const PdfDocument = documentModule.default as unknown as (props: { invoice: InvoicePdfData; items: InvoicePdfItem[]; settings: InvoicePdfSettings | null; logoSrc: string | null }) => ReactElement;
+    const SimpleDocument = () => createElement(renderer.Document, null,
+      createElement(renderer.Page, { size: "A4" }, createElement(renderer.Text, null, "PDF runtime check")),
+    );
+    const simpleBlob = await renderer.pdf(createElement(SimpleDocument)).toBlob();
+    console.info("Invoice PDF simple generateBlob() result", { type: simpleBlob.type, size: simpleBlob.size });
     const render = (logoSrc: string | null) => {
-      const documentElement = createElement(PdfDocument, { ...normalized, logoSrc }) as unknown as ReactElement<DocumentProps>;
-      return renderer.pdf(documentElement).toBlob();
+      const documentElement = createElement(PdfDocument, { ...normalized, logoSrc });
+      return renderer.pdf(documentElement as Parameters<typeof renderer.pdf>[0]).toBlob();
     };
 
     // Render the text-only document first. A PNG decoder failure must never block
     // an invoice download, and this makes the logo failure independently visible.
     const fallbackBlob = await render(null);
+    console.info("Invoice PDF generateBlob() result", { type: fallbackBlob.type, size: fallbackBlob.size });
     const logoSrc = await logoDataUri();
     if (!logoSrc) return fallbackBlob;
     try {
-      return await render(logoSrc);
+      const blob = await render(logoSrc);
+      console.info("Invoice PDF generateBlob() result with logo", { type: blob.type, size: blob.size });
+      return blob;
     } catch (error) {
       console.error("Invoice PDF logo failed; using text header instead.");
       logPdfError(error);
@@ -104,7 +114,7 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
       setPreviewUrl(url);
     } catch (error) {
       logPdfError(error);
-      setPdfError("PDF invoice tidak dapat dibuat. Periksa data invoice lalu coba lagi.");
+      setPdfError(error instanceof Error ? `${error.name}: ${error.message}` : String(error));
     } finally { setPreviewLoading(false); }
   }
 
@@ -122,7 +132,7 @@ export default function InvoicePdfActions({ invoice, items, settings = null }: P
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
       logPdfError(error);
-      setPdfError("PDF invoice tidak dapat diunduh. Coba lagi.");
+      setPdfError(error instanceof Error ? `${error.name}: ${error.message}` : String(error));
     } finally { setDownloadLoading(false); }
   }
 
