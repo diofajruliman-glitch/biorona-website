@@ -17,6 +17,7 @@ import ProductGallery from "@/components/ProductGallery";
 import ProductOrderForm from "@/components/ProductOrderForm";
 import ProductCard from "@/components/ProductCard";
 import ProductAuthority from "@/components/ProductAuthority";
+import FAQ from "@/components/FAQ";
 import { ArrowIcon, CheckIcon, WhatsAppIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
 import { floristId, floristSchema, serializeJsonLd } from "@/lib/structured-data";
@@ -152,6 +153,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <ProductAuthority product={product} categoryHref={categoryHref} categoryName={categoryName} status={status} />
         <div className="container"><ProductOrderForm product={product} /></div>
         {suggestions.length > 0 && <section className="container productRelated" aria-labelledby="related-products-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Pilihan Biorona</span><h2 id="related-products-title">Produk terkait</h2></div><p>Rekomendasi berdasarkan kategori, momen, dan kisaran harga terdekat.</p></div><div className="productGrid">{suggestions.map((suggestion) => <ProductCard product={suggestion} key={suggestion.slug}/>)}</div><p className="localLandingMore"><Link href={categoryHref}>Lihat {categoryName} <span aria-hidden="true">→</span></Link></p></section>}
+        <FAQ />
       </main>
       <Footer />
     </>

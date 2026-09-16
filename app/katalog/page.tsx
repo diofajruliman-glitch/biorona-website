@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import LocationSection from "@/components/LocationSection";
 import InstagramSection from "@/components/InstagramSection";
 import Reveal from "@/components/Reveal";
+import FAQ from "@/components/FAQ";
 import { CATALOG_UNAVAILABLE_MESSAGE, CatalogUnavailableError, getActiveCategories, getProducts } from "@/lib/products";
 import type { Product } from "@/data/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
@@ -31,5 +32,5 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 export default async function CatalogPage() {
   let products: Product[] = []; let categories: string[] = []; let unavailableMessage: string | undefined;
   try { [products, categories] = await Promise.all([getProducts(), getActiveCategories()]); } catch (error) { if (!(error instanceof CatalogUnavailableError)) throw error; unavailableMessage = CATALOG_UNAVAILABLE_MESSAGE; }
-  return <><Navbar/><main><Catalog products={products} categories={categories} unavailableMessage={unavailableMessage}/><Reveal><LocationSection/></Reveal><Reveal><InstagramSection/></Reveal></main><MobileOrderBar/><Footer/></>;
+  return <><Navbar/><main><Catalog products={products} categories={categories} unavailableMessage={unavailableMessage}/><Reveal><FAQ/></Reveal><Reveal><LocationSection/></Reveal><Reveal><InstagramSection/></Reveal></main><MobileOrderBar/><Footer/></>;
 }

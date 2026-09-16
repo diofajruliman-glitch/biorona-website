@@ -11,7 +11,7 @@ export default function JsonLd() {
       {
         "@type": "FAQPage",
         "@id": `${siteConfig.siteUrl}/#faq`,
-        mainEntity: homeFaqs.slice(0, 3).map(([name, text]) => ({
+        mainEntity: homeFaqs.slice(0, 4).map(([name, text]) => ({
           "@type": "Question",
           name,
           acceptedAnswer: { "@type": "Answer", text },
