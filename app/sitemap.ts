@@ -18,6 +18,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.siteUrl}/toko-bunga-cibinong/`, changeFrequency: "monthly", priority: .9 },
     { url: `${siteConfig.siteUrl}/katalog/`, changeFrequency: "weekly", priority: .9 },
     { url: `${siteConfig.siteUrl}/artikel/buket-bunga-wisuda/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/bunga-anniversary/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/standing-flower-grand-opening/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/bunga-duka-cita/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/harga-buket-bunga-bogor/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/buket-bunga-ulang-tahun-bogor/`, changeFrequency: "monthly", priority: .7 },
+    { url: `${siteConfig.siteUrl}/artikel/buket-bunga-untuk-pacar-bogor/`, changeFrequency: "monthly", priority: .7 },
   ];
   try {
     const products = await getCachedSitemapProducts();
