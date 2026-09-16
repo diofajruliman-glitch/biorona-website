@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "seed:products": "node --experimental-strip-types scripts/seed-products.ts",
+    "validate:seo": "node --experimental-strip-types scripts/validate-seo.ts",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "check": "npm test && npm run typecheck && npm run build"

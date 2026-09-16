@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footerGrid">
         <div><Logo /><p>{siteConfig.tagline} Katalog modern, pemesanan tetap personal lewat WhatsApp.</p></div>
-        <div><strong>Jelajahi</strong><a href="/katalog">Katalog bunga</a><a href="/toko-bunga-bogor/">Toko Bunga Bogor</a><a href="/toko-bunga-cibinong/">Toko Bunga Cibinong</a><a href="/#custom">Custom Bouquet</a><a href="/#faq">FAQ</a></div>
+        <div><strong>Jelajahi</strong><a href="/katalog/">Katalog bunga</a><a href="/toko-bunga-bogor/">Toko Bunga Bogor</a><a href="/toko-bunga-cibinong/">Toko Bunga Cibinong</a><a href="/#custom">Custom Bouquet</a><a href="/#faq">FAQ</a></div>
         <div>
           <strong>Hubungi</strong>
           <a href={waUrl("Halo Biorona 🌷 Saya ingin bertanya.")} target="_blank" rel="noreferrer">WhatsApp</a>

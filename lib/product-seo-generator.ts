@@ -42,12 +42,12 @@ const categoryRules: Record<string, { keywords: string[]; label: string; path: s
   "Standing Flower": { keywords: ["standing flower Bogor", "bunga ucapan"], label: "Standing flower Bogor", path: "/standing-flower-bogor/", occasion: "ucapan untuk acara penting" },
   "Bunga Papan / Ucapan": { keywords: ["papan bunga Bogor", "toko bunga terdekat"], label: "Bunga ucapan Bogor", path: "/bunga-ucapan-bogor/", occasion: "ucapan selamat atau simpati" },
   "Bloom Box": { keywords: ["bloom box Bogor", "hadiah bunga"], label: "Bloom box Bogor", path: "/katalog/", occasion: "hadiah yang berkesan" },
-  "Hampers / Gift": { keywords: ["hampers bunga Bogor", "hadiah untuk orang tersayang"], label: "Hampers bunga Bogor", path: "/katalog/", occasion: "momen berbagi" },
+  "Hampers & Gift": { keywords: ["hampers bunga Bogor", "hadiah untuk orang tersayang"], label: "Hampers & Gift", path: "/katalog/", occasion: "momen berbagi" },
   "Anggrek dalam Vase": { keywords: ["anggrek Bogor", "rangkaian bunga meja"], label: "Anggrek Bogor", path: "/katalog/", occasion: "dekorasi meja atau hadiah" },
-  "Custom Arrangement / Vase": { keywords: ["bunga custom Bogor", "florist Bogor"], label: "Bunga custom Bogor", path: "/#custom", occasion: "kebutuhan bunga yang personal" },
+  "Custom Arrangement / Vase": { keywords: ["bunga custom Bogor", "florist Bogor"], label: "Custom Arrangement / Vase", path: "/katalog/", occasion: "kebutuhan bunga yang personal" },
 };
 
-const fallbackRule = { keywords: ["toko bunga", "florist Bogor"], label: "Toko bunga Bogor", path: "/katalog/", occasion: "momen spesial" };
+const fallbackRule = { keywords: ["rangkaian bunga", "katalog bunga"], label: "Katalog Biorona", path: "/katalog/", occasion: "" };
 const openings = [
   "Untuk menyampaikan perhatian dengan cara yang hangat, {name} menghadirkan",
   "{name} dirancang sebagai pilihan bunga yang berkesan untuk",
@@ -73,7 +73,7 @@ function clean(value: string) {
   return value.replace(/\s+/g, " ").trim();
 }
 
-function list(values: string[], fallback: string) {
+function list(values: string[], fallback = "") {
   return values.map(clean).filter(Boolean).slice(0, 3).join(", ") || fallback;
 }
 
@@ -90,12 +90,18 @@ function ruleFor(category: string) {
 export function generateProductSeoContent(input: SeoGeneratorInput): GeneratedSeoContent {
   const rule = ruleFor(input.category);
   const seed = hash(`${input.id}|${input.sku}|${input.slug}|${input.name}`);
-  const colors = list(input.colors, "warna pilihan");
-  const occasions = list(input.occasions, rule.occasion);
-  const leadTime = input.leadTime ? ` Lead time yang tercatat: ${clean(input.leadTime)}.` : " Waktu pengerjaan dikonfirmasi saat order.";
+  const colors = list(input.colors);
+  const occasions = list(input.occasions);
+  const leadTime = input.leadTime ? `Lead time yang tercatat: ${clean(input.leadTime)}.` : "";
   const title = limit(`${input.name} | ${rule.label} - Biorona`, 60);
-  const description = `${pick(openings, seed).replace("{name}", input.name).replace("{colors}", colors)} ${rule.occasion}, seperti ${occasions}. ${pick(closings, seed, 1)}${leadTime}`;
-  const meta = limit(`${input.name}, ${rule.keywords[0]} dengan nuansa ${colors}. Cocok untuk ${occasions}. Pesan dan cek ketersediaan melalui WhatsApp Biorona.`, 160);
+  const description = [
+    pick(openings, seed).replace("{name}", input.name).replace("{colors}", colors || "rangkaian ini"),
+    occasions ? `Cocok untuk ${occasions}.` : "",
+    pick(closings, seed, 1),
+    leadTime,
+  ].filter(Boolean).join(" ");
+  const attributes = [colors ? `warna ${colors}` : "", occasions ? `untuk ${occasions}` : ""].filter(Boolean).join("; ");
+  const meta = limit(`${input.name}, ${rule.keywords[0]}${attributes ? `; ${attributes}` : ""}. Pesan dan cek ketersediaan melalui WhatsApp Biorona.`, 160);
   const productUrl = new URL(`/produk/${input.slug}/`, `${siteUrl}/`).toString();
   const image = input.imageUrls.map((url) => new URL(url, `${siteUrl}/`).toString());
   const availability = input.available ? (input.preorder ? "https://schema.org/PreOrder" : "https://schema.org/InStock") : "https://schema.org/OutOfStock";
@@ -104,11 +110,11 @@ export function generateProductSeoContent(input: SeoGeneratorInput): GeneratedSe
     seoTitle: title,
     metaDescription: meta,
     productDescription: clean(`${description} ${input.description ? `Karakter produk: ${clean(input.description)}` : ""}`),
-    heading: `${input.name}: ${rule.label} untuk ${rule.occasion}`,
-    altText: limit(`${input.name}, ${colors}, ${rule.label} dari Biorona`, 125),
+    heading: `${input.name}: ${rule.label}`,
+    altText: limit(`${input.name}${colors ? `, ${colors}` : ""} dari Biorona`, 125),
     keywords: [...new Set([...rule.keywords, ...input.tags.map(clean).filter(Boolean).slice(0, 2)])],
     faqs: [
-      { question: `Untuk momen apa ${input.name} dapat dipilih?`, answer: `${input.name} dapat dipertimbangkan untuk ${occasions}. Detail kebutuhan dapat dikonfirmasi berdasarkan data produk yang tersedia.` },
+      { question: `Apa informasi ${input.name} yang tersedia?`, answer: `${input.name} tercatat dalam kategori ${input.category}${occasions ? ` dan cocok untuk ${occasions}` : ""}. Detail kebutuhan dapat dikonfirmasi berdasarkan data produk yang tersedia.` },
       { question: `Bagaimana cara memesan ${input.name}?`, answer: `Kirim nama produk, tanggal kebutuhan, alamat, dan catatan melalui WhatsApp Biorona. Tim akan memeriksa harga, ketersediaan, serta lead time${input.leadTime ? ` ${clean(input.leadTime)}` : ""} sebelum pesanan diproses.` },
     ],
     internalLink: { label: `Lihat ${rule.label} lainnya`, path: rule.path },
@@ -125,7 +131,7 @@ export function generateProductSeoContent(input: SeoGeneratorInput): GeneratedSe
       brand: { "@type": "Brand", name: shortBrand },
       offers: { "@type": "Offer", priceCurrency: "IDR", price: String(input.price), availability, url: productUrl },
     },
-    whatsappCta: `Halo Biorona, saya ingin memesan ${input.name}. Mohon cek ketersediaan, lead time, dan pengiriman untuk kebutuhan ${rule.occasion}.`,
+    whatsappCta: `Halo Biorona, saya ingin memesan ${input.name}. Mohon cek ketersediaan${input.leadTime ? ", lead time," : ""} dan detail pemesanan${occasions ? ` untuk ${occasions}` : ""}.`,
   };
 }
 
