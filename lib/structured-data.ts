@@ -1,4 +1,6 @@
 import { absoluteUrl, siteConfig } from "@/data/site";
+import { getProductImages, type Product } from "@/data/products";
+import { productSeoDescription } from "@/lib/product-seo";
 
 export const websiteId = `${siteConfig.siteUrl}/#website`;
 export const floristId = `${siteConfig.siteUrl}/#florist`;
@@ -44,6 +46,32 @@ export function floristSchema() {
       { "@type": "AdministrativeArea", name: siteConfig.location.region },
     ],
     sameAs: siteConfig.instagram ? [siteConfig.instagram] : undefined,
+  };
+}
+
+export function productSchema(product: Product) {
+  const productUrl = absoluteUrl(`/produk/${product.slug}/`);
+  return {
+    "@type": "Product",
+    "@id": `${productUrl}#product`,
+    sku: product.sku || product.id,
+    name: product.name,
+    category: product.category,
+    url: productUrl,
+    mainEntityOfPage: productUrl,
+    image: getProductImages(product).map((image) => absoluteUrl(image)),
+    description: productSeoDescription(product),
+    brand: { "@type": "Brand", name: siteConfig.shortBrand },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "IDR",
+      price: String(product.price),
+      availability: product.available
+        ? product.preorder ? "https://schema.org/PreOrder" : "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: productUrl,
+      seller: { "@id": floristId },
+    },
   };
 }
 

@@ -8,7 +8,7 @@ import { absoluteUrl, siteConfig } from "@/data/site";
 import { productsForSeoCategory } from "@/lib/product-seo";
 import { getProducts } from "@/lib/products";
 
-const title = "Standing Flower Bogor | Biorona Florist";
+const title = "Standing Flower Bogor untuk Acara & Ucapan | Biorona";
 const description = "Pesan standing flower Bogor dari Biorona Florist Cibinong untuk grand opening, pernikahan, ucapan selamat, dan duka cita. Konsultasi via WhatsApp.";
 const url = absoluteUrl("/standing-flower-bogor/");
 export const dynamic = "force-dynamic";

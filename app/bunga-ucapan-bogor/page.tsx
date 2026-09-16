@@ -8,7 +8,7 @@ import { absoluteUrl, siteConfig } from "@/data/site";
 import { productsForSeoCategory } from "@/lib/product-seo";
 import { getProducts } from "@/lib/products";
 
-const title = "Bunga Ucapan Bogor | Biorona Florist";
+const title = "Bunga Ucapan Bogor untuk Selamat & Simpati | Biorona";
 const description = "Pesan bunga ucapan Bogor dari Biorona Florist Cibinong untuk grand opening, pernikahan, anniversary, ucapan selamat, dan duka cita.";
 const url = absoluteUrl("/bunga-ucapan-bogor/");
 export const dynamic = "force-dynamic";

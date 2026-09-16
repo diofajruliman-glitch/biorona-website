@@ -20,15 +20,46 @@ export const categorySeoRoutes = {
 
 export type CategorySeoKey = keyof typeof categorySeoRoutes;
 
+export type ProductSeoParent = {
+  key?: CategorySeoKey;
+  label: string;
+  slug: string;
+  href: string;
+};
+
+const catalogSeoParent: ProductSeoParent = {
+  label: "Katalog Biorona",
+  slug: "katalog",
+  href: "/katalog/",
+};
+
+export function seoCategoryForDatabaseCategory(category: string) {
+  const entry = Object.entries(categorySeoRoutes).find(([, route]) => (route.categories as readonly string[]).includes(category));
+  if (!entry) return undefined;
+  const [key, route] = entry as [CategorySeoKey, (typeof categorySeoRoutes)[CategorySeoKey]];
+  return { key, ...route, href: `/${route.slug}/` };
+}
+
+export function productSeoParent(product: Product): ProductSeoParent {
+  const category = seoCategoryForDatabaseCategory(product.category);
+  return category
+    ? { key: category.key, label: category.label, slug: category.slug, href: category.href }
+    : catalogSeoParent;
+}
+
+export function validSeoCategoryRoutes(products: Product[]) {
+  return Object.entries(categorySeoRoutes)
+    .map(([key, route]) => ({ key: key as CategorySeoKey, ...route, href: `/${route.slug}/`, products: productsForSeoCategory(products, key as CategorySeoKey) }))
+    .filter((route) => route.products.length > 0);
+}
+
 export function productsForSeoCategory(products: Product[], key: CategorySeoKey) {
   const categories: readonly string[] = categorySeoRoutes[key].categories;
   return products.filter((product) => categories.includes(product.category));
 }
 
 export function primarySeoCategory(product: Product) {
-  return Object.values(categorySeoRoutes).find((route) =>
-    (route.categories as readonly string[]).includes(product.category),
-  );
+  return seoCategoryForDatabaseCategory(product.category);
 }
 
 const productCategoryLabels: Record<string, string> = {
@@ -46,10 +77,10 @@ export function productCategoryLabel(product: Product) {
 }
 
 export function productSeoTitle(product: Product) {
-  const category = productCategoryLabel(product);
-  return category
-    ? `${product.name} | ${category} - Biorona`
-    : `${product.name} | Biorona Florist`;
+  const parent = productSeoParent(product);
+  return parent.key
+    ? `${product.name} | ${parent.label} - Biorona`
+    : `${product.name} | ${product.category} - Biorona Florist`;
 }
 
 export function relatedProducts(product: Product, products: Product[], limit = 4) {
@@ -75,7 +106,7 @@ export function relatedProducts(product: Product, products: Product[], limit = 4
     .map(({ candidate }) => candidate);
 }
 
-const genericDescriptionPattern = /(?:^|,\s*)rangkaian(?:\s+\w+)?\s+pilihan\s+untuk\s+momen\s+istimewa\.?$/i;
+const genericDescriptionPattern = /(?:^|,\s*)rangkaian(?:\s+\w+)?\s+pilihan\s+untuk\s+momen\s+istimewa\.?$|dirancang florist Biorona dengan komposisi warna yang seimbang untuk pengiriman area Bogor dan Cibinong\.?$/i;
 const genericSeoDescriptionPattern = /^Pesan .+ untuk hadiah dan ucapan berkesan dengan layanan florist Biorona\.?$/i;
 const META_DESCRIPTION_LIMIT = 160;
 
@@ -97,7 +128,13 @@ function productAttributeDetails(product: Product) {
 }
 
 function deterministicProductDescription(product: Product) {
-  return `${product.name}: ${productAttributeDetails(product)}. Lihat harga dan status pemesanan di Biorona Florist.`;
+  const leadTime = product.leadTime?.trim() ? ` Lead time tercatat: ${product.leadTime.trim()}.` : "";
+  const availability = !product.available
+    ? " Status pemesanan: tidak tersedia."
+    : product.preorder
+      ? " Status pemesanan: pre-order."
+      : " Status pemesanan: tersedia.";
+  return `${product.name}: ${productAttributeDetails(product)}.${leadTime}${availability} Lihat harga dan detail pemesanan di Biorona Florist.`;
 }
 
 function referencesAnotherProduct(product: Product, value: string) {
@@ -138,6 +175,8 @@ export function productMetadataDescription(product: Product) {
   const attributes = [
     colors.length ? `warna ${colors.join(", ")}` : "",
     occasions.length ? `untuk ${occasions.join(", ")}` : "",
+    product.leadTime?.trim() ? `lead time ${product.leadTime.trim()}` : "",
+    !product.available ? "tidak tersedia" : product.preorder ? "pre-order" : "tersedia",
   ].filter(Boolean).join("; ");
 
   return limitMetaDescription(`${product.name}, ${product.category}${attributes ? `; ${attributes}` : ""}. Cek harga dan ketersediaan di Biorona Florist.`);

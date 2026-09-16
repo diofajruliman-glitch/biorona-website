@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { unstable_cache } from "next/cache";
 import { siteConfig } from "@/data/site";
 import { isSearchIndexableProduct } from "@/data/products";
-import { categorySeoRoutes } from "@/lib/product-seo";
+import { validSeoCategoryRoutes } from "@/lib/product-seo";
 import { CatalogUnavailableError, getProducts } from "@/lib/products";
 
 const getCachedSitemapProducts = unstable_cache(
@@ -17,12 +17,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.siteUrl}/toko-bunga-bogor/`, changeFrequency: "monthly", priority: .9 },
     { url: `${siteConfig.siteUrl}/toko-bunga-cibinong/`, changeFrequency: "monthly", priority: .9 },
     { url: `${siteConfig.siteUrl}/katalog/`, changeFrequency: "weekly", priority: .9 },
+    { url: `${siteConfig.siteUrl}/artikel/buket-bunga-wisuda/`, changeFrequency: "monthly", priority: .7 },
   ];
   try {
     const products = await getCachedSitemapProducts();
-    const categoryPages = Object.values(categorySeoRoutes)
-      .map((route) => ({ url: `${siteConfig.siteUrl}/${route.slug}/`, changeFrequency: "weekly" as const, priority: .9 }));
-    return [...corePages, ...categoryPages, ...products.filter(isSearchIndexableProduct).map((product) => ({ url: `${siteConfig.siteUrl}/produk/${product.slug}/`, changeFrequency: "weekly" as const, priority: .8 }))];
+    const indexableProducts = products.filter(isSearchIndexableProduct);
+    const categoryPages = validSeoCategoryRoutes(indexableProducts)
+      .map((route) => ({ url: `${siteConfig.siteUrl}${route.href}`, changeFrequency: "weekly" as const, priority: .9 }));
+    return [...corePages, ...categoryPages, ...indexableProducts.map((product) => ({ url: `${siteConfig.siteUrl}/produk/${product.slug}/`, changeFrequency: "weekly" as const, priority: .8 }))];
   } catch (error) {
     if (!(error instanceof CatalogUnavailableError)) throw error;
     return corePages;

@@ -33,3 +33,8 @@ Push source ke GitHub, import repo ke Vercel, lalu isi Environment Variables yan
 
 ## Catatan
 Nama produk/foto/harga masih contoh. Ganti melalui `data/products.ts` dan `public/products/`.
+
+## Validasi SEO dan fallback katalog
+Jalankan `npm.cmd run validate:seo` untuk memeriksa duplicate SKU/slug, mapping kategori, route kategori sitemap, image/alt fallback, konsistensi Product schema, dan internal link publik.
+
+Production membaca katalog aktif dari Supabase. Seed produksi berisi 70 produk dalam 8 kategori dan gambar berasal dari tabel `product_images`. Development tanpa kredensial Supabase memakai 6 produk fallback dari `data/products.ts`, 6 kategori fallback, slug fallback, serta gambar lokal di `public/products/`. Fallback tidak dimaksudkan untuk menyamai jumlah atau isi katalog production.

@@ -12,8 +12,8 @@ import type { Product } from "@/data/products";
 import { absoluteUrl, siteConfig } from "@/data/site";
 
 export const dynamic = "force-dynamic";
-const title = "Katalog Bunga | Biorona Florist Bogor & Cibinong";
-const description = "Katalog buket bunga, standing flower, bunga ucapan, dan rangkaian bunga dari Biorona Florist Cibinong, Bogor.";
+const title = "Katalog Bunga Biorona | Bogor & Cibinong";
+const description = "Jelajahi katalog buket, standing flower, bunga ucapan, flower box, dan rangkaian bunga Biorona untuk Bogor dan Cibinong.";
 const canonical = absoluteUrl("/katalog/");
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }): Promise<Metadata> {

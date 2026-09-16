@@ -4,12 +4,11 @@ import { notFound } from "next/navigation";
 import {
   getPrimaryProductImage,
   getProductImageAlt,
-  getProductImages,
   getProductStatus,
   isSearchIndexableProduct,
 } from "@/data/products";
 import { getProductBySlug, getProducts } from "@/lib/products";
-import { primarySeoCategory, productDisplayDescription, productMetadataDescription, productSeoDescription, productSeoTitle, relatedProducts } from "@/lib/product-seo";
+import { productDisplayDescription, productMetadataDescription, productSeoParent, productSeoTitle, relatedProducts } from "@/lib/product-seo";
 import { absoluteUrl, siteConfig } from "@/data/site";
 import { formatRupiah } from "@/lib/format";
 import Logo from "@/components/Logo";
@@ -20,7 +19,7 @@ import ProductAuthority from "@/components/ProductAuthority";
 import FAQ from "@/components/FAQ";
 import { ArrowIcon, CheckIcon, WhatsAppIcon } from "@/components/Icons";
 import Footer from "@/components/Footer";
-import { floristId, floristSchema, serializeJsonLd } from "@/lib/structured-data";
+import { floristId, floristSchema, productSchema, serializeJsonLd } from "@/lib/structured-data";
 
 export const dynamic = "force-dynamic";
 
@@ -70,36 +69,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const isIndexable = isSearchIndexableProduct(product);
   const imageAlt = getProductImageAlt(product);
   const productUrl = absoluteUrl(`/produk/${product.slug}/`);
-  const primaryCategory = primarySeoCategory(product);
-  const categoryHref = primaryCategory ? `/${primaryCategory.slug}/` : "/katalog/";
-  const categoryName = primaryCategory?.label ?? "Katalog";
+  const productParent = productSeoParent(product);
+  const categoryHref = productParent.href;
+  const categoryName = productParent.label;
   const suggestions = relatedProducts(product, await getProducts());
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
       floristSchema(),
-      {
-        "@type": "Product",
-        "@id": `${productUrl}#product`,
-        sku: product.sku || product.id,
-        name: product.name,
-        category: product.category,
-        url: productUrl,
-        mainEntityOfPage: productUrl,
-        image: getProductImages(product).map((image) => absoluteUrl(image)),
-        description: productSeoDescription(product),
-        brand: { "@type": "Brand", name: siteConfig.shortBrand },
-        offers: {
-          "@type": "Offer",
-          priceCurrency: "IDR",
-          price: String(product.price),
-          availability: product.available
-            ? product.preorder ? "https://schema.org/PreOrder" : "https://schema.org/InStock"
-            : "https://schema.org/OutOfStock",
-          url: productUrl,
-          seller: { "@id": floristId },
-        },
-      },
+      productSchema(product),
       {
         "@type": "BreadcrumbList",
         "@id": `${productUrl}#breadcrumb`,
@@ -118,7 +96,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       <header className="productPageHeader">
         <div className="container productPageNav">
           <Logo />
-          <Link href="/katalog">← Kembali ke katalog</Link>
+          <Link href="/katalog/">← Kembali ke katalog</Link>
         </div>
       </header>
       <main className="productPage">

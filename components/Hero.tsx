@@ -72,10 +72,9 @@ export default function Hero() {
         <div className="heroCopy">
           <div className="sameDayBadge"><span aria-hidden="true">⚡</span> Pesan Hari Ini <span aria-hidden="true">•</span> Kirim Hari Ini</div>
           <div className="eyebrow heroEntrance heroEntranceLocation"><SparkleIcon size={17}/> Biorona Florist • Cibinong, Bogor</div>
-          <h1 aria-label="Toko Bunga Bogor & Florist Cibinong — Biorona Florist">
-            <span className="heroTitleLine"><span>Toko Bunga Bogor &amp; </span></span>
-            <span className="heroTitleLine"><span>Florist Cibinong</span></span>
-            <span className="srOnly"> — Biorona Florist</span>
+          <h1 aria-label="Biorona Florist untuk momen di Bogor dan Cibinong">
+            <span className="heroTitleLine"><span>Biorona Florist untuk </span></span>
+            <span className="heroTitleLine"><span>Bogor &amp; Cibinong</span></span>
           </h1>
           <p className="heroServiceLine" aria-label="Pilihan bunga untuk Buket Bunga">
             <span aria-hidden="true">Pilihan bunga untuk</span>
@@ -90,7 +89,7 @@ export default function Hero() {
             <p className="heroSupportingCopy">Pilih koleksi Biorona atau konsultasikan desain, warna, ukuran, ucapan, dan budget sesuai kebutuhan. Pemesanan dapat dilakukan langsung melalui WhatsApp tanpa login atau checkout.</p>
           </div>
           <div className="heroCtas" ref={ctasRef}>
-            <a className="primaryButton" href="/katalog">Lihat Koleksi Bunga <ArrowIcon size={18}/></a>
+            <a className="primaryButton" href="/katalog/">Lihat Koleksi Bunga <ArrowIcon size={18}/></a>
             <a className="secondaryGlassButton glassSurface" href="#custom"><SparkleIcon size={18}/> Custom Bouquet</a>
             <a className="secondaryGlassButton glassSurface" href={waUrl("Halo Biorona 🌷 Saya ingin konsultasi untuk memilih bunga.")} target="_blank" rel="noreferrer"><WhatsAppIcon size={19}/> Pesan via WhatsApp</a>
           </div>
