@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { unstable_cache } from "next/cache";
 import { siteConfig } from "@/data/site";
 import { isSearchIndexableProduct } from "@/data/products";
-import { categorySeoRoutes, productsForSeoCategory } from "@/lib/product-seo";
+import { categorySeoRoutes } from "@/lib/product-seo";
 import { CatalogUnavailableError, getProducts } from "@/lib/products";
 
 const getCachedSitemapProducts = unstable_cache(
@@ -20,9 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   try {
     const products = await getCachedSitemapProducts();
-    const categoryPages = Object.entries(categorySeoRoutes)
-      .filter(([key]) => productsForSeoCategory(products, key as keyof typeof categorySeoRoutes).some(isSearchIndexableProduct))
-      .map(([, route]) => ({ url: `${siteConfig.siteUrl}/${route.slug}/`, changeFrequency: "weekly" as const, priority: .9 }));
+    const categoryPages = Object.values(categorySeoRoutes)
+      .map((route) => ({ url: `${siteConfig.siteUrl}/${route.slug}/`, changeFrequency: "weekly" as const, priority: .9 }));
     return [...corePages, ...categoryPages, ...products.filter(isSearchIndexableProduct).map((product) => ({ url: `${siteConfig.siteUrl}/produk/${product.slug}/`, changeFrequency: "weekly" as const, priority: .8 }))];
   } catch (error) {
     if (!(error instanceof CatalogUnavailableError)) throw error;

@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { siteConfig } from "@/data/site";
 import RouteScrollManager from "@/components/RouteScrollManager";
+import { absoluteUrl } from "@/data/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
+  alternates: { canonical: absoluteUrl("/") },
   title: {
     default: `${siteConfig.brand} | Florist ${siteConfig.location.city}, ${siteConfig.location.region}`,
     template: `%s | ${siteConfig.brand}`,
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: `${siteConfig.siteUrl}/`,
+    url: absoluteUrl("/"),
     siteName: siteConfig.brand,
     title: `${siteConfig.brand} | Florist Cibinong, Bogor`,
     description: siteConfig.description,
