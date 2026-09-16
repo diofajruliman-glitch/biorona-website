@@ -9,7 +9,7 @@ import { productsForSeoCategory } from "@/lib/product-seo";
 import { getProducts } from "@/lib/products";
 
 const title = "Buket Bunga Bogor | Fresh & Artificial Bouquet - Biorona";
-const description = "Pesan buket bunga Bogor dari Biorona Florist Cibinong. Pilihan fresh flower, artificial bouquet dan custom bouquet untuk ulang tahun, wisuda, anniversary dan hadiah.";
+const description = "Temukan buket bunga Bogor dari Biorona untuk wisuda, ulang tahun, anniversary dan hadiah. Pilihan fresh, artificial dan custom untuk Bogor-Cibinong.";
 const url = absoluteUrl("/buket-bunga-bogor/");
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: { absolute: title }, description, alternates: { canonical: url }, robots: { index: true, follow: true }, openGraph: { type: "website", locale: "id_ID", siteName: siteConfig.brand, title, description, url, images: [{ url: absoluteUrl(siteConfig.defaultImage), alt: "Buket bunga dari Biorona Florist Bogor" }] }, twitter: { card: "summary_large_image", title, description, images: [absoluteUrl(siteConfig.defaultImage)] } };

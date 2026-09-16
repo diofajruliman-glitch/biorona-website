@@ -144,7 +144,7 @@ export default async function GraduationBouquetArticle() {
             <section aria-labelledby="sebelum-pesan-title">
               <h2 id="sebelum-pesan-title">Siapkan detail sebelum memesan</h2>
               <p>Sebelum menghubungi Biorona, siapkan nama produk, tanggal kebutuhan, nama penerima, isi kartu ucapan, dan preferensi warna jika ada. Detail tersebut membantu percakapan pemesanan dimulai dari kebutuhan yang jelas.</p>
-              <p><Link className="articleCategoryLink" href="/buket-bunga-bogor/">Lihat koleksi terkait</Link> untuk membandingkan pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
+              <p><Link className="articleCategoryLink" href="/buket-bunga-bogor/">Jelajahi koleksi buket Biorona</Link> untuk membandingkan pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
             </section>
             <section className="articleCta" aria-labelledby="konsultasi-title">
               <div>

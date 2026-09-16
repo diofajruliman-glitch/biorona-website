@@ -24,6 +24,11 @@ const pageCopy = {
       ["Bisakah memesan custom bouquet di Bogor?", "Bisa. Sampaikan momen, warna, gaya, dan budget melalui WhatsApp agar tim dapat memberikan opsi berdasarkan bahan yang tersedia."],
       ["Apakah buket bisa dikirim pada hari yang sama?", "Same-day dapat dikonsultasikan dan bergantung pada waktu pemesanan, produk, kapasitas pengerjaan, serta area tujuan."],
     ],
+    relatedArticles: [
+      ["Panduan memilih buket bunga wisuda", "/artikel/buket-bunga-wisuda/"],
+      ["Harga buket bunga di Bogor sesuai budget", "/artikel/harga-buket-bunga-bogor/"],
+      ["Buket bunga untuk pacar di Bogor", "/artikel/buket-bunga-untuk-pacar-bogor/"],
+    ],
   },
   standing: {
     h1: "Standing Flower Bogor untuk Ucapan & Acara",
@@ -41,22 +46,31 @@ const pageCopy = {
       ["Apakah tulisan ucapan dapat disesuaikan?", "Ya. Isi ucapan dan nama pengirim dikirim melalui WhatsApp dan diperiksa kembali saat konfirmasi pesanan."],
       ["Apakah tersedia pengiriman ke Cibinong dan Bogor?", "Tersedia sesuai jangkauan kurir. Kirim alamat lengkap dan jadwal agar ongkir serta estimasi dapat dikonfirmasi."],
     ],
+    relatedArticles: [
+      ["Panduan standing flower untuk grand opening", "/artikel/standing-flower-grand-opening/"],
+      ["Panduan memilih bunga duka cita", "/artikel/bunga-duka-cita/"],
+    ],
   },
   ucapan: {
     h1: "Bunga Ucapan Bogor untuk Berbagai Momen",
     eyebrow: "Pesan personal • Selamat • Dukacita",
-    intro: "Pilih bunga ucapan Bogor dari produk aktif Biorona untuk menyampaikan selamat, dukungan, atau simpati. Halaman ini secara khusus menampilkan kategori Bunga Papan / Ucapan yang tersedia di katalog, tanpa mencampurkan produk lain hanya untuk menambah jumlah pilihan. Detail pesan dan kebutuhan acara dikonfirmasi langsung melalui WhatsApp.",
+    intro: "Pilih bunga ucapan Bogor dari produk aktif Biorona untuk grand opening, pernikahan, acara perusahaan, ucapan selamat, atau simpati. Halaman ini hanya menampilkan kategori Bunga Papan / Ucapan yang tersedia di katalog; detail tulisan, penerima, dan kebutuhan acara dikonfirmasi melalui WhatsApp.",
     usage: [
       ["Perayaan dan pembukaan", "Sampaikan selamat untuk grand opening, pencapaian, atau momen penting dengan teks yang telah diperiksa."],
       ["Pernikahan dan anniversary", "Rangkaian ucapan dapat dikonsultasikan untuk pernikahan, anniversary, atau dukungan bagi orang terdekat."],
       ["Simpati dan dukacita", "Gunakan pesan yang pantas dan nuansa lebih tenang untuk mewakili perhatian keluarga, kerabat, atau perusahaan."],
     ],
     area: "Pesanan bunga ucapan dapat diambil di Cibinong atau dikirim ke area Cibinong, Bogor, dan sekitarnya sesuai jangkauan. Ketersediaan produk, ongkos kirim, dan waktu tiba perlu dikonfirmasi terlebih dahulu. Cantumkan alamat lengkap, tanggal, batas waktu acara, serta kontak penerima agar proses pengiriman dapat direncanakan dengan jelas.",
-    moments: "Agar pesan tidak keliru, kirim teks ucapan, nama penerima, dan nama pengirim dalam format final. Biorona akan mengonfirmasi detail tersebut bersama produk dan jadwal sebelum pengerjaan. Jika Anda belum yakin memilih rangkaian untuk ulang tahun, anniversary, ucapan selamat, atau duka cita, jelaskan momennya agar tim dapat membantu menunjukkan opsi yang memang tersedia tanpa menjanjikan bahan yang belum dikonfirmasi.",
+    moments: "Pilih bunga ucapan berdasarkan acara dan nada pesan. Untuk grand opening atau acara perusahaan, siapkan nama instansi dan ucapan selamat; untuk pernikahan atau anniversary, jelaskan hubungan dengan penerima; untuk simpati, gunakan pesan yang singkat dan pantas. Warna dan gaya dapat dibahas berdasarkan produk runtime yang tersedia. Kirim teks final, nama penerima, dan nama pengirim agar detail tulisan dapat dikonfirmasi sebelum pengerjaan.",
     faqs: [
       ["Apakah isi bunga ucapan dapat dibuat personal?", "Ya. Teks, nama penerima, dan nama pengirim dikonfirmasi melalui WhatsApp sebelum pesanan diproses."],
-      ["Apakah halaman ini menampilkan produk aktual?", "Ya. Produk diambil dari kategori aktif Bunga Papan / Ucapan pada katalog Biorona."],
-      ["Bisakah dikirim untuk acara di Bogor?", "Bisa sesuai jangkauan dan jadwal kurir. Alamat, ongkir, dan estimasi waktu akan dikonfirmasi melalui WhatsApp."],
+      ["Apakah halaman ini menampilkan produk aktual?", "Ya. Produk diambil dari kategori aktif Bunga Papan / Ucapan pada katalog Biorona, lalu statusnya dapat diperiksa pada halaman produk."],
+      ["Bagaimana memilih bunga ucapan untuk acara?", "Sampaikan jenis acara, pesan, warna atau gaya yang diinginkan, serta budget. Tim akan membantu membandingkan produk runtime yang relevan."],
+      ["Bisakah dikirim ke Bogor dan Cibinong?", "Pengiriman dapat dikonsultasikan sesuai alamat, jadwal, produk, dan ketersediaan kurir. Detail biaya dan estimasi dikonfirmasi melalui WhatsApp."],
+    ],
+    relatedArticles: [
+      ["Panduan standing flower untuk grand opening", "/artikel/standing-flower-grand-opening/"],
+      ["Panduan memilih bunga duka cita", "/artikel/bunga-duka-cita/"],
     ],
   },
 } as const;
@@ -93,6 +107,7 @@ export default function CategorySeoPage({ categoryKey, products }: { categoryKey
       <div className="container localLandingBody">
         <nav className="productBreadcrumb" aria-label="Breadcrumb"><Link href="/">Beranda</Link><span aria-hidden="true">/</span><span aria-current="page">{route.label}</span></nav>
         <section id="produk" aria-labelledby="produk-title"><div className="sectionHeading splitHeading"><div><span className="kicker">Katalog aktif Biorona</span><h2 id="produk-title">Pilihan {route.label}</h2></div><p>Harga dan status ketersediaan ditampilkan pada setiap produk.</p></div><div className="productGrid">{products.map((product) => <ProductCard product={product} key={product.slug}/>)}</div></section>
+        <section className="localLandingOrder glassSurface" aria-labelledby="article-guides-title"><span className="kicker">Panduan terkait</span><h2 id="article-guides-title">Baca sebelum memilih</h2><p>{page.relatedArticles.map(([label, href], index) => <span key={href}>{index > 0 && " · "}<Link href={href}>{label}</Link></span>)}</p></section>
         <section aria-labelledby="penggunaan-title"><h2 id="penggunaan-title">Jenis rangkaian dan momen penggunaan</h2><p>{page.moments}</p><div className="localLandingServices">{page.usage.map(([title, description]) => <article className="glassSurface" key={title}><h3>{title}</h3><p>{description}</p></article>)}</div></section>
         <section className="localLandingSplit" aria-labelledby="area-title"><div><h2 id="area-title">Area layanan Bogor dan Cibinong</h2><p>{page.area}</p><p><Link href="/toko-bunga-bogor/">Layanan toko bunga Bogor</Link> · <Link href="/toko-bunga-cibinong/">Florist Cibinong</Link></p></div><div><h2>Cara order</h2><p>Pilih produk dan buka halaman detail untuk melihat informasi lengkap. Tekan tombol WhatsApp, lalu kirim tanggal, alamat, nama penerima, isi kartu atau ucapan, dan permintaan warna bila ada. Tim Biorona akan mengonfirmasi ketersediaan, ongkir, total, serta langkah pembayaran sebelum pengerjaan.</p></div></section>
         <section className="localLandingOrder glassSurface" aria-labelledby="related-title"><div><span className="kicker">Jelajahi koleksi terkait</span><h2 id="related-title">Kategori bunga lainnya</h2><p>{related.map((item, index) => <span key={item.slug}>{index > 0 && " · "}<Link href={`/${item.slug}/`}>{item.label}</Link></span>)} · <Link href="/katalog/">Semua koleksi Biorona</Link></p></div><Link className="secondaryGlassButton" href="/katalog/">Buka katalog <ArrowIcon size={18}/></Link></section>

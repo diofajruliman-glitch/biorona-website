@@ -146,7 +146,7 @@ export default async function BungaDukaCitaArticle() {
             <section aria-labelledby="steps-title">
               <h2 id="steps-title">Siapkan detail sebelum memesan</h2>
               <p>Sebelum menghubungi Biorona, siapkan nama produk, nama penerima atau keluarga, dan pesan simpati yang ingin disampaikan. Detail tersebut membantu percakapan pemesanan dimulai dengan jelas.</p>
-              <p><Link className="articleCategoryLink" href="/standing-flower-bogor/">Lihat koleksi terkait</Link> untuk membandingkan pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
+              <p><Link className="articleCategoryLink" href="/standing-flower-bogor/">Jelajahi standing flower untuk menyampaikan simpati</Link> untuk membandingkan pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
             </section>
             <section className="articleCta" aria-labelledby="cta-title">
               <div>

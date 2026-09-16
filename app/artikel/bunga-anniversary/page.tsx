@@ -142,7 +142,7 @@ export default async function BungaAnniversaryArticle() {
                 </div>
               ))}
             </div>
-            <p className="articleCategoryLink"><Link href="/katalog/">Lihat katalog Biorona <span aria-hidden="true">→</span></Link></p>
+            <p className="articleCategoryLink"><Link href="/buket-bunga-bogor/">Jelajahi koleksi buket Biorona <span aria-hidden="true">→</span></Link></p>
           </section>
 
           <section className="articleCta" aria-labelledby="article-cta-title">

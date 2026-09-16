@@ -146,7 +146,7 @@ export default async function StandingFlowerGrandOpeningArticle() {
             <section aria-labelledby="steps-title">
               <h2 id="steps-title">Siapkan detail sebelum memesan</h2>
               <p>Sebelum menghubungi Biorona, siapkan nama produk, konteks acara, nama penerima atau instansi, dan preferensi yang ingin dibicarakan. Detail tersebut membantu percakapan pemesanan dimulai dari kebutuhan yang jelas.</p>
-              <p><Link className="articleCategoryLink" href="/standing-flower-bogor/">Lihat koleksi terkait</Link> untuk membandingkan pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
+              <p><Link className="articleCategoryLink" href="/standing-flower-bogor/">Bandingkan pilihan standing flower untuk acara</Link> untuk melihat pilihan yang tersedia, lalu buka halaman produk yang paling sesuai.</p>
             </section>
             <section className="articleCta" aria-labelledby="cta-title">
               <div>
