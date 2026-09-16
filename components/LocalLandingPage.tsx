@@ -72,6 +72,8 @@ const localCategories = [
   { title: "Buket Bunga Bogor", href: "/buket-bunga-bogor/", description: "Bouquet untuk wisuda, ulang tahun, anniversary, hadiah, dan momen personal." },
   { title: "Standing Flower Bogor", href: "/standing-flower-bogor/", description: "Rangkaian standing flower untuk grand opening, pernikahan, ucapan, dan acara." },
   { title: "Bunga Ucapan Bogor", href: "/bunga-ucapan-bogor/", description: "Rangkaian bunga ucapan dengan pesan, warna, dan kebutuhan acara yang dapat dikonsultasikan." },
+  { title: "Flower Box", href: "/katalog/?category=Bloom%20Box", description: "Pilihan flower box Biorona untuk hadiah dan momen personal." },
+  { title: "Custom Bouquet", href: "/katalog/?category=Custom%20Arrangement%20%2F%20Vase", description: "Jelajahi rangkaian custom yang tersedia di katalog Biorona." },
 ] as const;
 
 export default function LocalLandingPage({ area, products }: { area: Area; products: Product[] }) {
